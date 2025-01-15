@@ -7,7 +7,7 @@ function Navbar() {
     <div className="navbar">
       {/* Logo */}
       <div className="logo">
-        MovieApp
+        Netflick
       </div>
 
       {/* Navbar Links */}

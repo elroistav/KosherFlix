@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import RandomMovie from '../components/RandomMovie';
+import CategoryRow from '../components/CategoryRow';
 import Navbar from '../components/NavBar';  // Importing the Navbar component
 import MovieModal from '../components/MovieModal';  // assuming you already have the modal component
 import '../styles/HomeScreen.css';
@@ -14,7 +16,7 @@ function HomeScreen() {
     async function fetchMovies() {
       try {
         const response = await axios.get('http://localhost:4000/api/movies', {
-          headers: { 'user-id': '6787bd0b237c5fc978270e18' }
+          headers: { 'user-id': '678820cd237c5fc9782768ba' }
         });
 
         // Fetch the details of each movie in each category
@@ -24,7 +26,7 @@ function HomeScreen() {
           for (const movieId of category.movies) {
             try {
               const movieResponse = await axios.get(`http://localhost:4000/api/movies/${movieId}`, {
-                headers: { 'user-id': '6787bd0b237c5fc978270e18' }
+                headers: { 'user-id': '678820cd237c5fc9782768ba' }
               });
               fetchedMovies.push(movieResponse.data);
             } catch (error) {
@@ -61,36 +63,13 @@ function HomeScreen() {
         <Navbar /> {/* Navbar component */}
       {/* Random Movie Section */}
       {randomMovie && (
-        <div className="random-movie">
-          <div className="overlay"></div>
-          <h1 className="welcome-text">Play Random Movie</h1>
-          <h2>{randomMovie.title}</h2>
-          <button>Play</button>
-        </div>
+        <RandomMovie movie={randomMovie} />
       )}
 
       {/* Movie Categories Section */}
       <div className="movie-categories">
         {movies.length > 0 && movies.map((category, index) => (
-          <div className="category-row" key={index}>
-            <h3>{category.category}</h3>
-            <div className="category-movies">
-              {category.movies.map((movie, idx) => (
-                <div
-                  className="movie-card"
-                  key={idx}
-                  onClick={() => handleMovieClick(movie._id)}
-                  style={{
-                    backgroundImage: `url(${movie.thumbnail})`, // Set movie thumbnail dynamically
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                  }}
-                >
-                  <p>{movie.title}</p> {/* Display the movie title */}
-                </div>
-              ))}
-            </div>
-          </div>
+          <CategoryRow key={index} categoryName={category.category} movies={category.movies} onMovieClick={handleMovieClick} />
         ))}
       </div>
 

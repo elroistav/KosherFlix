@@ -1,5 +1,5 @@
 import React from 'react';
-import '../styles/HomeScreen.css';
+import '../styles/RandomMovie.css';
 
 function RandomMovie({ movie }) {
   if (!movie) return null;
@@ -7,11 +7,20 @@ function RandomMovie({ movie }) {
   return (
     <div className="random-movie">
       <div className="overlay"></div>
-      <h1 className="welcome-text">Play Random Movie</h1>
-      <h2>{movie.title}</h2> {/* Display the movie title */}
-      <button>Play</button>
+      <h2>{movie.title}</h2>
+
+      {/* Buttons */}
+      <div className="buttons-container">
+        <button>
+          <span className="play-icon">▶</span> Play
+        </button>
+        <button>
+          <span className="info-icon">ℹ️</span> More Info
+        </button>
+      </div>
     </div>
   );
 }
 
 export default RandomMovie;
+

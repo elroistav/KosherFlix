@@ -6,8 +6,8 @@ function CategoryRow({ categoryName, movies, onMovieClick }) {
     <div className="category-row">
       <h3>{categoryName}</h3>
       <div className="category-movies">
-        {movies.map((movieId, index) => (
-          <MovieCard key={index} movieId={movieId} onClick={() => onMovieClick(movieId)} />
+        {movies.map((movie, index) => (
+          <MovieCard key={index} movie={movie} onClick={() => onMovieClick(movie._id)} />
         ))}
       </div>
     </div>

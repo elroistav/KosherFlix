@@ -20,6 +20,7 @@
     font-weight: bold;
     color: #e50914;
     cursor: pointer;
+    font-family: 'Bebas Neue', sans-serif;  /* Applying the font */
   }
   
   /* Navbar Links */
