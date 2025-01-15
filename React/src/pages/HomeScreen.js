@@ -59,25 +59,25 @@ function HomeScreen() {
   };
 
   return (
-    <div>
+      <div>
         <Navbar /> {/* Navbar component */}
-      {/* Random Movie Section */}
-      {randomMovie && (
-        <RandomMovie movie={randomMovie} />
-      )}
+        {/* Random Movie Section */}
+        {randomMovie && (
+          <RandomMovie movie={randomMovie} />
+        )}
 
-      {/* Movie Categories Section */}
-      <div className="movie-categories">
-        {movies.length > 0 && movies.map((category, index) => (
-          <CategoryRow key={index} categoryName={category.category} movies={category.movies} onMovieClick={handleMovieClick} />
-        ))}
+        {/* Movie Categories Section */}
+        <div className="movie-categories">
+          {movies.length > 0 && movies.map((category, index) => (
+            <CategoryRow key={index} categoryName={category.category} movies={category.movies} onMovieClick={handleMovieClick} />
+          ))}
+        </div>
+
+        {/* Movie Modal */}
+        {selectedMovie && (
+          <MovieModal movie={selectedMovie} onClose={() => setSelectedMovie(null)} />
+        )}
       </div>
-
-      {/* Movie Modal */}
-      {selectedMovie && (
-        <MovieModal movie={selectedMovie} onClose={() => setSelectedMovie(null)} />
-      )}
-    </div>
   );
 }
 

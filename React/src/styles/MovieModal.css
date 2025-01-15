@@ -14,22 +14,27 @@
 }
 
 .movie-modal-content {
-  width: 80%;
-  height: 80%;
+  width: 70%;
+  max-width: 800px;
+  height: auto;
+  max-height: 80%;
   background-color: #333;
   color: white;
-  padding: 20px;
+  padding: 30px;
   border-radius: 12px;
   position: relative;
   overflow-y: auto;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
 .close-button {
   position: absolute;
   top: 20px;
   right: 20px;
-  background-color: transparent;
+  background-color: #000;
   color: white;
   font-size: 1.5rem;
   border: none;
@@ -42,14 +47,20 @@
 
 h2 {
   margin-top: 0;
+  font-size: 2rem;
+  text-align: center;
 }
 
 p {
   font-size: 1.2rem;
   margin-bottom: 10px;
+  line-height: 1.5;
 }
 
 .watch-button {
+  position: absolute;
+  top: 20px;
+  left: 20px;
   padding: 12px 24px;
   font-size: 1.2rem;
   background-color: #e50914;
@@ -57,9 +68,9 @@ p {
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  margin-top: 20px;
 }
 
 .watch-button:hover {
   background-color: #f40612;
+  transform: scale(1.05);
 }
