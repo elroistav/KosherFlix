@@ -1,25 +1,17 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import './pages/HomeScreen.css';
 
-function App() {
+function HomeScreen() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <div className="overlay"></div>
+      <h1 className="welcome-text">Welcome to Netflix</h1>
+      <div className="button-container">
+        <button>Play</button>
+        <button>My List</button>
+      </div>
     </div>
   );
 }
 
-export default App;
+export default HomeScreen;
