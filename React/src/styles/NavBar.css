@@ -1,0 +1,80 @@
+/* Navbar Styles */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 10px 20px;
+    background-color: rgba(0, 0, 0, 0.9);
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 100;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+  }
+  
+  /* Logo */
+  .navbar .logo {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #e50914;
+    cursor: pointer;
+  }
+  
+  /* Navbar Links */
+  .navbar .nav-links {
+    display: flex;
+    gap: 20px;
+    font-size: 1rem;
+  }
+  
+  .navbar .nav-links a {
+    color: white;
+    text-decoration: none;
+    text-transform: uppercase;
+    font-weight: bold;
+    transition: color 0.3s ease;
+  }
+  
+  .navbar .nav-links a:hover {
+    color: #e50914; /* Highlight on hover */
+  }
+  
+  /* Profile and Search Icons Container */
+  .navbar .profile-and-search {
+    display: flex;
+    align-items: center;
+  }
+  
+  /* Search Icon */
+  .navbar .search-icon {
+    font-size: 1.5rem;
+    color: white;
+    cursor: pointer;
+    margin-right: 15px;  /* Add space between search icon and profile picture */
+  }
+
+  .navbar .search-icon:hover {
+    transform: scale(1.1); /* Subtle zoom effect on hover */
+  }
+  
+  /* Profile Icon */
+  .navbar .profile-icon {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    margin-right: 25px;  /* Add space between search icon and profile picture */
+  }
+
+    .navbar .profile-icon:hover img {
+        transform: scale(1.1); /* Subtle zoom effect on hover */
+    }
+  
+  .navbar .profile-icon img {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    border: 2px solid white;
+  }
+  

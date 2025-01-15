@@ -1,17 +1,12 @@
 import React from 'react';
-import './pages/HomeScreen.css';
+import HomeScreen from './pages/HomeScreen';  // Import the HomeScreen component
 
-function HomeScreen() {
+function App() {
   return (
-    <div>
-      <div className="overlay"></div>
-      <h1 className="welcome-text">Welcome to Netflix</h1>
-      <div className="button-container">
-        <button>Play</button>
-        <button>My List</button>
-      </div>
+    <div className="App">
+      <HomeScreen />  {/* Render the HomeScreen component */}
     </div>
   );
 }
 
-export default HomeScreen;
+export default App;

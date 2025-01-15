@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+  # Backend service (from NetflixProj3)
+  server:
+    build:
+      context: ../NetflixProj3/NetflixProj2/src/server  # Point to the NetflixProj2 folder
+      dockerfile: Dockerfile
+    ports:
+      - "5555:5555"
+    volumes:
+      - ../NetflixProj3/NetflixProj2/src:/usr/src/myapp/src  # Map the NetflixProj2 src folder
+      - ../NetflixProj3/NetflixProj2/data/Users:/usr/src/myapp/data/Users
+    networks:
+      - appnet
+    restart: on-failure
+
+  app:
+    build:
+      context: ..  # Current directory (proj3)
+      dockerfile: Dockerfile
+    command: "npm run startDocker"  # Start the app in Docker mode
+    volumes:
+      - .:/usr/src/app  # Map the current proj3 folder
+    ports:
+      - "4000:3000"  # Adjust the port if needed
+    depends_on:
+      - server
+      - mongo
+    networks:
+      - appnet
+    env_file:
+      - config/.env.docker # Load environment variables from .env file
+  
+  mongo:
+    image: mongo:latest  # Use the official MongoDB image
+    ports:
+      - "27018:27017"
+    networks:
+      - appnet
+    volumes:
+      - ./data/db:/data/db
+    logging:
+      driver: "none"  # Disable logging
+    restart: always
+
+  # React app (Frontend for NetflixProj4)
+  frontend:
+    build:
+      context: ./NetflixProj4  # Path to your frontend (React) code
+      dockerfile: Dockerfile  # Dockerfile for frontend in proj4
+    command: "npm run startDocker"  # Start React frontend in Docker mode
+    volumes:
+      - ./NetflixProj4:/usr/src/frontend  # Mount the frontend code to the container
+    ports:
+      - "3001:3000"  # Expose React frontend on port 3001 to avoid conflicts
+    depends_on:
+      - app  # This ensures the backend starts first
+    networks:
+      - appnet
+    env_file:
+      - config/.env.docker  # Environment variables for the frontend
+
+networks:
+  appnet:
+    external: true  # Use the same network as proj3's backend
