@@ -61,6 +61,11 @@ function HomeScreen() {
     setSearchResults(results);
   };
 
+  // Clear search results
+  const clearSearchResults = () => {
+    setSearchResults([]);
+  };
+
   // Handle click on a movie card to open the modal
   const handleMovieClick = (movieId) => {
     const movie = searchResults.length > 0
@@ -71,7 +76,7 @@ function HomeScreen() {
 
   return (
       <div>
-        <Navbar onSearchResults={handleSearchResults} /> {/* Navbar component */}
+        <Navbar onSearchResults={handleSearchResults} clearSearchResults={clearSearchResults} /> {/* Navbar component */}
         {/* Random Movie Section */}
         {randomMovie && searchResults.length === 0 && (
           <RandomMovie movie={randomMovie} onClick={() => setSelectedMovie(randomMovie)} />

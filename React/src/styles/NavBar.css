@@ -98,6 +98,20 @@
   .search-panel button:hover {
     background-color: #f40612;
   }
+
+  /* No results toast */
+.no-results-toast {
+    position: absolute;
+    top: 100%; /* Position it below the search panel */
+    left: 0;
+    right: 0;
+    padding: 5px;
+    background-color: #858585;
+    color: white;
+    border-radius: 4px;
+    text-align: center;
+    font-size: 0.9rem; /* Adjusted font size to make it thinner */
+  }
   
   /* Profile Icon */
   .navbar .profile-icon {

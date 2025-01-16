@@ -4,9 +4,10 @@ import axios from 'axios';
 import { FaSearch } from 'react-icons/fa'; // Importing the search icon
 import '../styles/NavBar.css';
 
-function Navbar( {onSearchResults} ) {
+function Navbar( { onSearchResults, clearSearchResults } ) {
     const [searchOpen, setSearchOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
+    const [noResults, setNoResults] = useState(false);
     const searchPanelRef = useRef(null);
   
     const handleSearchClick = () => {
@@ -24,6 +25,12 @@ function Navbar( {onSearchResults} ) {
         const response = await axios.get(`http://localhost:4000/api/movies/search/${searchQuery}`, {
           headers: { 'user-id': '6788f8771a6c2941d023825c' }
         });
+        if (response.data.length === 0) {
+            setNoResults(true);
+            setTimeout(() => setNoResults(false), 3000); // Hide the message after 3 seconds
+        } else {
+            setNoResults(false);
+        }
         onSearchResults(response.data);
       } catch (error) {
         console.error('Error fetching search results:', error);
@@ -51,12 +58,12 @@ function Navbar( {onSearchResults} ) {
   return (
     <div className="navbar">
       {/* Logo */}
-      <div className="logo">
+      <Link to="/" className="logo" onClick={clearSearchResults}>
         Netflick
-      </div>
+      </Link>
 
       {/* Navbar Links */}
-      <div className="nav-links">
+      <div className="nav-links" onClick={clearSearchResults}>
         <Link to="/">Home</Link>
         <Link to="/movies">Movies</Link>
         <Link to="/tv-shows">TV Shows</Link>
@@ -84,6 +91,7 @@ function Navbar( {onSearchResults} ) {
                 />
                 <button type="submit">Search</button>
             </form>
+            {noResults && <div className="no-results-toast">No results found</div>}
             </div>
         )}
       </div>
