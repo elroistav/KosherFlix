@@ -1,0 +1,16 @@
+{
+  "dependencies": {
+    "body-parser": "^1.20.3",
+    "cors": "^2.8.5",
+    "custom-env": "^2.0.6",
+    "express": "^4.21.2",
+    "mongoose": "^8.9.2"
+  },
+  "scripts": {
+    "startLocal": "cross-env NODE_ENV=local node app.js",
+    "startDocker": "cross-env NODE_ENV=docker node app.js"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3"
+  }
+}
