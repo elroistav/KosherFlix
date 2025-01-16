@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 import { FaSearch } from 'react-icons/fa'; // Importing the search icon
 import '../styles/NavBar.css';
 
-function Navbar() {
+function Navbar( {onSearchResults} ) {
     const [searchOpen, setSearchOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const searchPanelRef = useRef(null);
@@ -16,10 +17,17 @@ function Navbar() {
       setSearchQuery(e.target.value);
     };
   
-    const handleSearchSubmit = (e) => {
+    const handleSearchSubmit = async (e) => {
       e.preventDefault();
-      // Implement your search logic here
       console.log('Searching for:', searchQuery);
+      try {
+        const response = await axios.get(`http://localhost:4000/api/movies/search/${searchQuery}`, {
+          headers: { 'user-id': '6788f8771a6c2941d023825c' }
+        });
+        onSearchResults(response.data);
+      } catch (error) {
+        console.error('Error fetching search results:', error);
+      }
     };
 
     const handleClickOutside = (event) => {
