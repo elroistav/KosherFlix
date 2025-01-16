@@ -1,5 +1,6 @@
 import React from 'react';
 import MovieCard from './MovieCard';
+import '../styles/CategoryRow.css';
 
 function CategoryRow({ categoryName, movies, onMovieClick }) {
   return (

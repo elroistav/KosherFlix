@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import MovieCard from './MovieCard'; // Import your existing MovieCard component
-import '../styles/MovieModal.css';
+import '../styles/MoviePopup.css';
 
-function MovieModal({ movie, onClose }) {
+function MoviePopup({ initialMovie, onClose }) {
+  const [movie, setMovie] = useState(initialMovie);
   const [recommendations, setRecommendations] = useState([]);
+  const [show, setShow] = useState(false);
 
   // Fetch recommendations when the modal opens
   useEffect(() => {
@@ -45,18 +47,20 @@ function MovieModal({ movie, onClose }) {
   useEffect(() => {
     // Add class to body to disable scrolling
     document.body.classList.add('no-scroll');
+    setShow(true);
 
     // Cleanup function to remove class when modal is closed
     return () => {
       document.body.classList.remove('no-scroll');
+      setShow(false);
     };
   }, []);
 
   if (!movie) return null;
 
   return (
-    <div className="movie-modal-overlay" onClick={onClose}>
-      <div className="movie-modal-content" onClick={(e) => e.stopPropagation()}>
+    <div className="movie-popup-overlay" onClick={onClose}>
+      <div className="movie-popup-content" onClick={(e) => e.stopPropagation()}>
         <button className="close-button" onClick={onClose}>X</button>
         <h2>{movie.title}</h2>
         <p><strong>Length:</strong> {movie.length} mins</p>
@@ -65,12 +69,12 @@ function MovieModal({ movie, onClose }) {
         <p><strong>Release Date:</strong> {new Date(movie.releaseDate).toDateString()}</p>
         <p><strong>Subtitles:</strong> {movie.subtitles.join(', ')}</p>
         <button className="watch-button">Watch Movie</button>
-        <div className="movie-modal-recommendations">
+        <div className="movie-popup-recommendations">
           <h3>Recommendations</h3>
           <div className="recommendations-container">
             {recommendations.length > 0 ? (
               recommendations.map((rec) => (
-                <MovieCard key={rec._id} movie={rec} onClick={() => console.log(`Selected movie: ${rec.title}`)} />
+                <MovieCard key={rec._id} movie={rec} onClick={() => setMovie(rec)} />
               ))
             ) : (
               <p>No recommendations available.</p>
@@ -82,4 +86,4 @@ function MovieModal({ movie, onClose }) {
   );
 }
 
-export default MovieModal;
+export default MoviePopup;

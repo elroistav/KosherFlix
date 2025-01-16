@@ -3,7 +3,7 @@ import axios from 'axios';
 import RandomMovie from '../components/RandomMovie';
 import CategoryRow from '../components/CategoryRow';
 import Navbar from '../components/NavBar';  // Importing the Navbar component
-import MovieModal from '../components/MovieModal';  // assuming you already have the modal component
+import MoviePopup from '../components/MoviePopup';  // assuming you already have the modal component
 import '../styles/HomeScreen.css';
 
 function HomeScreen() {
@@ -73,9 +73,9 @@ function HomeScreen() {
           ))}
         </div>
 
-        {/* Movie Modal */}
+        {/* Movie Popup */}
         {selectedMovie && (
-          <MovieModal movie={selectedMovie} onClose={() => setSelectedMovie(null)} />
+          <MoviePopup initialMovie={selectedMovie} onClose={() => setSelectedMovie(null)} />
         )}
       </div>
   );
