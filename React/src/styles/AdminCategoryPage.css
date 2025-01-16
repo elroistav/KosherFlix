@@ -1,0 +1,83 @@
+/* AdminCategoryPage.css */
+
+.admin-category-page {
+    background-color: #141414; /* Netflix dark background */
+    color: white;
+    min-height: 100vh;
+    padding: 20px;
+  }
+  
+  .admin-category-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #222; /* Slightly lighter for form background */
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+  }
+  
+  .admin-page-title {
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 20px;
+    color: #e50914; /* Netflix red */
+  }
+  
+  .admin-category-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .form-group {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .form-group label {
+    font-size: 1.2rem;
+    margin-bottom: 8px;
+  }
+  
+  .form-group input,
+  .form-group textarea {
+    padding: 10px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 8px;
+    background-color: #333;
+    color: white;
+  }
+  
+  .form-group textarea {
+    resize: none;
+    height: 80px;
+  }
+  
+  .form-group input:focus,
+  .form-group textarea:focus {
+    outline: 2px solid #e50914;
+  }
+  
+  .checkbox-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .submit-button {
+    padding: 12px;
+    font-size: 1.2rem;
+    background-color: #e50914;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.3s, background-color 0.3s;
+  }
+  
+  .submit-button:hover {
+    background-color: #f40612;
+    transform: scale(1.05);
+  }
+  
