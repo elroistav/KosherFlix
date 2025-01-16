@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import { FaSearch } from 'react-icons/fa'; // Importing the search icon
 import '../styles/NavBar.css';
 
@@ -48,10 +49,10 @@ function Navbar() {
 
       {/* Navbar Links */}
       <div className="nav-links">
-        <a href="#home">Home</a>
-        <a href="#movies">Movies</a>
-        <a href="#tv-shows">TV Shows</a>
-        <a href="#my-list">My List</a>
+        <Link to="/">Home</Link>
+        <Link to="/movies">Movies</Link>
+        <Link to="/tv-shows">TV Shows</Link>
+        <Link to="/my-list">My List</Link>
       </div>
 
       {/* Profile and Search Icons */}
