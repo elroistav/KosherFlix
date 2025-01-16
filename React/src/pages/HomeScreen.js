@@ -16,7 +16,7 @@ function HomeScreen() {
     async function fetchMovies() {
       try {
         const response = await axios.get('http://localhost:4000/api/movies', {
-          headers: { 'user-id': '678820cd237c5fc9782768ba' }
+          headers: { 'user-id': '6788f8771a6c2941d023825c' }
         });
 
         // Fetch the details of each movie in each category
@@ -26,7 +26,7 @@ function HomeScreen() {
           for (const movieId of category.movies) {
             try {
               const movieResponse = await axios.get(`http://localhost:4000/api/movies/${movieId}`, {
-                headers: { 'user-id': '678820cd237c5fc9782768ba' }
+                headers: { 'user-id': '6788f8771a6c2941d023825c' }
               });
               fetchedMovies.push(movieResponse.data);
             } catch (error) {
@@ -63,7 +63,7 @@ function HomeScreen() {
         <Navbar /> {/* Navbar component */}
         {/* Random Movie Section */}
         {randomMovie && (
-          <RandomMovie movie={randomMovie} />
+          <RandomMovie movie={randomMovie} onClick={() => setSelectedMovie(randomMovie)} />
         )}
 
         {/* Movie Categories Section */}

@@ -1,7 +1,7 @@
 import React from 'react';
 import '../styles/RandomMovie.css';
 
-function RandomMovie({ movie }) {
+function RandomMovie({ movie, onClick }) {
   if (!movie) return null;
 
   return (
@@ -14,7 +14,7 @@ function RandomMovie({ movie }) {
         <button>
           <span className="play-icon">▶</span> Play
         </button>
-        <button>
+        <button onClick={onClick}>
           <span className="info-icon">ℹ️</span> More Info
         </button>
       </div>
