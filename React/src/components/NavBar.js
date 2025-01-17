@@ -8,7 +8,9 @@ function Navbar( { onSearchResults, clearSearchResults } ) {
     const [searchOpen, setSearchOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const [noResults, setNoResults] = useState(false);
+    const [dropdownOpen, setDropdownOpen] = useState(false);
     const searchPanelRef = useRef(null);
+    const dropdownRef = useRef(null);
   
     const handleSearchClick = () => {
       setSearchOpen(!searchOpen);
@@ -41,19 +43,26 @@ function Navbar( { onSearchResults, clearSearchResults } ) {
         if (searchPanelRef.current && !searchPanelRef.current.contains(event.target)) {
           setSearchOpen(false);
         }
+        if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+          setDropdownOpen(false);
+        }
       };
+    
+      useEffect(() => {
+        if (searchOpen || dropdownOpen) {
+          document.addEventListener('mousedown', handleClickOutside);
+        } else {
+          document.removeEventListener('mousedown', handleClickOutside);
+        }
+    
+        return () => {
+          document.removeEventListener('mousedown', handleClickOutside);
+        };
+      }, [searchOpen, dropdownOpen]);
 
-    useEffect(() => {
-    if (searchOpen) {
-        document.addEventListener('mousedown', handleClickOutside);
-    } else {
-        document.removeEventListener('mousedown', handleClickOutside);
-    }
-
-    return () => {
-        document.removeEventListener('mousedown', handleClickOutside);
-    };
-    }, [searchOpen]);
+    const handleProfileClick = () => {
+        setDropdownOpen(!dropdownOpen);
+      };    
 
   return (
     <div className="navbar">
@@ -74,11 +83,6 @@ function Navbar( { onSearchResults, clearSearchResults } ) {
       <div className="profile-and-search">
         {/* Search Icon */}
         <FaSearch className="search-icon" onClick={handleSearchClick} />
-
-        {/* Profile Icon */}
-        <div className="profile-icon">
-          <img src="https://example.com/profile-pic.jpg" alt="Profile" />
-        </div>
         {/* Search Panel */}
         {searchOpen && (
             <div className="search-panel" ref={searchPanelRef}>
@@ -93,6 +97,17 @@ function Navbar( { onSearchResults, clearSearchResults } ) {
             </form>
             {noResults && <div className="no-results-toast">No results found</div>}
             </div>
+        )}
+        {/* Profile Icon */}
+        <div className="profile-icon" onClick={handleProfileClick}>
+          <img src="https://example.com/profile-pic.jpg" alt="Profile" />
+        </div>
+        {dropdownOpen && (
+          <div className="dropdown-menu" ref={dropdownRef}>
+            <Link to="/profile">Profile</Link>
+            <Link to="/settings">Settings</Link>
+            <Link to="/logout">Logout</Link>
+          </div>
         )}
       </div>
     </div>
