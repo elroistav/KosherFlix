@@ -5,6 +5,7 @@ import AnotherPage from './pages/AnotherPage';  // Import another page component
 import AdminCategoryPage from './pages/AdminCategoryPage';  // Import the AdminCategoryPage component
 import MoviePage from './pages/MoviePage';
 import MockMoviePage from "./pages/MockMoviePage"; // Import the mock version
+import ErrorPage from './components/ErrorPage';  // Import the ErrorPage component
 
 
 function App() {
@@ -17,6 +18,8 @@ function App() {
           <Route path="/admin" element={<AdminCategoryPage />} />
           <Route path="/movies/:movieId" element={<MoviePage />} />
           <Route path="/mock-movie" element={<MockMoviePage />} />
+          <Route path="*" element={<ErrorPage />} /> {/* Catch-all route for undefined paths */}
+
           {/* Add more routes as needed */}
         </Routes>
       </div>

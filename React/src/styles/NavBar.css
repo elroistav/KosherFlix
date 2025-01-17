@@ -61,15 +61,22 @@
     transform: scale(1.1); /* Subtle zoom effect on hover */
   }
 
+  /* Search Container */
+.search-container {
+    display: flex;
+    align-items: center;
+    position: relative;
+  }
+
   .search-panel {
-    position: absolute;
-    top: 60px;
-    right: 20px;
-    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
     background-color: #333;
-    padding: 10px;
+    padding: 5px;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    margin-left: 0px; /* Space between search icon and search panel */
+    margin-right: 10px; /* Space between search panel and profile picture */
   }
   
   .search-panel form {
@@ -130,5 +137,29 @@
     height: 35px;
     border-radius: 50%;
     border: 2px solid white;
+  }
+
+  /* Dropdown Menu */
+.dropdown-menu {
+    position: absolute;
+    top: 45px; /* Adjust based on your navbar height */
+    right: 20px;
+    background-color: #333;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    z-index: 1000;
+  }
+  
+  .dropdown-menu a {
+    display: block;
+    padding: 10px 20px;
+    color: white;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+  }
+  
+  .dropdown-menu a:hover {
+    background-color: #444;
   }
   
