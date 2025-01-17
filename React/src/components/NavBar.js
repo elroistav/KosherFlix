@@ -23,7 +23,7 @@ function Navbar( { onSearchResults, clearSearchResults } ) {
       console.log('Searching for:', searchQuery);
       try {
         const response = await axios.get(`http://localhost:4000/api/movies/search/${searchQuery}`, {
-          headers: { 'user-id': '6788f8771a6c2941d023825c' }
+          headers: { 'user-id': '67896618dc8bdabbd1a66ba7' }
         });
         if (response.data.length === 0) {
             setNoResults(true);

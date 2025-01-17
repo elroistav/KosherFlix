@@ -1,0 +1,86 @@
+/* MoviePage.css */
+
+.movie-page {
+    position: relative;
+    color: white;
+    min-height: 100vh;
+    padding: 20px;
+  }
+  
+  .movie-container {
+    background-color: rgba(0, 0, 0, 0.8);
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    border-radius: 12px;
+    text-align: center;
+  }
+  
+  .movie-title {
+    font-size: 3rem;
+    margin-bottom: 10px;
+    color: #e50914; /* Netflix red */
+  }
+  
+  .movie-description {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+  }
+  
+  .movie-metadata {
+    font-size: 1rem;
+    margin-bottom: 20px;
+    color: gray;
+  }
+  
+  .movie-actions {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin: 20px 0;
+  }
+  
+  .movie-actions button {
+    padding: 10px 20px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: #e50914;
+    color: white;
+    transition: transform 0.2s;
+  }
+  
+  .movie-actions button:hover {
+    transform: scale(1.1);
+    background-color: #f40612;
+  }
+  
+  .related-movies {
+    margin-top: 30px;
+  }
+  
+  .related-movies h2 {
+    margin-bottom: 20px;
+  }
+  
+  .related-movies-list {
+    display: flex;
+    gap: 15px;
+    overflow-x: auto;
+    padding-bottom: 10px;
+  }
+  
+  .related-movie-card {
+    background-color: #333;
+    width: 150px;
+    text-align: center;
+    border-radius: 8px;
+    padding: 10px;
+  }
+  
+  .related-movie-card img {
+    width: 100%;
+    border-radius: 8px;
+  }
+  
