@@ -1,21 +1,23 @@
 /* MoviePlayer.css */
 
 .movie-player-container {
-    position: relative;
-    width: 100%;
-    max-width: 800px;
-    margin: 0 auto;
-    background: black;
-    border-radius: 10px;
-    overflow: hidden;
-    cursor: pointer;
-  }
+  position: relative;
+  width: 100%;
+  max-width: 100vw;
+  height: 100vh;
+  margin: 0;
+  background: black;
+  border-radius: 0;
+  overflow: hidden;
+  cursor: pointer;
+}
   
-  .video-player {
-    width: 100%;
-    height: auto;
-    display: block;
-  }
+.video-player {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
   
   .video-controls {
     position: absolute;

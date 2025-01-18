@@ -9,12 +9,7 @@ function MockMoviePage() {
   useEffect(() => {
     // Mock movie data
     const mockMovie = {
-      title: "Sample Movie",
-      description: "A thrilling adventure through the world of testing UIs.",
       videoUrl: "/videos/sample.mp4", // Use a local video file
-      genres: ["Action", "Adventure"],
-      releaseYear: 2023,
-      rating: 8.5,
       backgroundImageUrl: "https://via.placeholder.com/1920x1080", // Placeholder image
     };
 
@@ -33,18 +28,10 @@ function MockMoviePage() {
     <div
       className="movie-page"
       style={{
-        backgroundImage: `url(${movie.backgroundImageUrl})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
+        backgroundImage: `url(${movie.backgroundImageUrl})`
       }}
     >
       <div className="movie-container">
-        <h1 className="movie-title">{movie.title}</h1>
-        <p className="movie-description">{movie.description}</p>
-        <div className="movie-metadata">
-          <span>{movie.releaseYear}</span> • <span>{movie.genres.join(", ")}</span> •{" "}
-          <span>{movie.rating} ⭐</span>
-        </div>
         <MoviePlayer videoUrl={movie.videoUrl} />
       </div>
     </div>

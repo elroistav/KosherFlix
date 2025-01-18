@@ -14,15 +14,9 @@ function MoviePage() {
     async function fetchMovieDetails() {
       try {
         const response = await axios.get(`http://localhost:4000/api/movies/${movieId}`, {
-          headers: { "user-id": "678820cd237c5fc9782768ba" },
+          headers: { "user-id": "678c10fe72b00e76a2d02581" },
         });
         setMovie(response.data);
-
-        // Fetch related movies
-        const relatedResponse = await axios.get(`http://localhost:4000/api/movies/related/${movieId}`, {
-          headers: { "user-id": "678820cd237c5fc9782768ba" },
-        });
-        setRelatedMovies(relatedResponse.data);
       } catch (error) {
         console.error("Error fetching movie details:", error);
       }
