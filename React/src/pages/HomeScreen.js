@@ -20,7 +20,7 @@ function HomeScreen() {
     async function fetchMovies() {
       try {
         const response = await axios.get('http://localhost:4000/api/movies', {
-          headers: { 'user-id': '6788f8771a6c2941d023825c' }
+          headers: { 'user-id': '67896618dc8bdabbd1a66ba7' }
         });
 
         // Fetch the details of each movie in each category
@@ -30,7 +30,7 @@ function HomeScreen() {
           for (const movieId of category.movies) {
             try {
               const movieResponse = await axios.get(`http://localhost:4000/api/movies/${movieId}`, {
-                headers: { 'user-id': '6788f8771a6c2941d023825c' }
+                headers: { 'user-id': '67896618dc8bdabbd1a66ba7' }
               });
               fetchedMovies.push(movieResponse.data);
             } catch (error) {
