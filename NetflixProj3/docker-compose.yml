@@ -1,0 +1,45 @@
+services:
+  server:
+    build:
+      context: ./NetflixProj2/src/server  # Point to the NetflixProj2 folder
+      dockerfile: Dockerfile
+    ports:
+      - "5555:5555"
+    volumes:
+      - ./NetflixProj2/src:/usr/src/myapp/src  # Map the NetflixProj2 src folder
+      - ./NetflixProj2/data/Users:/usr/src/myapp/data/Users
+    networks:
+      - appnet
+    restart: on-failure
+
+  app:
+    build:
+      context: .  # Current directory (proj3)
+      dockerfile: Dockerfile
+    command: "npm run startDocker"  # Start the app in Docker mode
+    volumes:
+      - .:/usr/src/app  # Map the current proj3 folder
+    ports:
+      - "4000:4000"  # Adjust the port if needed
+    depends_on:
+      - server
+      - mongo
+    networks:
+      - appnet
+    env_file:
+      - config/.env.docker # Load environment variables from .env file
+  
+  mongo:
+    image: mongo:latest  # Use the official MongoDB image
+    ports:
+      - "27018:27017"
+    networks:
+      - appnet
+    volumes:
+      - ./data/db:/data/db
+    logging:
+      driver: "none"  # Disable logging
+    restart: always
+
+networks:
+  appnet:

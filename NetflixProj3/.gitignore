@@ -1,0 +1,11 @@
+config
+node_modules
+build
+.DS_Store
+.vscode
+cmake-build-debug
+data/db
+populateMongo.py
+NetflixProj2/data
+.history
+.lh

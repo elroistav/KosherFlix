@@ -1,0 +1,45 @@
+/* Category Row */
+.category-row {
+    width: 100%;
+    margin-bottom: 40px;
+    text-align: left;
+  }
+  
+  /* Category Title */
+  .category-row h3 {
+    font-size: 2rem;
+    margin-bottom: 10px;
+    padding-left: 0;
+    font-weight: bold;
+    letter-spacing: 1px; /* Adding some letter spacing for style */
+    text-transform: uppercase; /* Make the category title uppercase */
+    color: #e50914; /* Highlight category titles in red */
+  }
+  
+  /* Movies container */
+  .category-movies {
+    display: flex;
+    overflow-x: auto;
+    padding-left: 0;
+    width: 100%;
+    gap: 20px; /* Increased gap between movie cards */
+    padding-bottom: 20px;
+    -ms-overflow-style: none;  /* Hide scrollbar in IE and Edge */
+  }
+  
+  .category-movies::-webkit-scrollbar {
+    display: none; /* Hide scrollbar in Webkit browsers (Chrome, Safari) */
+  }
+  
+  /* Make category rows responsive */
+  @media (max-width: 768px) {
+    .category-movies {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  
+    .movie-card {
+      width: 150px; /* Adjust size for smaller screens */
+      height: 200px;
+    }
+  }

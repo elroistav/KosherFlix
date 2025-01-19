@@ -1,0 +1,40 @@
+/* Container for search results */
+.search-results {
+    padding: 20px;
+  }
+  
+  /* Title for search results */
+  .search-results h2 {
+    margin-bottom: 20px;
+    color: #fff;
+  }
+  
+  /* Container for movie cards */
+  .search-results .category-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center; /* Center the rows */
+  }
+  
+  @media (max-width: 1200px) {
+    .movie-card {
+      flex: 1 1 calc(33.33% - 20px);
+      max-width: calc(33.33% - 20px);
+    }
+  }
+  
+  @media (max-width: 900px) {
+    .movie-card {
+      flex: 1 1 calc(50% - 20px);
+      max-width: calc(50% - 20px);
+    }
+  }
+  
+  @media (max-width: 600px) {
+    .movie-card {
+      flex: 1 1 100%;
+      max-width: 100%;
+    }
+  }
+  

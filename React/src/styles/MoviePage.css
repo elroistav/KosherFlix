@@ -1,0 +1,47 @@
+/* MoviePage.css */
+.movie-page {
+  position: relative;
+  color: white;
+  height: 100vh; /* Changed from min-height to height to fit the area given */
+  margin: 2.5vm 2.5vw 2.5vw; /* Add margin to leave a little bit of space on the edges */
+  overflow-y: hidden; /* Prevent horizontal scrolling */
+}
+  
+.movie-container {
+  background-color: rgba(0, 0, 0, 0.8);
+  max-width: 95vw; /* Changed from 800px to 95% of viewport width */
+  margin: 0 auto;
+  padding: 20px;
+  border-radius: 12px;
+  text-align: center;
+}
+  
+  .movie-title {
+    font-size: 3rem;
+    margin-bottom: 10px;
+    color: #e50914; /* Netflix red */
+  }
+ 
+  .movie-actions {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin: 20px 0;
+  }
+  
+  .movie-actions button {
+    padding: 10px 20px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: #e50914;
+    color: white;
+    transition: transform 0.2s;
+  }
+  
+  .movie-actions button:hover {
+    transform: scale(1.1);
+    background-color: #f40612;
+  }
+ 

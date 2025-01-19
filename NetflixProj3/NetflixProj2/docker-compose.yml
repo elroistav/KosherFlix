@@ -1,0 +1,45 @@
+services:
+  server:
+    build:
+      context: src/server
+      dockerfile: Dockerfile
+    ports:
+      - "5555:5555"
+    volumes:
+      - ./src:/usr/src/myapp/src
+      - ./data/Users:/usr/src/myapp/data/Users
+    networks:
+      - appnet
+    restart: on-failure
+
+  client:
+    build:
+      context: src/client
+      dockerfile: Dockerfile
+    depends_on:
+      - server
+    tty: true  # Add TTY support
+    stdin_open: true  # Enable stdin
+    command: >
+      /bin/sh -c "
+      sleep 5 &&
+      python3 Client.py
+      "
+    networks:
+      - appnet
+
+  test:
+    build:
+      context: src/server  # Set the context to the project root
+      dockerfile: Dockerfile
+    volumes:
+      - ./src:/usr/src/myapp/src
+      - ./data/testUsers:/usr/src/myapp/data/Users  # Mount the test data
+      - ./src/server/tests:/usr/src/myapp/src/tests  # Mount the tests folder to the container
+    entrypoint: []
+    command: [ "./build/runTests" ]  # Run tests instead of the server
+    networks:
+      - appnet
+
+networks:
+  appnet:

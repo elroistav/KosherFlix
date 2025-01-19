@@ -1,100 +1,34 @@
 /* HomeScreen.css */
 
 body {
-    margin: 0;
-    padding: 0;
-    font-family: 'Arial', sans-serif;
-    background: url('https://assets.nflxext.com/ffe/siteui/vlv3/380c0a19-34ef-4dc1-9f98-0f4e1a8057b2/7a04c678-fef4-48cc-9909-40d7328e7a9b/IL-he-20221219-popsignuptwoweeks-perspective_alpha_website_large.jpg') no-repeat center center/cover;
-    height: 100vh;
-    color: #fff;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+  background-color: #000;
+}
+
+.homeScreenBody {
+  margin: 0;
+  padding: 0;
+  font-family: 'Arial', sans-serif;
+  color: #fff;
+  justify-content: flex-start;
+  align-items: flex-start;
+  overflow-x: hidden; /* Prevent horizontal scrolling */
+  overflow-y: scroll;
+  background-color: black;
+  margin-top: 40px; /* Add space for the fixed navbar */
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
   }
-  
-  /* Overlay for random movie section */
-  .random-movie {
-    position: relative;
-    width: 100%;
-    height: 300px;
-    text-align: center;
+  100% {
+    opacity: 1;
   }
-  
-  .random-movie .overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.7);
-  }
-  
-  .random-movie h1, .random-movie h2 {
-    position: relative;
-    z-index: 1;
-  }
-  
-  .random-movie button {
-    padding: 15px 30px;
-    font-size: 1.2rem;
-    color: #fff;
-    background-color: #e50914;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    z-index: 1;
-    transition: background-color 0.3s ease;
-  }
-  
-  .random-movie button:hover {
-    background-color: #f40612;
-  }
-  
-  /* Category section */
-  .movie-categories {
-    margin-top: 30px;
-    width: 100%;
-    padding: 20px;
-  }
-  
-  .category-row {
-    margin-bottom: 40px;
-  }
-  
-  .category-row h3 {
-    font-size: 2rem;
-    margin-bottom: 10px;
-  }
-  
-  /* Movie cards in each category */
-  .category-movies {
-    display: flex;
-    overflow-x: scroll;
-  }
-  
-  .movie-card {
-    margin-right: 20px;
-    width: 150px;
-    text-align: center;
-  }
-  
-  .movie-card img {
-    width: 100%;
-    border-radius: 10px;
-    object-fit: cover;
-  }
-  
-  .movie-card p {
-    font-size: 1rem;
-    margin-top: 10px;
-  }
-  
-  /* Make category rows responsive */
-  @media (max-width: 768px) {
-    .category-movies {
-      flex-direction: column;
-      align-items: center;
-    }
-  }
-  
+}
+
+/* Category section */
+.movieCategories {
+  width: 100%;
+  padding: 20px;
+  margin-top: 30px; /* Add space between random movie and categories */
+}
