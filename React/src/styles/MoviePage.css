@@ -2,8 +2,9 @@
 .movie-page {
   position: relative;
   color: white;
-  min-height: 100vh;
-  padding: 20px;
+  height: 100vh; /* Changed from min-height to height to fit the area given */
+  margin: 2.5vm 2.5vw 2.5vw; /* Add margin to leave a little bit of space on the edges */
+  overflow-y: hidden; /* Prevent horizontal scrolling */
 }
   
 .movie-container {

@@ -10,7 +10,7 @@ function MockMoviePage() {
     // Mock movie data
     const mockMovie = {
       videoUrl: "/videos/sample.mp4", // Use a local video file
-      backgroundImageUrl: "https://via.placeholder.com/1920x1080", // Placeholder image
+      backgroundImageUrl: "http://localhost:3000/images/brooklyn-99-thumbnail.png", // Placeholder image
     };
 
     // Simulate API delay
@@ -31,9 +31,7 @@ function MockMoviePage() {
         backgroundImage: `url(${movie.backgroundImageUrl})`
       }}
     >
-      <div className="movie-container">
-        <MoviePlayer videoUrl={movie.videoUrl} />
-      </div>
+      <MoviePlayer videoUrl={movie.videoUrl} />
     </div>
   );
 }

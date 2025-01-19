@@ -93,4 +93,32 @@
   .center-play-button:hover {
     background: #e50914;
   }
-  
+
+  /* Rewind and Forward Buttons */
+.control-button {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0 10px;
+}
+
+.control-button:hover {
+  color: #e50914; /* Netflix red */
+}
+
+/* Playback Speed Selector */
+.speed-selector {
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  border: none;
+  font-size: 1rem;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.speed-selector:hover {
+  background: #e50914;
+}

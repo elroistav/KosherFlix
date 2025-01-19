@@ -19,8 +19,9 @@ function HomeScreen() {
   useEffect(() => {
     async function fetchMovies() {
       try {
+        //get user-id from the tokes first
         const response = await axios.get('http://localhost:4000/api/movies', {
-          headers: { 'user-id': '67896618dc8bdabbd1a66ba7' }
+          headers: { 'user-id': '6788f8771a6c2941d023825c' }
         });
 
         // Fetch the details of each movie in each category
@@ -30,7 +31,7 @@ function HomeScreen() {
           for (const movieId of category.movies) {
             try {
               const movieResponse = await axios.get(`http://localhost:4000/api/movies/${movieId}`, {
-                headers: { 'user-id': '67896618dc8bdabbd1a66ba7' }
+                headers: { 'user-id': '6788f8771a6c2941d023825c' }
               });
               fetchedMovies.push(movieResponse.data);
             } catch (error) {
@@ -75,29 +76,30 @@ function HomeScreen() {
   };
 
   return (
-      <div>
-        <Navbar onSearchResults={handleSearchResults} clearSearchResults={clearSearchResults} /> {/* Navbar component */}
-        {/* Random Movie Section */}
-        {randomMovie && searchResults.length === 0 && (
-          <RandomMovie movie={randomMovie} onClick={() => setSelectedMovie(randomMovie)} />
-        )}
+    <div className="homeScreenBody">
+      <Navbar onSearchResults={handleSearchResults} clearSearchResults={clearSearchResults} /> {/* Navbar component */}
+      {/* Random Movie Section */}
+      {randomMovie && searchResults.length === 0 && (
+        <RandomMovie movie={randomMovie} onClick={() => setSelectedMovie(randomMovie)} />
+      )}
 
-        {/* Movie Categories Section */}
-        {searchResults.length === 0 ? (
-            <div className="movie-categories">
-                {movies.length > 0 && movies.map((category, index) => (
-                <CategoryRow key={index} categoryName={category.category} movies={category.movies} onMovieClick={handleMovieClick} />
-            ))}
+      {/* Movie Categories Section */}
+      {searchResults.length === 0 ? (
+        <div className="movieCategories">
+          {movies.length > 0 && movies.map((category, index) => (
+            <CategoryRow key={index} categoryName={category.category} movies={category.movies} onMovieClick={handleMovieClick} />
+          ))}
         </div>
-        ) : (
+      ) : (
         <SearchResults searchResults={searchResults} handleMovieClick={handleMovieClick} />
-        )}
+      )}
 
-        {/* Movie Popup */}
-        {selectedMovie && (
-          <MoviePopup initialMovie={selectedMovie} onClose={() => setSelectedMovie(null)} />
-        )}
-      </div>
+      {/* Movie Popup */}
+      {selectedMovie && (
+        <MoviePopup initialMovie={selectedMovie} onClose={() => setSelectedMovie(null)} />
+      )}
+      <Link to="/another">Go to Another Page</Link>
+    </div>
   );
 }
 

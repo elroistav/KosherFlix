@@ -8,6 +8,7 @@ function MoviePlayer({ videoUrl }) {
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [showControls, setShowControls] = useState(true);
   const [progress, setProgress] = useState(0);
+  const [playbackSpeed, setPlaybackSpeed] = useState(1); // Default speed is 1x
 
   // Play/Pause functionality
   const togglePlayPause = () => {
@@ -20,13 +21,15 @@ function MoviePlayer({ videoUrl }) {
   };
 
   // Mute/Unmute functionality
-  const toggleMute = () => {
+  const toggleMute = (e) => {
+    e.stopPropagation(); // Prevent event propagation
     videoRef.current.muted = !isMuted;
     setIsMuted(!isMuted);
   };
 
   // Full-screen functionality
-  const toggleFullScreen = () => {
+  const toggleFullScreen = (e) => {
+    e.stopPropagation(); // Prevent event propagation
     if (!isFullScreen) {
       videoRef.current.requestFullscreen();
     } else {
@@ -36,9 +39,31 @@ function MoviePlayer({ videoUrl }) {
   };
 
   // Update progress bar
-  const handleTimeUpdate = () => {
+  const handleTimeUpdate = (e) => {
+    e.stopPropagation(); // Prevent event propagation
     const progress = (videoRef.current.currentTime / videoRef.current.duration) * 100;
     setProgress(progress);
+  };
+
+  // Rewind 10 seconds
+  const rewind = (e) => {
+    e.stopPropagation(); // Prevent event propagation
+    videoRef.current.currentTime = Math.max(0, videoRef.current.currentTime - 10);
+  };
+
+  // Forward 10 seconds
+  const forward = (e) => {
+    e.stopPropagation(); // Prevent event propagation
+    videoRef.current.currentTime = Math.min(
+      videoRef.current.duration,
+      videoRef.current.currentTime + 10
+    );
+  };
+
+  // Change playback speed
+  const changePlaybackSpeed = (speed) => {
+    videoRef.current.playbackRate = speed;
+    setPlaybackSpeed(speed);
   };
 
   // Show controls on mouse activity
@@ -76,8 +101,14 @@ function MoviePlayer({ videoUrl }) {
       {/* Overlay Controls */}
       {showControls && (
         <div className="video-controls">
+          <button onClick={rewind} className="control-button">
+            ⏪ 10s
+          </button>
           <button onClick={togglePlayPause} className="control-button">
             {isPlaying ? "❚❚" : "▶"}
+          </button>
+          <button onClick={forward} className="control-button">
+            10s ⏩
           </button>
           <input
             type="range"
@@ -92,6 +123,19 @@ function MoviePlayer({ videoUrl }) {
           <button onClick={toggleMute} className="control-button">
             {isMuted ? "🔇" : "🔊"}
           </button>
+          <select
+            className="speed-selector"
+            value={playbackSpeed}
+            onChange={(e) => {
+              e.stopPropagation(); // Prevent event propagation
+              changePlaybackSpeed(Number(e.target.value))
+            }}
+          >
+            <option value={0.5}>0.5x</option>
+            <option value={1}>1x</option>
+            <option value={1.5}>1.5x</option>
+            <option value={2}>2x</option>
+          </select>
           <button onClick={toggleFullScreen} className="control-button">
             {isFullScreen ? "⤬" : "⤢"}
           </button>
