@@ -6,6 +6,10 @@ import AdminCategoryPage from './pages/AdminCategoryPage';  // Import the AdminC
 import MoviePage from './pages/MoviePage';
 import MockMoviePage from "./pages/MockMoviePage"; // Import the mock version
 import ErrorPage from './components/ErrorPage';  // Import the ErrorPage component
+import Welcome from './pages/Welcome';  // Import the Welcome component
+//import Login from './pages/Login';  // Import the Login component
+import Register from './pages/Register';  // Import the Register component
+
 
 
 function App() {
@@ -13,12 +17,15 @@ function App() {
     <Router>
       <div className="App">
         <Routes>
-          <Route path="/" element={<HomeScreen />} />
+          <Route path="/homescreen" element={<HomeScreen />} />
           <Route path="/another" element={<AnotherPage />} />
           <Route path="/admin" element={<AdminCategoryPage />} />
           <Route path="/movies/:movieId" element={<MoviePage />} />
           <Route path="/mock-movie" element={<MockMoviePage />} />
           <Route path="*" element={<ErrorPage />} /> {/* Catch-all route for undefined paths */}
+          <Route path="/" element={<Welcome />} />
+          <Route path="/register" element={<Register />} />
+          
 
           {/* Add more routes as needed */}
         </Routes>

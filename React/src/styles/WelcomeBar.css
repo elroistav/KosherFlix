@@ -1,0 +1,54 @@
+/* Navbar Styles */
+.Welcomebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 10px 20px;
+    background-color: rgba(0, 0, 0, 0.9);
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 100;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+  }
+  
+  /* Logo */
+  .Welcomebar .logo {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #e50914;
+    cursor: pointer;
+    font-family: 'Bebas Neue', sans-serif;  /* Applying the font */
+    padding: 0 20px;
+    margin-right: 20px;
+  }
+  
+/* Login button container */
+.login-button {
+    display: flex;
+    align-items: center;
+    margin: 0; 
+    padding: 0;
+    margin-right: 40px;
+}
+
+/* Login button styles */
+.login-button a {
+    text-decoration: none;
+    color: white;
+    font-size: 1.2rem;
+    font-weight: bold;
+    padding: 10px 15px; /* הגדרת מרווח פנימי סביר */
+    border: 1px solid #fff;
+    border-radius: 5px;
+    background-color: #e50914;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.login-button a:hover {
+    background-color: #f40612;
+    transform: scale(1.05); /* אפקט hover */
+}
+
