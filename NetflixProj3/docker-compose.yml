@@ -8,6 +8,8 @@ services:
     volumes:
       - ./NetflixProj2/src:/usr/src/myapp/src  # Map the NetflixProj2 src folder
       - ./NetflixProj2/data/Users:/usr/src/myapp/data/Users
+      - /usr/src/myapp/node_modules  # Preserve node_modules in container
+      - ./uploads:/usr/src/myapp/uploads  # Map uploads directory
     networks:
       - appnet
     restart: on-failure
@@ -19,8 +21,10 @@ services:
     command: "npm run startDocker"  # Start the app in Docker mode
     volumes:
       - .:/usr/src/app  # Map the current proj3 folder
+      - /usr/src/app/node_modules  
+      - ./uploads:/usr/src/app/uploads
     ports:
-      - "4000:4000"  # Adjust the port if needed
+      - "3000:3000"  # Adjust the port if needed
     depends_on:
       - server
       - mongo

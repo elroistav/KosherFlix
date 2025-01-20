@@ -20,7 +20,7 @@ const createUser = async (userData) => {
             uniqueIntId = Math.floor(Math.random() * 900000) + 100000;
 
             // Check if this intId already exists in the database
-            const existingUser = await User.findOne({ intId: uniqueIntId });
+            const existingUser = await User.findOne({ intId: uniqueIntId }).maxTimeMS(5000);
             if (!existingUser) break; // Exit loop if unique
         }
 

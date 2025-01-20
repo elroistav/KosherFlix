@@ -1,15 +1,51 @@
 const userService = require('../services/user');
+const multer = require('multer');
+const fs = require('fs');
+const path = require('path');
+
+const uploadDir = path.join(__dirname, 'uploads');
+
+if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir);
+}
+
+
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'uploads/'); 
+    },
+    filename: (req, file, cb) => {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, `${file.fieldname}-${uniqueSuffix}-${file.originalname}`);
+    },
+});
+
+const upload = multer({ storage }).single('profilePicture'); 
+
 
 // Create a new user
 const createUser = async (req, res) => {
     try {
-        const user = await userService.createUser(
-            //req.body.userName,
-            req.body
-        );
-        return res.status(201)
-                  .location(`/users/${user._id}`) // Change `/users/${user._id}` if needed
-                  .json(user); // Send back the created user as JSON
+        upload(req, res, async (err) => {
+            if (err) {
+                return res.status(400).json({ error: 'File upload failed' });
+            }
+
+            const { userName, name, email, password } = req.body;
+            const profilePicture = req.file ? req.file.path : null;
+
+            const user = await userService.createUser({
+                userName,
+                name,
+                email,
+                password,
+                image: profilePicture,
+            });
+
+            return res.status(201)
+                      .location(`/users/${user._id}`) 
+                      .json(user); 
+        });
     } catch (err) {
         if (err.code === 11000) {
             // userName must be unique
