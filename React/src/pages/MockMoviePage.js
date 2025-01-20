@@ -27,9 +27,6 @@ function MockMoviePage() {
   return (
     <div
       className="movie-page"
-      style={{
-        backgroundImage: `url(${movie.backgroundImageUrl})`
-      }}
     >
       <MoviePlayer videoUrl={movie.videoUrl} />
     </div>

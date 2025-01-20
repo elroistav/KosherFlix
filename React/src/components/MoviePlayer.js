@@ -115,7 +115,6 @@ function MoviePlayer({ videoUrl, controlsAppear = true }) {
         ref={videoRef}
         className="video-player"
         onTimeUpdate={handleTimeUpdate}
-        controls={controlsAppear}
         muted={!controlsAppear}
         loop={!controlsAppear}
         autoPlay={!controlsAppear} // Autoplay if controlsAppear is false
