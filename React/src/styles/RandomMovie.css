@@ -21,27 +21,6 @@
   z-index: 1;
 }
 
-.random-movie h2 {
-  position: absolute;
-  top: 15px;               /* Adjusts the distance from the top */
-  z-index: 3;              /* Ensure it's higher than other elements */
-  color: rgb(255, 255, 255);
-  font-size: 2.5rem;       /* Adjust size as needed */
-  text-shadow: 3px 3px 10px rgba(0, 0, 0, 0.7);  /* Makes text more readable */
-  font-family: 'Arial Black', sans-serif;  /* Adds a bold, impactful font */
-  letter-spacing: 2px;    /* Adds spacing between letters */
-  animation: glow 1.5s infinite alternate; /* Adds a glowing animation */
-}
-
-@keyframes glow {
-  from {
-    text-shadow: 0 0 10px rgba(255, 255, 255, 0.7), 0 0 20px rgba(255, 255, 255, 0.7), 0 0 30px rgba(255, 255, 255, 0.7);
-  }
-  to {
-    text-shadow: 0 0 20px rgba(255, 255, 255, 1), 0 0 30px rgba(255, 255, 255, 1), 0 0 40px rgba(255, 255, 255, 1);
-  }
-}
-
 .movie-player-wrapper {
   position: relative;
   z-index: 2;
@@ -92,4 +71,46 @@
 .random-movie .info-icon {
   font-size: 1.5rem;
   margin-right: 10px;
+}
+
+.movie-info h2 {
+  position: absolute;
+  top: 15px;               /* Adjusts the distance from the top */
+  z-index: 3;              /* Ensure it's higher than other elements */
+  color: rgb(255, 255, 255);
+  font-size: 2.5rem;       /* Adjust size as needed */
+  text-shadow: 3px 3px 10px rgba(0, 0, 0, 0.7);  /* Makes text more readable */
+  font-family: 'Arial Black', sans-serif;  /* Adds a bold, impactful font */
+  letter-spacing: 2px;    /* Adds spacing between letters */
+  animation: glow 1.5s infinite alternate; /* Adds a glowing animation */
+}
+
+@keyframes glow {
+  from {
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.7), 0 0 20px rgba(255, 255, 255, 0.7), 0 0 30px rgba(255, 255, 255, 0.7);
+  }
+  to {
+    text-shadow: 0 0 20px rgba(255, 255, 255, 1), 0 0 30px rgba(255, 255, 255, 1), 0 0 40px rgba(255, 255, 255, 1);
+  }
+}
+
+.movie-info {
+  position: absolute;
+  bottom: 60px; /* Adjusts the distance from the bottom */
+  left: 20px;   /* Adjusts the distance from the left */
+  width: 40%; /* Adjusts the width to be only part of the left */
+  color: white;
+  background: rgba(0, 0, 0, 0.3); /* Slight dark overlay */
+  z-index: 2; /* Ensure it appears above the video */
+  text-align: left; /* Aligns text to the left */
+  padding: 10px; /* Adds some padding for better readability */
+}
+
+.movie-info p {
+  margin-top: 70px; /* Adds space between the title and description */
+  font-size: 1.5rem; /* Adjust size as needed */
+  color: rgb(255, 255, 255);
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7); /* Makes text more readable */
+  font-family: 'Arial', sans-serif; /* Adds a readable font */
+  letter-spacing: 1px; /* Adds spacing between letters */
 }

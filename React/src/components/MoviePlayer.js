@@ -117,6 +117,7 @@ function MoviePlayer({ videoUrl, controlsAppear = true }) {
         onTimeUpdate={handleTimeUpdate}
         controls={controlsAppear}
         muted={!controlsAppear}
+        loop={!controlsAppear}
         autoPlay={!controlsAppear} // Autoplay if controlsAppear is false
       >
         <source src={videoUrl} type="video/mp4" />
