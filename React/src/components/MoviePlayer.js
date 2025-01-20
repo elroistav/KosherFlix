@@ -1,4 +1,5 @@
 import React, { useRef, useState, useEffect } from "react";
+import MovieControls from "./MovieControls";
 import "../styles/MoviePlayer.css";
 
 function MoviePlayer({ videoUrl, controlsAppear = true }) {
@@ -30,12 +31,8 @@ function MoviePlayer({ videoUrl, controlsAppear = true }) {
   // Full-screen functionality
   const toggleFullScreen = (e) => {
     e.stopPropagation(); // Prevent event propagation
-    if (!isFullScreen) {
-      videoRef.current.requestFullscreen();
-    } else {
-      document.exitFullscreen();
-    }
-    setIsFullScreen(!isFullScreen);
+    videoRef.current.requestFullscreen();
+    
   };
 
   // Update progress bar
@@ -74,22 +71,6 @@ function MoviePlayer({ videoUrl, controlsAppear = true }) {
 
   useEffect(() => {
     const video = videoRef.current;
-
-    // Attempt to play the video automatically if controlsAppear is false
-    if (!controlsAppear) {
-      const playPromise = video.play();
-      if (playPromise !== undefined) {
-        playPromise.catch(error => {
-          console.log('Autoplay was prevented. Attempting to play after user interaction.');
-          // Add a click event listener to attempt to play the video after user interaction
-          const handleUserInteraction = () => {
-            video.play();
-            document.removeEventListener('click', handleUserInteraction);
-          };
-          document.addEventListener('click', handleUserInteraction);
-        });
-      }
-    }
 
     if (!controlsAppear) {
       // Disable the ability to pause the video
@@ -136,46 +117,43 @@ function MoviePlayer({ videoUrl, controlsAppear = true }) {
       )}
       {/* Overlay Controls */}
       {controlsAppear && showControls && (
-        <div className="video-controls">
-          <button onClick={rewind} className="control-button">
-            ⏪ 10s
-          </button>
-          <button onClick={togglePlayPause} className="control-button">
-            {isPlaying ? "❚❚" : "▶"}
-          </button>
-          <button onClick={forward} className="control-button">
-            10s ⏩
-          </button>
-          <input
-            type="range"
-            className="progress-bar"
-            value={progress}
-            onChange={(e) => {
-              const newTime = (e.target.value / 100) * videoRef.current.duration;
-              videoRef.current.currentTime = newTime;
-              setProgress(e.target.value);
-            }}
-          />
-          <button onClick={toggleMute} className="control-button">
-            {isMuted ? "🔇" : "🔊"}
-          </button>
-          <select
-            className="speed-selector"
-            value={playbackSpeed}
-            onChange={(e) => {
-              e.stopPropagation(); // Prevent event propagation
-              changePlaybackSpeed(Number(e.target.value))
-            }}
-          >
-            <option value={0.5}>0.5x</option>
-            <option value={1}>1x</option>
-            <option value={1.5}>1.5x</option>
-            <option value={2}>2x</option>
-          </select>
-          <button onClick={toggleFullScreen} className="control-button">
-            {isFullScreen ? "⤬" : "⤢"}
-          </button>
-        </div>
+        <MovieControls
+        isPlaying={isPlaying}
+        isMuted={isMuted}
+        isFullScreen={isFullScreen}
+        progress={progress}
+        playbackSpeed={playbackSpeed}
+        onRewind={(e) => {
+          e.stopPropagation();
+          rewind(e);
+        }}
+        onPlayPause={(e) => {
+          e.stopPropagation();
+          togglePlayPause();
+        }}
+        onForward={(e) => {
+          e.stopPropagation();
+          forward(e);
+        }}
+        onProgressChange={(e) => {
+          e.stopPropagation();
+          const newTime = (e.target.value / 100) * videoRef.current.duration;
+          videoRef.current.currentTime = newTime;
+          setProgress(e.target.value);
+        }}
+        onMute={(e) => {
+          e.stopPropagation();
+          toggleMute(e);
+        }}
+        onSpeedChange={(e) => {
+          e.stopPropagation();
+          changePlaybackSpeed(Number(e.target.value));
+        }}
+        onFullScreen={(e) => {
+          e.stopPropagation();
+          toggleFullScreen(e);
+        }}
+        />
       )}
     </div>
   );

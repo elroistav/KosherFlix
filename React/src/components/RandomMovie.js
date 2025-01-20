@@ -1,10 +1,16 @@
 import React from 'react';
-import MoviePlayer from './MoviePlayer'; // Import the MoviePlayer component
+import { useNavigate } from 'react-router-dom';
+import MoviePlayer from './MoviePlayer';
 import '../styles/RandomMovie.css';
-import HomeScreen from '../pages/HomeScreen';
 
 function RandomMovie({ movie, onClick }) {
+  const navigate = useNavigate();
+
   if (!movie) return null;
+
+  const handlePlayClick = () => {
+    navigate('/movie', { state: { movie } });
+  };
 
   return (
     <div className="random-movie">
@@ -20,7 +26,7 @@ function RandomMovie({ movie, onClick }) {
 
       {/* Buttons */}
       <div className="buttons-container">
-        <button onClick={() => document.querySelector('.movie-player-container video').play()}>
+        <button onClick={handlePlayClick}>
           <span className="play-icon">▶</span> Play
         </button>
         <button onClick={onClick}>
