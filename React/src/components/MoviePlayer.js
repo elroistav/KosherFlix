@@ -1,10 +1,10 @@
 import React, { useRef, useState, useEffect } from "react";
 import "../styles/MoviePlayer.css";
 
-function MoviePlayer({ videoUrl }) {
+function MoviePlayer({ videoUrl, controlsAppear = true }) {
   const videoRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [isMuted, setIsMuted] = useState(false);
+  const [isMuted, setIsMuted] = useState(!controlsAppear);
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [showControls, setShowControls] = useState(true);
   const [progress, setProgress] = useState(0);
@@ -12,7 +12,7 @@ function MoviePlayer({ videoUrl }) {
 
   // Play/Pause functionality
   const togglePlayPause = () => {
-    if (isPlaying) {
+    if (isPlaying && controlsAppear) {
       videoRef.current.pause();
     } else {
       videoRef.current.play();
@@ -72,22 +72,58 @@ function MoviePlayer({ videoUrl }) {
     return () => clearTimeout(timer);
   }, [showControls]);
 
+  useEffect(() => {
+    const video = videoRef.current;
+
+    // Attempt to play the video automatically if controlsAppear is false
+    if (!controlsAppear) {
+      const playPromise = video.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(error => {
+          console.log('Autoplay was prevented. Attempting to play after user interaction.');
+          // Add a click event listener to attempt to play the video after user interaction
+          const handleUserInteraction = () => {
+            video.play();
+            document.removeEventListener('click', handleUserInteraction);
+          };
+          document.addEventListener('click', handleUserInteraction);
+        });
+      }
+    }
+
+    if (!controlsAppear) {
+      // Disable the ability to pause the video
+      const handlePlay = () => {
+        video.play();
+      };
+
+      video.addEventListener('pause', handlePlay);
+
+      return () => {
+        video.removeEventListener('pause', handlePlay);
+      };
+    }
+  }, [controlsAppear]);
+
   return (
     <div
       className="movie-player-container"
-      onMouseMove={() => setShowControls(true)} // Show controls on mouse move
-      onClick={togglePlayPause} // Play/pause when clicking anywhere on the video
+      onMouseMove={() => setShowControls(controlsAppear)} // Show controls on mouse move
+      onClick={controlsAppear ? togglePlayPause : null} // Play/pause when clicking anywhere on the video if controlsAppear is true
     >
       <video
         ref={videoRef}
         className="video-player"
         onTimeUpdate={handleTimeUpdate}
+        controls={controlsAppear}
+        muted={!controlsAppear}
+        autoPlay={!controlsAppear} // Autoplay if controlsAppear is false
       >
         <source src={videoUrl} type="video/mp4" />
         Your browser does not support the video tag.
       </video>
       {/* Big Center Play/Pause Button */}
-      {showControls && (
+      {controlsAppear && showControls && (
         <button
           className={`center-play-button ${isPlaying ? "hidden" : ""}`}
           onClick={(e) => {
@@ -99,7 +135,7 @@ function MoviePlayer({ videoUrl }) {
         </button>
       )}
       {/* Overlay Controls */}
-      {showControls && (
+      {controlsAppear && showControls && (
         <div className="video-controls">
           <button onClick={rewind} className="control-button">
             ⏪ 10s
