@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Navbar from '../components/RegisterLoginBar'; // ייבוא ה-navbar
-import '../styles/Register.css';
+import '../styles/RegisterLogin.css';
 
 const Welcome = () => {
     const navigate = useNavigate(); 

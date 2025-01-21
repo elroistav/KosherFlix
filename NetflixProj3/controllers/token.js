@@ -6,7 +6,9 @@ const login = async (req, res) => {
     if (!user) {
         return res.status(401).json({ error: 'Invalid details' });
     }
-    res.status(200).json(user._id);
+    const data = { username: req.body.username }
+    const token = jwt.sign(data, key)
+    res.status(201).json({ token });
 };
 
 
