@@ -15,7 +15,8 @@ function App() {
         <Routes>
           <Route path="/" element={<HomeScreen />} />
           <Route path="/another" element={<AnotherPage />} />
-          <Route path="/admin" element={<AdminCategoryPage />} />
+          <Route path="/admin" element={<HomeScreen isAdmin={true} />} />
+          <Route path="/admin/category" element={<AdminCategoryPage />} />
           <Route path="/movie" element={<MoviePage />} />
           <Route path="/mock-movie" element={<MockMoviePage />} />
           <Route path="*" element={<ErrorPage />} /> {/* Catch-all route for undefined paths */}
