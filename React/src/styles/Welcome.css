@@ -2,6 +2,15 @@
     text-align: center;
     margin-top: 50px;
 }
+.welcome-content {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 20px;
+    padding: 50px;
+}
 
 h1 {
     font-size: 2.5rem;
