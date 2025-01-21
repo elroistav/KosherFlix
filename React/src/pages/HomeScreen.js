@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import RandomMovie from '../components/RandomMovie';
 import CategoryRow from '../components/CategoryRow';
 import Navbar from '../components/NavBar';  // Importing the Navbar component
-import MovieCard from '../components/MovieCard';
+import AdminCategoryRow from '../components/AdminCategoryRow';  // Importing the AdminCategoryRow component
 import MoviePopup from '../components/MoviePopup';  // assuming you already have the modal component
 import SearchResults from '../components/SearchResults';  // assuming you already have the search results component
 import '../styles/HomeScreen.css';
@@ -14,7 +14,7 @@ import { useLocation } from 'react-router-dom';
 //import user from '../../../NetflixProj3/models/user';
 
 
-function HomeScreen() {
+function HomeScreen( {isAdmin} ) {
   const [movies, setMovies] = useState([]);
   const [randomMovie, setRandomMovie] = useState(null);
   const [searchResults, setSearchResults] = useState([]);
@@ -145,17 +145,21 @@ function HomeScreen() {
       )}
 
       {/* Movie Categories Section */}
-      {searchResults.length === 0 ? (
-        <div className="movieCategories">
-          {movies.length > 0 && movies.map((category, index) => (
+        {searchResults.length === 0 ? (
+          <div className="movieCategories">
+            {movies.length > 0 && movies.map((category, index) => (
+          isAdmin ? (
+            <AdminCategoryRow key={index} categoryName={category.category} movies={category.movies} onMovieClick={handleMovieClick} />
+          ) : (
             <CategoryRow key={index} categoryName={category.category} movies={category.movies} onMovieClick={handleMovieClick} />
-          ))}
-        </div>
-      ) : (
-        <SearchResults searchResults={searchResults} handleMovieClick={handleMovieClick} />
-      )}
+          )
+            ))}
+          </div>
+        ) : (
+          <SearchResults searchResults={searchResults} handleMovieClick={handleMovieClick} isAdmin={isAdmin} />
+        )}
 
-      {/* Movie Popup */}
+        {/* Movie Popup */}
       {selectedMovie && (
         <MoviePopup initialMovie={selectedMovie} onClose={() => setSelectedMovie(null)} />
       )}
