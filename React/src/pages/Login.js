@@ -43,7 +43,8 @@ const Welcome = () => {
             if (response.status === 201) {
                 alert('Login successful');
                 Promise.resolve().then(() => {
-                    navigate('/homescreen');
+                const token = response.data.token;
+                navigate('/homescreen', { state: { token } });
                 });
             }
         } catch (error) {

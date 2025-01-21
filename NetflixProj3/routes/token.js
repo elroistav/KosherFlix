@@ -5,7 +5,8 @@ var router = express.Router();
 
 
 router.route('/')
-.post(tokenController.login);
+.post(tokenController.login)
+.get(tokenController.isLoggedIn);
 
 // Catch-all route for undefined paths within /category
 router.use((req, res, next) => {
