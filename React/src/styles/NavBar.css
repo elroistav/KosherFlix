@@ -21,6 +21,7 @@
     color: #e50914;
     cursor: pointer;
     font-family: 'Bebas Neue', sans-serif;  /* Applying the font */
+    text-decoration: none;  /* Remove underline */
   }
   
   /* Navbar Links */
@@ -28,11 +29,14 @@
     display: flex;
     gap: 20px;
     font-size: 1rem;
+    align-items: center;
   }
 
   .categories-dropdown {
     position: relative;
     display: inline-block;
+    height: 100%;
+    align-self: center;
   }
   
   .categories-button {
@@ -40,8 +44,12 @@
     border: none;
     color: white;
     cursor: pointer;
-    padding: 10px 15px;
-    font-size: 16px;
+    font-size: 1rem;
+    text-transform: uppercase;
+    font-weight: bold;
+    padding: 0;
+    margin: 0;
+    height: 100%;
     transition: color 0.3s ease;
   }
   
@@ -49,17 +57,18 @@
     color: #e50914;
   }
   
-  .categories-menu {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    background-color: #141414;
-    min-width: 200px;
-    border-radius: 4px;
-    padding: 8px 0;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-    z-index: 1000;
-  }
+/* Align categories menu position */
+.categories-menu {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 0;
+  background-color: #141414;
+  min-width: 200px;
+  border-radius: 4px;
+  padding: 8px 0;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+}
   
   .category-item {
     display: block;

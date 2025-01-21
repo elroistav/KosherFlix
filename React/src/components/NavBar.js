@@ -113,16 +113,19 @@ function Navbar( { onSearchResults, clearSearchResults } ) {
     <div className="navbar">
       {/* Logo */}
       <Link to="/" className="logo" onClick={clearSearchResults}>
-        Netflicks
+        Notflicks
       </Link>
 
       {/* Navbar Links */}
       <div className="nav-links" onClick={clearSearchResults}>
         <div className="categories-dropdown" ref={categoriesRef}>
-          <button 
-            className="categories-button"
-            onClick={() => setCategoriesOpen(!categoriesOpen)}
-          >
+        <button 
+          className="categories-button"
+          onClick={(e) => {
+            e.stopPropagation(); // Prevent event bubbling
+            setCategoriesOpen(!categoriesOpen);
+          }}
+        >
             Categories ▼
           </button>
           {categoriesOpen && (
@@ -130,7 +133,10 @@ function Navbar( { onSearchResults, clearSearchResults } ) {
               {categories.map(category => (
                 <button 
                   key={category._id}
-                  onClick={() => handleCategoryClick(category._id)}
+                  onClick={(e) => {
+                    e.stopPropagation(); // Prevent event bubbling
+                    handleCategoryClick(category._id);
+                  }}
                   className="category-item"
                 >
                   {category.name}
