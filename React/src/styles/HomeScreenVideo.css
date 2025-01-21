@@ -1,0 +1,45 @@
+/* HomeScreenVideo.css */
+
+.home-screen-video-container {
+    position: relative;
+    width: 100%;
+    height: 100vh; /* Full-screen height */
+    overflow: hidden;
+    z-index: 1;
+  }
+  
+  .home-screen-video {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: auto;
+    transform: translate(-50%, -50%);
+    object-fit: cover; /* Ensures the video covers the entire area */
+  }
+
+  .home-screen-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    background: rgba(0, 0, 0, 0.3); /* Slight dark overlay */
+    z-index: 2; /* Ensure it appears above the video */
+    text-align: center;
+  }
+  
+  .home-screen-overlay h1 {
+    font-size: 4rem;
+    margin-bottom: 20px;
+  }
+  
+  .home-screen-overlay p {
+    font-size: 1.5rem;
+  }
+  

@@ -11,6 +11,48 @@ function Navbar( { onSearchResults, clearSearchResults } ) {
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const searchPanelRef = useRef(null);
     const dropdownRef = useRef(null);
+    const [categories, setCategories] = useState([]);
+    const [categoriesOpen, setCategoriesOpen] = useState(false);
+    const categoriesRef = useRef(null);
+
+    useEffect(() => {
+      const fetchCategories = async () => {
+        try {
+          const response = await axios.get('http://localhost:4000/api/categories', {
+            headers: { 'user-id': '678f5239892efc5766c18798' }
+          });
+          setCategories(response.data.categories || []);
+        } catch (error) {
+          console.error('Error fetching categories:', error);
+        }
+      };
+      fetchCategories();
+    }, []);
+  
+    // Add categories click handler
+    const handleCategoryClick = async (categoryId) => {
+      try {
+        // First get the category details
+        const categoryResponse = await axios.get(`http://localhost:4000/api/categories/${categoryId}`, {
+          headers: { 'user-id': '678f5239892efc5766c18798' }
+        });
+
+        // Get movie details for each movie ID
+        const moviePromises = categoryResponse.data.movies.map(movieId => 
+          axios.get(`http://localhost:4000/api/movies/${movieId}`, {
+            headers: { 'user-id': '678f5239892efc5766c18798' }
+          })
+        );
+
+        const movieResponses = await Promise.all(moviePromises);
+        const movies = movieResponses.map(response => response.data);
+
+        onSearchResults(movies);
+        setCategoriesOpen(false);
+      } catch (error) {
+        console.error('Error fetching category movies:', error);
+      }
+    };
   
     const handleSearchClick = () => {
       setSearchOpen(!searchOpen);
@@ -25,7 +67,7 @@ function Navbar( { onSearchResults, clearSearchResults } ) {
       console.log('Searching for:', searchQuery);
       try {
         const response = await axios.get(`http://localhost:4000/api/movies/search/${searchQuery}`, {
-          headers: { 'user-id': '6788f8771a6c2941d023825c' }
+          headers: { 'user-id': '678f5239892efc5766c18798' }
         });
         if (response.data.length === 0) {
             setNoResults(true);
@@ -40,39 +82,69 @@ function Navbar( { onSearchResults, clearSearchResults } ) {
     };
 
     const handleClickOutside = (event) => {
-        if (searchPanelRef.current && !searchPanelRef.current.contains(event.target)) {
-          setSearchOpen(false);
-        }
-        if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-          setDropdownOpen(false);
-        }
+      if (searchPanelRef.current && !searchPanelRef.current.contains(event.target)) {
+        setSearchOpen(false);
+      }
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setDropdownOpen(false);
+      }
+      if (categoriesRef.current && !categoriesRef.current.contains(event.target)) {
+        setCategoriesOpen(false);
+      }
       };
     
       useEffect(() => {
-        if (searchOpen || dropdownOpen) {
-          document.addEventListener('mousedown', handleClickOutside);
-        } else {
-          document.removeEventListener('mousedown', handleClickOutside);
-        }
+      if (searchOpen || dropdownOpen || categoriesOpen) {
+        document.addEventListener('mousedown', handleClickOutside);
+      } else {
+        document.removeEventListener('mousedown', handleClickOutside);
+      }
     
-        return () => {
-          document.removeEventListener('mousedown', handleClickOutside);
-        };
-      }, [searchOpen, dropdownOpen]);
+      return () => {
+        document.removeEventListener('mousedown', handleClickOutside);
+      };
+      }, [searchOpen, dropdownOpen, categoriesOpen]);
 
     const handleProfileClick = () => {
-        setDropdownOpen(!dropdownOpen);
-      };    
+      setDropdownOpen(!dropdownOpen);
+      };   
 
   return (
     <div className="navbar">
       {/* Logo */}
       <Link to="/" className="logo" onClick={clearSearchResults}>
-        Netflick
+        Notflicks
       </Link>
 
       {/* Navbar Links */}
       <div className="nav-links" onClick={clearSearchResults}>
+        <div className="categories-dropdown" ref={categoriesRef}>
+        <button 
+          className="categories-button"
+          onClick={(e) => {
+            e.stopPropagation(); // Prevent event bubbling
+            setCategoriesOpen(!categoriesOpen);
+          }}
+        >
+            Categories ▼
+          </button>
+          {categoriesOpen && (
+            <div className="categories-menu">
+              {categories.map(category => (
+                <button 
+                  key={category._id}
+                  onClick={(e) => {
+                    e.stopPropagation(); // Prevent event bubbling
+                    handleCategoryClick(category._id);
+                  }}
+                  className="category-item"
+                >
+                  {category.name}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
         <Link to="/">Home</Link>
         <Link to="/movies">Movies</Link>
         <Link to="/tv-shows">TV Shows</Link>

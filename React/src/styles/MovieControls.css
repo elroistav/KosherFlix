@@ -1,0 +1,122 @@
+.back-button {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    padding: 10px 20px;
+    background: rgba(229, 9, 20, 0.7);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    z-index: 10;
+    transition: background-color 0.3s ease;
+  }
+  
+  .back-button:hover {
+    background: rgba(229, 9, 20, 1);
+  }
+
+.video-controls {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.6);
+    border-radius: 0 0 10px 10px;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+  }
+    
+  .video-controls.hidden {
+    opacity: 0;
+  }
+    
+  .control-button {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0 10px;
+  }
+    
+  .control-button:hover {
+    color: #e50914; /* Netflix red */
+  }
+    
+  .progress-bar {
+    flex: 1;
+    margin: 0 10px;
+    height: 5px;
+    background: #444;
+    appearance: none;
+  }
+    
+  .progress-bar::-webkit-slider-thumb {
+    appearance: none;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #e50914;
+    cursor: pointer;
+  }
+    
+  /* Big Play/Pause Button */
+  .center-play-button {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    border: none;
+    font-size: 4rem;
+    padding: 10px 20px;
+    border-radius: 50%;
+    cursor: pointer;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+  }
+    
+  .center-play-button.hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+    
+  .center-play-button:hover {
+    background: #e50914;
+  }
+  
+  /* Rewind and Forward Buttons */
+  .control-button {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0 10px;
+  }
+  
+  .control-button:hover {
+    color: #e50914; /* Netflix red */
+  }
+  
+  /* Playback Speed Selector */
+  .speed-selector {
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    border: none;
+    font-size: 1rem;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .speed-selector:hover {
+    background: #e50914;
+  }

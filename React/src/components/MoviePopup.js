@@ -1,12 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import MovieCard from './MovieCard'; // Import your existing MovieCard component
+import { useNavigate } from 'react-router-dom';
+import MoviePlayer from './MoviePlayer'; // Import your existing MoviePlayer component
+import MovieInfo from './MovieInfo';
 import '../styles/MoviePopup.css';
 
 function MoviePopup({ initialMovie, onClose }) {
   const [movie, setMovie] = useState(initialMovie);
   const [recommendations, setRecommendations] = useState([]);
   const [show, setShow] = useState(false);
+
+  const navigate = useNavigate();
 
   // Fetch recommendations when the modal opens
   useEffect(() => {
@@ -16,7 +21,7 @@ function MoviePopup({ initialMovie, onClose }) {
       try {
         console.log('Fetching recommendations for movie:', movie.title, movie._id);
         const response = await axios.get(`http://localhost:4000/api/movies/${movie._id}/recommend`, {
-          headers: { 'user-id': '6788f8771a6c2941d023825c' }
+          headers: { 'user-id': '678f5239892efc5766c18798' }
         });
         const recommendedMovieIds = response.data; // Assuming the response is a list of movie IDs
 
@@ -25,7 +30,7 @@ function MoviePopup({ initialMovie, onClose }) {
           recommendedMovieIds.map(async (id) => {
             try {
               const movieResponse = await axios.get(`http://localhost:4000/api/movies/${id}`, {
-                headers: { 'user-id': '6788f8771a6c2941d023825c' }
+                headers: { 'user-id': '678f5239892efc5766c18798' }
               });
               return movieResponse.data;
             } catch (error) {
@@ -58,19 +63,34 @@ function MoviePopup({ initialMovie, onClose }) {
 
   if (!movie) return null;
 
+  const handleVideoEnd = () => {
+    const videoElement = document.querySelector('.movie-video-prview video');
+    if (videoElement) {
+      videoElement.currentTime = 0;
+      videoElement.play();
+    }
+  };
+
   return (
     <div className="movie-popup-overlay" onClick={onClose}>
       <div className="movie-popup-content" onClick={(e) => e.stopPropagation()}>
         <button className="close-button" onClick={onClose}>X</button>
         <h2>{movie.title}</h2>
-        <p><strong>Length:</strong> {movie.length} mins</p>
-        <p><strong>Director:</strong> {movie.director}</p>
-        <p><strong>Language:</strong> {movie.language}</p>
-        <p><strong>Release Date:</strong> {new Date(movie.releaseDate).toDateString()}</p>
-        <p><strong>Subtitles:</strong> {movie.subtitles.join(', ')}</p>
-        <button className="watch-button">Watch Movie</button>
+        {movie.videoUrl && (
+          <div className="movie-video-prview">
+            <MoviePlayer 
+              videoUrl={movie.videoUrl} 
+              controlsAppear={false}
+              onEnded={handleVideoEnd} 
+            />
+          </div>
+        )}
+        <MovieInfo movie={movie} />
+      <button className="watch-button" onClick={() => {navigate('/movie', { state: { movie } });}}>
+        Watch Movie
+        </button>
         <div className="movie-popup-recommendations">
-          <h3>Recommendations</h3>
+          <h3>Movie recommendations based of your previous watches:</h3>
           <div className="recommendations-container">
             {recommendations.length > 0 ? (
               recommendations.map((rec) => (

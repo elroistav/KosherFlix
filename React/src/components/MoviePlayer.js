@@ -1,10 +1,11 @@
 import React, { useRef, useState, useEffect } from "react";
+import MovieControls from "./MovieControls";
 import "../styles/MoviePlayer.css";
 
-function MoviePlayer({ videoUrl }) {
+function MoviePlayer({ videoUrl, controlsAppear = true, onEnded }) {
   const videoRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [isMuted, setIsMuted] = useState(false);
+  const [isMuted, setIsMuted] = useState(!controlsAppear);
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [showControls, setShowControls] = useState(true);
   const [progress, setProgress] = useState(0);
@@ -12,7 +13,7 @@ function MoviePlayer({ videoUrl }) {
 
   // Play/Pause functionality
   const togglePlayPause = () => {
-    if (isPlaying) {
+    if (isPlaying && controlsAppear) {
       videoRef.current.pause();
     } else {
       videoRef.current.play();
@@ -30,12 +31,8 @@ function MoviePlayer({ videoUrl }) {
   // Full-screen functionality
   const toggleFullScreen = (e) => {
     e.stopPropagation(); // Prevent event propagation
-    if (!isFullScreen) {
-      videoRef.current.requestFullscreen();
-    } else {
-      document.exitFullscreen();
-    }
-    setIsFullScreen(!isFullScreen);
+    videoRef.current.requestFullscreen();
+    
   };
 
   // Update progress bar
@@ -72,22 +69,43 @@ function MoviePlayer({ videoUrl }) {
     return () => clearTimeout(timer);
   }, [showControls]);
 
+  useEffect(() => {
+    const video = videoRef.current;
+
+    if (!controlsAppear) {
+      // Disable the ability to pause the video
+      const handlePlay = () => {
+        video.play();
+      };
+
+      video.addEventListener('pause', handlePlay);
+
+      return () => {
+        video.removeEventListener('pause', handlePlay);
+      };
+    }
+  }, [controlsAppear]);
+
   return (
     <div
       className="movie-player-container"
-      onMouseMove={() => setShowControls(true)} // Show controls on mouse move
-      onClick={togglePlayPause} // Play/pause when clicking anywhere on the video
+      onMouseMove={() => setShowControls(controlsAppear)} // Show controls on mouse move
+      onClick={controlsAppear ? togglePlayPause : null} // Play/pause when clicking anywhere on the video if controlsAppear is true
     >
       <video
         ref={videoRef}
         className="video-player"
         onTimeUpdate={handleTimeUpdate}
+        onEnded={onEnded}
+        muted={!controlsAppear}
+        loop={!controlsAppear}
+        autoPlay={!controlsAppear} // Autoplay if controlsAppear is false
       >
         <source src={videoUrl} type="video/mp4" />
         Your browser does not support the video tag.
       </video>
       {/* Big Center Play/Pause Button */}
-      {showControls && (
+      {controlsAppear && showControls && (
         <button
           className={`center-play-button ${isPlaying ? "hidden" : ""}`}
           onClick={(e) => {
@@ -99,47 +117,44 @@ function MoviePlayer({ videoUrl }) {
         </button>
       )}
       {/* Overlay Controls */}
-      {showControls && (
-        <div className="video-controls">
-          <button onClick={rewind} className="control-button">
-            ⏪ 10s
-          </button>
-          <button onClick={togglePlayPause} className="control-button">
-            {isPlaying ? "❚❚" : "▶"}
-          </button>
-          <button onClick={forward} className="control-button">
-            10s ⏩
-          </button>
-          <input
-            type="range"
-            className="progress-bar"
-            value={progress}
-            onChange={(e) => {
-              const newTime = (e.target.value / 100) * videoRef.current.duration;
-              videoRef.current.currentTime = newTime;
-              setProgress(e.target.value);
-            }}
-          />
-          <button onClick={toggleMute} className="control-button">
-            {isMuted ? "🔇" : "🔊"}
-          </button>
-          <select
-            className="speed-selector"
-            value={playbackSpeed}
-            onChange={(e) => {
-              e.stopPropagation(); // Prevent event propagation
-              changePlaybackSpeed(Number(e.target.value))
-            }}
-          >
-            <option value={0.5}>0.5x</option>
-            <option value={1}>1x</option>
-            <option value={1.5}>1.5x</option>
-            <option value={2}>2x</option>
-          </select>
-          <button onClick={toggleFullScreen} className="control-button">
-            {isFullScreen ? "⤬" : "⤢"}
-          </button>
-        </div>
+      {controlsAppear && showControls && (
+        <MovieControls
+        isPlaying={isPlaying}
+        isMuted={isMuted}
+        isFullScreen={isFullScreen}
+        progress={progress}
+        playbackSpeed={playbackSpeed}
+        onRewind={(e) => {
+          e.stopPropagation();
+          rewind(e);
+        }}
+        onPlayPause={(e) => {
+          e.stopPropagation();
+          togglePlayPause();
+        }}
+        onForward={(e) => {
+          e.stopPropagation();
+          forward(e);
+        }}
+        onProgressChange={(e) => {
+          e.stopPropagation();
+          const newTime = (e.target.value / 100) * videoRef.current.duration;
+          videoRef.current.currentTime = newTime;
+          setProgress(e.target.value);
+        }}
+        onMute={(e) => {
+          e.stopPropagation();
+          toggleMute(e);
+        }}
+        onSpeedChange={(e) => {
+          e.stopPropagation();
+          changePlaybackSpeed(Number(e.target.value));
+        }}
+        onFullScreen={(e) => {
+          e.stopPropagation();
+          toggleFullScreen(e);
+        }}
+        />
       )}
     </div>
   );

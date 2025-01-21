@@ -1,69 +1,32 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom"; // To get the movie ID from the URL
+import { useParams, useLocation } from "react-router-dom";
 import axios from "axios";
 import MoviePlayer from "../components/MoviePlayer";
-import Navbar from "../components/NavBar"; // Reusable navbar
+import Navbar from "../components/NavBar";
 import "../styles/MoviePage.css";
+import { useNavigate } from "react-router-dom";
 
 function MoviePage() {
-  const { movieId } = useParams(); // Fetch movie ID from URL
-  const [movie, setMovie] = useState(null);
+  const { movieId } = useParams();
+  const location = useLocation();
+  const [movie, setMovie] = useState(location.state?.movie || null);
   const [relatedMovies, setRelatedMovies] = useState([]);
 
+
+
+  const navigate = useNavigate();
+
   useEffect(() => {
-    async function fetchMovieDetails() {
-      try {
-        const response = await axios.get(`http://localhost:4000/api/movies/${movieId}`, {
-          headers: { "user-id": "678c10fe72b00e76a2d02581" },
-        });
-        setMovie(response.data);
-      } catch (error) {
-        console.error("Error fetching movie details:", error);
-      }
+    if (!movie) {
+      alert("Movie not found. Redirecting to homepage.");
+      navigate("/");
     }
-
-    fetchMovieDetails();
-  }, [movieId]);
-
-  if (!movie) {
-    return <div className="loading">Loading...</div>;
-  }
+  }, [movie, navigate]);
 
   return (
-    <div
-      className="movie-page"
-      style={{
-        backgroundImage: `url(${movie.backgroundImageUrl})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-      }}
-    >
+    <div className="movie-page">
       <Navbar />
-      <div className="movie-container">
-        <h1 className="movie-title">{movie.title}</h1>
-        <p className="movie-description">{movie.description}</p>
-        <div className="movie-metadata">
-          <span>{movie.releaseYear}</span> • <span>{movie.genres.join(", ")}</span> •{" "}
-          <span>{movie.rating} ⭐</span>
-        </div>
-        <MoviePlayer videoUrl={movie.videoUrl} />
-        <div className="movie-actions">
-          <button className="like-button">👍 Like</button>
-          <button className="dislike-button">👎 Dislike</button>
-          <button className="save-button">💾 Save to List</button>
-        </div>
-        <div className="related-movies">
-          <h2>More Like This</h2>
-          <div className="related-movies-list">
-            {relatedMovies.map((relatedMovie) => (
-              <div key={relatedMovie._id} className="related-movie-card">
-                <img src={relatedMovie.thumbnail} alt={relatedMovie.title} />
-                <p>{relatedMovie.title}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
+      {movie && <MoviePlayer videoUrl={movie.videoUrl} />}
     </div>
   );
 }
