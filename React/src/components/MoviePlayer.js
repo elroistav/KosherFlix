@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect } from "react";
 import MovieControls from "./MovieControls";
 import "../styles/MoviePlayer.css";
 
-function MoviePlayer({ videoUrl, controlsAppear = true }) {
+function MoviePlayer({ videoUrl, controlsAppear = true, onEnded }) {
   const videoRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(!controlsAppear);
@@ -96,6 +96,7 @@ function MoviePlayer({ videoUrl, controlsAppear = true }) {
         ref={videoRef}
         className="video-player"
         onTimeUpdate={handleTimeUpdate}
+        onEnded={onEnded}
         muted={!controlsAppear}
         loop={!controlsAppear}
         autoPlay={!controlsAppear} // Autoplay if controlsAppear is false

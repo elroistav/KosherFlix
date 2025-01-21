@@ -25,29 +25,71 @@
   border-radius: 12px;
   position: relative;
   overflow-y: auto;
+  overflow-x: hidden;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   display: flex;
   flex-direction: column;
   gap: 20px;
   transform: scale(0.9);
   transition: transform 0.3s ease-in-out;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;  /* Internet Explorer 10+ */
 }
 
-.movie-background-image {
-  position: relative;
+.movie-popup-content::-webkit-scrollbar {
+  display: none; /* Safari and Chrome */
+}
+
+.movie-popup-content h2 {
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+  text-align: center;
+  font-family: 'Arial', sans-serif;
+  color: #e50914;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.movie-video-prview {
   width: 100%;
-  height: 300px; /* Adjust the height as needed */
-  overflow: hidden;
-  border-radius: 8px; /* Add rounded corners */
-  margin-bottom: 20px; /* Add some space below the image */
+  aspect-ratio: 16 / 9;
+  margin: 0;
+  position: relative;
+  background: #000;
 }
 
-.movie-background-image img {
+.movie-video-prview > div {
   width: 100%;
   height: 100%;
-  object-fit: cover; /* Ensure the image covers the entire container */
-  display: block;
-  border-radius: 8px; /* Match the border radius of the container */
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.movie-video-prview .movie-player-container {
+  width: 100%;
+  height: 100%;
+}
+
+.movie-video-prview .video-player {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .movie-popup-content {
+    width: 90%;
+    padding: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .movie-popup-content {
+    width: 95%;
+    padding: 15px;
+  }
 }
 
 .movie-popup-overlay.show {
@@ -71,22 +113,6 @@
 
 .close-button:hover {
   color: #e50914;
-}
-
-h2 {
-  margin-top: 0;
-  font-size: 2rem;
-  text-align: center;
-}
-
-body.no-scroll {
-  overflow: hidden;
-}
-
-p {
-  font-size: 1.2rem;
-  margin-bottom: 10px;
-  line-height: 1.5;
 }
 
 .watch-button {

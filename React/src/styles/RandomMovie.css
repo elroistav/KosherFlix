@@ -73,9 +73,8 @@
   margin-right: 10px;
 }
 
-.movie-info h2 {
-  position: absolute;
-  top: 15px;               /* Adjusts the distance from the top */
+.random-movie-info h2 {
+  position: relative;
   z-index: 3;              /* Ensure it's higher than other elements */
   color: rgb(255, 255, 255);
   font-size: 2.5rem;       /* Adjust size as needed */
@@ -83,6 +82,7 @@
   font-family: 'Arial Black', sans-serif;  /* Adds a bold, impactful font */
   letter-spacing: 2px;    /* Adds spacing between letters */
   animation: glow 1.5s infinite alternate; /* Adds a glowing animation */
+  margin-bottom: 20px; /* Adds space below the title */
 }
 
 @keyframes glow {
@@ -94,7 +94,7 @@
   }
 }
 
-.movie-info {
+.random-movie-info {
   position: absolute;
   bottom: 60px; /* Adjusts the distance from the bottom */
   left: 20px;   /* Adjusts the distance from the left */
@@ -106,8 +106,8 @@
   padding: 10px; /* Adds some padding for better readability */
 }
 
-.movie-info p {
-  margin-top: 70px; /* Adds space between the title and description */
+.random-movie-info p {
+  margin-top: 0; /* Removes the top margin */
   font-size: 1.5rem; /* Adjust size as needed */
   color: rgb(255, 255, 255);
   text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7); /* Makes text more readable */

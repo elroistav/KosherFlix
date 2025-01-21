@@ -19,9 +19,9 @@ function RandomMovie({ movie, onClick }) {
         <MoviePlayer videoUrl={movie.videoUrl} controlsAppear={false} />
       </div>
 
-      <div className="movie-info">
+      <div className="random-movie-info">
         <h2 className="movie-title">{movie.title}</h2>
-        <p>This is the description of the movieThis is the description of the movieThis is the description of the movieThis is the description of the movieThis is the description of the movieThis is the description of the movieThis is the description of the movieThis is the description of the movieThis is the description of the movieThis is the description of the movieThis is the description of the movieThis is the description of the movieThis is the description of the movieThis is the description of the movieThis is the description of the movieThis is the description of the movieThis is the description of the movieThis is the description of the movieThis is the description of the movieThis is the description of the movieThis is the description of the movie</p>
+        <p>Isnt this a great soccer game?? Does it need anything else? If so, call 1800-CHANGE to let us know and maybe you'll win a NEW CAR!</p>
       </div>
 
       {/* Buttons */}
