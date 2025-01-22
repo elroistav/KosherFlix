@@ -120,7 +120,7 @@ function HomeScreen( {isAdmin} ) {
         // Delete category in backend
         await axios.delete(
             `http://localhost:4000/api/categories/${categoryId}`,
-            { headers: { 'user-id': '6790aeff2af1fd8ab364f8f3' }}
+            { headers: { 'user-id': '679145dc2af1fd8ab3650de9' }}
         );
     } catch (error) {
         console.error('Error deleting category:', error);
@@ -140,7 +140,7 @@ function HomeScreen( {isAdmin} ) {
         
         // Update categories in backend
         await axios.delete(`http://localhost:4000/api/movies/${movieId}`, {
-            headers: { 'user-id': '6790aeff2af1fd8ab364f8f3' }
+            headers: { 'user-id': '679145dc2af1fd8ab3650de9' }
         });
     } catch (error) {
         console.error('Error deleting movie:', error);

@@ -35,13 +35,13 @@ function Navbar( { onSearchResults, clearSearchResults, userInfo, loading} ) {
       try {
         // First get the category details
         const categoryResponse = await axios.get(`http://localhost:4000/api/categories/${categoryId}`, {
-          headers: { 'user-id': '6790aeff2af1fd8ab364f8f3' }
+          headers: { 'user-id': '679145dc2af1fd8ab3650de9' }
         });
 
         // Get movie details for each movie ID
         const moviePromises = categoryResponse.data.movies.map(movieId => 
           axios.get(`http://localhost:4000/api/movies/${movieId}`, {
-            headers: { 'user-id': '6790aeff2af1fd8ab364f8f3' }
+            headers: { 'user-id': '679145dc2af1fd8ab3650de9' }
           })
         );
 
@@ -68,7 +68,7 @@ function Navbar( { onSearchResults, clearSearchResults, userInfo, loading} ) {
       console.log('Searching for:', searchQuery);
       try {
         const response = await axios.get(`http://localhost:4000/api/movies/search/${searchQuery}`, {
-          headers: { 'user-id': '6790aeff2af1fd8ab364f8f3' }
+          headers: { 'user-id': '679145dc2af1fd8ab3650de9' }
         });
         if (response.data.length === 0) {
             setNoResults(true);
