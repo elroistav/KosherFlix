@@ -1,19 +1,25 @@
 package com.example.netflix_app4;
 
+import java.util.List;
+
 public class MovieModel {
+    private String _id;
     private String title;
     private String description;
     private double rating;
     private int length;
     private String director;
-    private int intId;
-    private String[] categories;
+    private List<CategoryModel> categories; // Update to match the JSON
     private String language;
     private String releaseDate;
     private String thumbnail;
     private String videoUrl;
 
     // Getters
+    public String getId() {
+        return _id;
+    }
+
     public String getTitle() {
         return title;
     }
@@ -34,11 +40,7 @@ public class MovieModel {
         return director;
     }
 
-    public int getIntId() {
-        return intId;
-    }
-
-    public String[] getCategories() {
+    public List<CategoryModel> getCategories() {
         return categories;
     }
 

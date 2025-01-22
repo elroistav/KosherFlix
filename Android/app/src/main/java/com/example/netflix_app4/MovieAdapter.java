@@ -1,17 +1,20 @@
 package com.example.netflix_app4;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHolder> {
@@ -21,6 +24,8 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
     public MovieAdapter(Context context, List<MovieModel> movieList) {
         this.context = context;
         this.movieList = movieList;
+        Log.d("MovieAdapter", "Adapter initialized with movie list size: " + movieList.size());
+
     }
 
     @NonNull
@@ -33,11 +38,16 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
     @Override
     public void onBindViewHolder(@NonNull MovieViewHolder holder, int position) {
         MovieModel movie = movieList.get(position);
-
+        Log.d("MainActivity", "Binding movie: " + movie.getTitle()); // Debugging
+        Log.d("MainActivity", "Movie thumbnail: " + movie.getThumbnail()); // Debugging
+        Log.d("MainActivity", "Movie description: " + movie.getDescription()); // Debugging
+        Log.d("MainActivity", "Movie video URL: " + movie.getVideoUrl()); // Debugging
         holder.movieTitle.setText(movie.getTitle());
-        Glide.with(context)
-                .load(movie.getThumbnail())
-                .into(holder.movieThumbnail);
+        Glide.with(context).load(movie.getThumbnail()).into(holder.movieThumbnail);
+
+        holder.itemView.setOnClickListener(v -> {
+            Toast.makeText(context, "Clicked on: " + movie.getTitle(), Toast.LENGTH_SHORT).show();
+        });
     }
 
     @Override
@@ -56,3 +66,4 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
         }
     }
 }
+

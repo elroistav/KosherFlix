@@ -16,8 +16,8 @@ public interface MovieApiService {
     );
 
     // Fetch all categories
-    @GET("categories/")
-    Call<List<CategoryModel>> getCategories(
+    @GET("movies/")
+    Call<CategoriesResponse> getCategories(
             @Header("user-id") String userId // User ID passed in the header
     );
 }
