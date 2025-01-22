@@ -109,6 +109,45 @@ function HomeScreen( {isAdmin} ) {
     fetchMovies();
   }, []);
 
+  const handleCategoryDelete = async (categoryId) => {
+    try {
+        // Update UI state first
+        const updatedMovies = movies.filter(category => 
+            category._id !== categoryId
+        );
+        setMovies(updatedMovies);
+
+        // Delete category in backend
+        await axios.delete(
+            `http://localhost:4000/api/categories/${categoryId}`,
+            { headers: { 'user-id': '6790aeff2af1fd8ab364f8f3' }}
+        );
+    } catch (error) {
+        console.error('Error deleting category:', error);
+        // Optionally restore the previous state if delete fails
+    }
+};
+
+  const handleMovieDelete = async (movieId) => {
+    try {
+        // Update UI state first
+        const updatedMovies = movies.map(category => ({
+            ...category,
+            movies: category.movies.filter(movie => movie._id !== movieId)
+        }));
+        
+        setMovies(updatedMovies);
+        
+        // Update categories in backend
+        await axios.delete(`http://localhost:4000/api/movies/${movieId}`, {
+            headers: { 'user-id': '6790aeff2af1fd8ab364f8f3' }
+        });
+    } catch (error) {
+        console.error('Error deleting movie:', error);
+        // Optionally revert the UI state if delete fails
+    }
+  };
+
   // Handle search results
   const handleSearchResults = (results) => {
     setSearchResults(results);
@@ -126,6 +165,16 @@ function HomeScreen( {isAdmin} ) {
       : movies.flatMap(category => category.movies).find(m => m._id === movieId);
     setSelectedMovie(movie);
   };
+
+  const handleMovieUpdate = (updatedMovie) => {
+    const updatedMovies = movies.map(category => ({
+        ...category,
+        movies: category.movies.map(movie => 
+            movie._id === updatedMovie._id ? updatedMovie : movie
+        )
+    }));
+    setMovies(updatedMovies);
+};
 
   if (loading) {
     return <div>Loading...</div>; // Show a loading spinner or message
@@ -147,13 +196,25 @@ function HomeScreen( {isAdmin} ) {
       {/* Movie Categories Section */}
         {searchResults.length === 0 ? (
           <div className="movieCategories">
-            {movies.length > 0 && movies.map((category, index) => (
-          isAdmin ? (
-            <AdminCategoryRow key={index} categoryName={category.category} movies={category.movies} onMovieClick={handleMovieClick} />
-          ) : (
-            <CategoryRow key={index} categoryName={category.category} movies={category.movies} onMovieClick={handleMovieClick} />
-          )
-            ))}
+          {movies.length > 0 && movies.map((category, index) => (
+            isAdmin ? (
+                <AdminCategoryRow 
+                    key={index} 
+                    category={category}  // Remove movies prop since it's included in category
+                    onMovieClick={handleMovieClick}
+                    onMovieUpdate={handleMovieUpdate} 
+                    onMovieDelete={handleMovieDelete}
+                    onCategoryDelete={handleCategoryDelete}
+                />
+            ) : (
+                <CategoryRow 
+                    key={index} 
+                    categoryName={category.category} 
+                    movies={category.movies} 
+                    onMovieClick={handleMovieClick} 
+                />
+            )
+        ))}
           </div>
         ) : (
           <SearchResults searchResults={searchResults} handleMovieClick={handleMovieClick} isAdmin={isAdmin} />

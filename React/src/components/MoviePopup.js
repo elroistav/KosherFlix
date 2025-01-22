@@ -21,7 +21,7 @@ function MoviePopup({ initialMovie, onClose }) {
       try {
         console.log('Fetching recommendations for movie:', movie.title, movie._id);
         const response = await axios.get(`http://localhost:4000/api/movies/${movie._id}/recommend`, {
-          headers: { 'user-id': '678f5239892efc5766c18798' }
+          headers: { 'user-id': '6790aeff2af1fd8ab364f8f3' }
         });
         const recommendedMovieIds = response.data; // Assuming the response is a list of movie IDs
 
@@ -30,7 +30,7 @@ function MoviePopup({ initialMovie, onClose }) {
           recommendedMovieIds.map(async (id) => {
             try {
               const movieResponse = await axios.get(`http://localhost:4000/api/movies/${id}`, {
-                headers: { 'user-id': '678f5239892efc5766c18798' }
+                headers: { 'user-id': '6790aeff2af1fd8ab364f8f3' }
               });
               return movieResponse.data;
             } catch (error) {
