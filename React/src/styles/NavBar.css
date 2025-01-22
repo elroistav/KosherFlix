@@ -178,30 +178,38 @@
   }
   
   /* Profile Icon */
-  .navbar .profile-icon {
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-    margin-right: 25px;  /* Add space between search icon and profile picture */
-  }
+/* Profile Icon */
+.navbar .profile-icon {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  margin-right: 25px; /* Add space between search icon and profile picture */
+}
 
-    .navbar .profile-icon:hover img {
-        transform: scale(1.1); /* Subtle zoom effect on hover */
-    }
-  
-  .navbar .profile-icon img {
-    width: 35px;
-    height: 35px;
-    border-radius: 50%;
-    border: 2px solid white;
-  }
+.navbar .profile-icon:hover img {
+  transform: scale(1.1); /* Subtle zoom effect on hover */
+}
 
-  .navbar .profile-icon username {
-    font-size: 14px;
-    font-weight: bold;
-    color: white;
+.navbar .profile-icon .profile-details {
+  display: flex;
+  align-items: center;
+}
 
-  }
+.navbar .profile-icon img {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  border: 2px solid white;
+  margin-left: 10px; /* Add space between the text and the image */
+}
+
+.navbar .profile-icon .username {
+  font-size: 14px;
+  font-weight: bold;
+  color: white;
+  margin: 0; /* Remove default margin for text */
+  line-height: 1; /* Ensure text is vertically centered */
+}
 
   /* Dropdown Menu */
 .dropdown-menu {

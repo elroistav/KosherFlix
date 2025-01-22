@@ -172,15 +172,16 @@ function Navbar( { onSearchResults, clearSearchResults, userInfo, loading} ) {
         )}
         {/* Profile Icon */}
         <div className="profile-icon" onClick={handleProfileClick}>
-          {loading ? ( 
+          {loading ? (
             <div>Loading...</div>
           ) : (
-            <>
+            <div className="profile-details">
+              <span className="username">Hello, {userInfo?.name}</span>
               <img src={userInfo?.avatar} alt="Profile" />
-              {userInfo?.name && <span className="username">{userInfo.name}</span>}
-            </>
+            </div>
           )}
         </div>
+
         {dropdownOpen && (
           <div className="dropdown-menu" ref={dropdownRef}>
             <Link to="/profile">Profile</Link>

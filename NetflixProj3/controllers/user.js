@@ -16,7 +16,10 @@ const storage = multer.diskStorage({
     },
     filename: (req, file, cb) => {
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        cb(null, `${file.fieldname}-${uniqueSuffix}-${file.originalname}`);
+
+        // שינוי שם הקובץ כך שלא יכלול רווחים
+        const sanitizedOriginalName = file.originalname.replace(/\s/g, '-'); // 🔴 הוספת שורה זו
+        cb(null, `${file.fieldname}-${uniqueSuffix}-${sanitizedOriginalName}`); // 🟢 עדכון השימוש בשם הקובץ המעודכן
     },
 });
 
