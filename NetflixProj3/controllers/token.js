@@ -13,8 +13,10 @@ const login = async (req, res) => {
     const data = { username: req.body.username,
                    name: user.name,
                    image: user.image,
+                   userId: user._id
      }
-    const token = jwt.sign(data, key)
+     console.log('LOGIN The data is: ' + JSON.stringify(data));
+     const token = jwt.sign(data, key)
     res.status(201).json({ token });
 };
 
@@ -26,9 +28,11 @@ const isLoggedIn = async (req, res) => {
             const data = jwt.verify(token, key);
             console.log('The logged in user is: ' + data.username);
             const user = {
-                username: data.username,
-                avatar: data.image ? `${user.image}` : null,
+                name: data.name,
+                avatar: data.image ? `${data.image}` : null,
+                userId: data.userId
             };
+            console.log('The user is: ' + JSON.stringify(user));
             return res.status(200).json(user);
         } catch (err) {
             return res.status(401).send("Invalid Token");

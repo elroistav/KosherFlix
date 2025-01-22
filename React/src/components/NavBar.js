@@ -4,7 +4,7 @@ import axios from 'axios';
 import { FaSearch } from 'react-icons/fa'; // Importing the search icon
 import '../styles/NavBar.css';
 
-function Navbar( { onSearchResults, clearSearchResults, userInfo} ) {
+function Navbar( { onSearchResults, clearSearchResults, userInfo, loading} ) {
     const [searchOpen, setSearchOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const [noResults, setNoResults] = useState(false);
@@ -172,12 +172,14 @@ function Navbar( { onSearchResults, clearSearchResults, userInfo} ) {
         )}
         {/* Profile Icon */}
         <div className="profile-icon" onClick={handleProfileClick}>
-          <img 
-            src={userInfo?.profilePic} 
-              // || "https://example.com/default-profile-pic.jpg"} 
-            alt="Profile" 
-          />
-          {userInfo?.username && <span className="username">{userInfo.username}</span>}
+          {loading ? ( 
+            <div>Loading...</div>
+          ) : (
+            <>
+              <img src={userInfo?.avatar} alt="Profile" />
+              {userInfo?.name && <span className="username">{userInfo.name}</span>}
+            </>
+          )}
         </div>
         {dropdownOpen && (
           <div className="dropdown-menu" ref={dropdownRef}>

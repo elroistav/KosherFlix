@@ -10,6 +10,7 @@ import MoviePopup from '../components/MoviePopup';  // assuming you already have
 import SearchResults from '../components/SearchResults';  // assuming you already have the search results component
 import '../styles/HomeScreen.css';
 import { useLocation } from 'react-router-dom';
+//import user from '../../../NetflixProj3/models/user';
 
 
 function HomeScreen() {
@@ -33,10 +34,11 @@ function HomeScreen() {
 
         if (response.status === 200) {
           console.log('User is logged in');
-          const avatarUrl = `http://localhost:4000${response.data.avatar}`;
+          const avatarUrl = `http://localhost:4000/${response.data.avatar}`;
           setUserInfo({
-            username: response.data.username,
+            name: response.data.name,
             avatar: avatarUrl, 
+            userId: response.data.userId,
           });
         }
       } catch (error) {
@@ -49,6 +51,8 @@ function HomeScreen() {
 
     checkToken();
   }, [navigate]);
+
+  console.log('userInfo:', userInfo);
 
 
   // Fetch movies data from API and details for each movie
@@ -121,6 +125,7 @@ function HomeScreen() {
         onSearchResults={handleSearchResults} 
         clearSearchResults={clearSearchResults}
         userInfo={userInfo} 
+        loading={loading}
       /> 
       {/* Random Movie Section */}
       {randomMovie && searchResults.length === 0 && (
