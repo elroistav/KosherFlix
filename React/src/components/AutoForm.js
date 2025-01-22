@@ -2,28 +2,44 @@ import React from 'react';
 import '../styles/AutoForm.css';
 
 
-function AuthForm({ title, inputs, handleSubmit, buttonText }) {
+const AuthForm = ({ title, inputs, handleSubmit, buttonText, imagePreview }) => {
     return (
-        <div className="auth-content">
-            <div className="auth">
-                <h1>{title}</h1>
-                <form onSubmit={handleSubmit}>
-                    {inputs.map((input, index) => (
-                        <div key={index} className="form-group">
+        <div className="auth-form">
+            <h1>{title}</h1>
+            <form onSubmit={handleSubmit}>
+                {inputs.map((input, index) => (
+                    <div key={index}>
+                        {input.type === 'file' ? (
+                            <div className="file-input-container">
+                                <input
+                                    type={input.type}
+                                    onChange={input.onChange}
+                                    placeholder="Upload image file (JPG, PNG, JPEG)"
+                                    {...input.extraProps}
+                                />
+                                {imagePreview && (
+                                    <img 
+                                        src={imagePreview} 
+                                        alt="Profile Preview" 
+                                        className="preview-image"
+                                    />
+                                )}
+                            </div>
+                        ) : (
                             <input
                                 type={input.type}
                                 value={input.value}
                                 onChange={input.onChange}
                                 placeholder={input.placeholder}
-                                {...(input.extraProps || {})} // עבור שדות מיוחדים כמו file
+                                {...input.extraProps}
                             />
-                        </div>
-                    ))}
-                    <button type="submit">{buttonText}</button>
-                </form>
-            </div>
+                        )}
+                    </div>
+                ))}
+                <button type="submit">{buttonText}</button>
+            </form>
         </div>
     );
-}
+};
 
 export default AuthForm;

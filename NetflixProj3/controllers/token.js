@@ -10,26 +10,31 @@ const login = async (req, res) => {
     if (!user) {
         return res.status(401).json({ error: 'Invalid details' });
     }
-    const data = { username: req.body.username }
+    const data = { username: req.body.username,
+                   name: user.name,
+                   image: user.image,
+     }
     const token = jwt.sign(data, key)
     res.status(201).json({ token });
 };
 
 //isLoggedIn 
-const isLoggedIn = (req, res) => {
+const isLoggedIn = async (req, res) => {
     if (req.headers.authorization) {
-    const token = req.headers.authorization.split(" ")[1];
-    try {
-    const data = jwt.verify(token, key);
-    console.log('The logged in user is: ' + data.username);
-    return res.status(200).send('User is logged in');
-} catch (err) {
-    return res.status(401).send("Invalid Token");
+        const token = req.headers.authorization.split(" ")[1];
+        try {
+            const data = jwt.verify(token, key);
+            console.log('The logged in user is: ' + data.username);
+            const user = {
+                username: data.username,
+                avatar: data.image ? `${user.image}` : null,
+            };
+            return res.status(200).json(user);
+        } catch (err) {
+            return res.status(401).send("Invalid Token");
+        }
     }
-    }
-    else
-    return res.status(403).send('Token required');
-    }
+};
 
 
 module.exports = { login, isLoggedIn };

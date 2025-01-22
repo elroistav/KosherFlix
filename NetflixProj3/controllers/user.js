@@ -68,6 +68,10 @@ const getUser = async (req, res) => {
     if (!user) {
         return res.status(404).json({ errors: ['User not found'] });
     }
+
+    if (user.image) {
+        user.image = `http://localhost:4000/${user.image}`;
+    }
     res.json(user);
 };
 

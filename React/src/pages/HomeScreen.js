@@ -21,6 +21,7 @@ function HomeScreen() {
   const location = useLocation();
   const token = location.state?.token;
   const [loading, setLoading] = useState(true);
+  const [userInfo, setUserInfo] = useState(null);
 
   useEffect(() => {
     async function checkToken() {
@@ -32,6 +33,11 @@ function HomeScreen() {
 
         if (response.status === 200) {
           console.log('User is logged in');
+          const avatarUrl = `http://localhost:4000${response.data.avatar}`;
+          setUserInfo({
+            username: response.data.username,
+            avatar: avatarUrl, 
+          });
         }
       } catch (error) {
         console.error('Token validation failed:', error);
@@ -111,7 +117,11 @@ function HomeScreen() {
 
   return (
     <div className="homeScreenBody">
-      <Navbar onSearchResults={handleSearchResults} clearSearchResults={clearSearchResults} /> {/* Navbar component */}
+        <Navbar 
+        onSearchResults={handleSearchResults} 
+        clearSearchResults={clearSearchResults}
+        userInfo={userInfo} 
+      /> 
       {/* Random Movie Section */}
       {randomMovie && searchResults.length === 0 && (
         <RandomMovie movie={randomMovie} onClick={() => setSelectedMovie(randomMovie)} />
