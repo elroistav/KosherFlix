@@ -15,8 +15,8 @@ const Welcome = () => {
     const [error, setError] = useState('');
 
     const inputs = [
-        { type: 'text', value: userName, onChange: (e) => setUserName(e.target.value), placeholder: 'UserName (3-15 characters, letters, numbers, underscores, hyphens)' },
-        { type: 'password', value: password, onChange: (e) => setPassword(e.target.value), placeholder: 'Password (at least 8, one letter, one number)' },
+        { type: 'text', value: userName, onChange: (e) => setUserName(e.target.value), placeholder: 'UserName' },
+        { type: 'password', value: password, onChange: (e) => setPassword(e.target.value), placeholder: 'Password' },
 
     ];
 

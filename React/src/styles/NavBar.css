@@ -196,6 +196,13 @@
     border: 2px solid white;
   }
 
+  .navbar .profile-icon username {
+    font-size: 14px;
+    font-weight: bold;
+    color: white;
+
+  }
+
   /* Dropdown Menu */
 .dropdown-menu {
     position: absolute;
