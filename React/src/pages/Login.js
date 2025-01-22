@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Navbar from '../components/RegisterLoginBar'; 
 import '../styles/RegisterLogin.css';
+import AuthForm from '../components/AutoForm';
 
 const Welcome = () => {
     const navigate = useNavigate(); 
@@ -12,6 +13,12 @@ const Welcome = () => {
     const [password, setPassword] = useState('');
     const [profilePicture, setProfilePicture] = useState(null);
     const [error, setError] = useState('');
+
+    const inputs = [
+        { type: 'text', value: userName, onChange: (e) => setUserName(e.target.value), placeholder: 'UserName (3-15 characters, letters, numbers, underscores, hyphens)' },
+        { type: 'password', value: password, onChange: (e) => setPassword(e.target.value), placeholder: 'Password (at least 8, one letter, one number)' },
+
+    ];
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -60,7 +67,7 @@ const Welcome = () => {
         <div className="login-page">
             <Navbar />
             
-            <div className="login-content">
+            {/* <div className="login-content">
                 <div className="register">
                     <h1>login</h1>
                     <form onSubmit={handleSubmit}>
@@ -79,7 +86,8 @@ const Welcome = () => {
                         <button type="submit">Login</button>
                     </form>
                 </div>
-            </div>
+            </div> */}
+            <AuthForm title="Welcome" inputs={inputs} handleSubmit={handleSubmit} buttonText="Login" />
         </div>
     );
 };

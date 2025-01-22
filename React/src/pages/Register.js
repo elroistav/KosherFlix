@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Navbar from '../components/RegisterLoginBar'; // ייבוא ה-navbar
 import '../styles/RegisterLogin.css';
+import AuthForm from '../components/AutoForm';
+
 
 const Welcome = () => {
     const navigate = useNavigate(); 
@@ -12,6 +14,29 @@ const Welcome = () => {
     const [password, setPassword] = useState('');
     const [profilePicture, setProfilePicture] = useState(null);
     const [error, setError] = useState('');
+    const [imagePreview, setImagePreview] = useState(null); // Add this line
+
+    const handleImageChange = (e) => {  // Add this function
+        const file = e.target.files[0];
+        if (file) {
+            setProfilePicture(file);
+            setImagePreview(URL.createObjectURL(file));
+        }
+    };
+
+    const inputs = [
+        { type: 'text', value: userName, onChange: (e) => setUserName(e.target.value), placeholder: 'UserName (3-15 characters, letters, numbers, underscores, hyphens)' },
+        { type: 'text', value: name, onChange: (e) => setName(e.target.value), placeholder: 'Full Name (English letters only)' },
+        { type: 'email', value: email, onChange: (e) => setEmail(e.target.value), placeholder: 'Email (valid email address)' },
+        { type: 'password', value: password, onChange: (e) => setPassword(e.target.value), placeholder: 'Password (at least 8, one letter, one number)' },
+        { 
+            type: 'file', 
+            value: undefined, 
+            onChange: handleImageChange, 
+            placeholder: '', 
+            extraProps: { id: 'profilePicture' },
+        },
+    ];
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -81,7 +106,7 @@ const Welcome = () => {
             if (response.status === 201) {
                 alert('Registration successful');
                 Promise.resolve().then(() => {
-                    navigate('/homescreen');
+                    navigate('/login');
                 });
             } else {
                 setError('Registration failed');
@@ -91,13 +116,15 @@ const Welcome = () => {
             setError('Registration failed');
             console.error('Registration failed', error);
         }
+
+
     };
 
     return (
         <div className="register-page">
             <Navbar />
             
-            <div className="register-content">
+            {/* <div className="register-content">
                 <div className="register">
                     <h1>register</h1>
                     <form onSubmit={handleSubmit}>
@@ -105,38 +132,52 @@ const Welcome = () => {
                             type="text"
                             value={userName}
                             onChange={(e) => setUserName(e.target.value)}
-                            placeholder="UserName"
+                            placeholder="UserName (3-15 characters, letters, numbers, underscores, hyphens)"
                         />
                         <input
                             type="text"
                             value={name}
                             onChange={(e) => setName(e.target.value)}
-                            placeholder="Full Name"
+                            placeholder="Full Name (English letters only)"
                         />
                         <input
                             type="email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            placeholder="Email"
+                            placeholder="Email (valid email address)"
                         />
                         <input
                             type="password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            placeholder="Password"
+                            placeholder="Password (at least 8, one letter, one number)"
                         />
                         <div className="file-upload">
                             <label htmlFor="profilePicture">Upload Profile Picture</label>
                             <input
                                 type="file"
                                 id="profilePicture"
-                                onChange={(e) => setProfilePicture(e.target.files[0])}
+                                onChange={handleImageChange}
                             />
+                            {imagePreview && (
+                                <img 
+                                    src={imagePreview} 
+                                    alt="Preview" 
+                                    className="preview-image"
+                                />
+                            )}
                         </div>
                         <button type="submit">Register</button>
                     </form>
                 </div>
-            </div>
+            </div> */}
+
+<AuthForm 
+            title="Register"
+            inputs={inputs}
+            handleSubmit={handleSubmit}
+            buttonText="Register"
+        />
         </div>
     );
 };

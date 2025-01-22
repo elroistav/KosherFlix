@@ -62,3 +62,11 @@ h2 {
 .btn-secondary:hover {
     background-color: #5a6268;
 }
+
+.preview-image {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 50%;
+    margin-top: 10px;
+}
