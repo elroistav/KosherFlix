@@ -11,6 +11,7 @@ import SearchResults from '../components/SearchResults';  // assuming you alread
 import '../styles/HomeScreen.css';
 import { useLocation } from 'react-router-dom';
 //import user from '../../../NetflixProj3/models/user';
+//import user from '../../../NetflixProj3/models/user';
 
 
 function HomeScreen() {
@@ -35,11 +36,16 @@ function HomeScreen() {
         if (response.status === 200) {
           console.log('User is logged in');
           const avatarUrl = `http://localhost:4000/${response.data.avatar}`;
+          console.log('the returned data is ' + JSON.stringify(response.data));
+
           setUserInfo({
             name: response.data.name,
             avatar: avatarUrl, 
             userId: response.data.userId,
           });
+
+          console.log('the userInfo ' + JSON.stringify(userInfo));
+
         }
       } catch (error) {
         console.error('Token validation failed:', error);
@@ -57,11 +63,17 @@ function HomeScreen() {
 
   // Fetch movies data from API and details for each movie
   useEffect(() => {
+    if (loading || !userInfo) {
+      console.log('Waiting for userInfo to load...');
+      return; // חכה עד שה- loading יסתיים ו- userInfo יהיה זמין
+    }
+
     async function fetchMovies() {
       try {
         //get user-id from the tokes first
+        console.log('The user id is: ' + userInfo.userId);
         const response = await axios.get('http://localhost:4000/api/movies', {
-          headers: { 'user-id': '6788f8771a6c2941d023825c' }
+          headers: { 'user-id': userInfo.userId }
         });
 
         // Fetch the details of each movie in each category
@@ -71,7 +83,7 @@ function HomeScreen() {
           for (const movieId of category.movies) {
             try {
               const movieResponse = await axios.get(`http://localhost:4000/api/movies/${movieId}`, {
-                headers: { 'user-id': '6788f8771a6c2941d023825c' }
+                  headers: { 'user-id': userInfo.userId }
               });
               fetchedMovies.push(movieResponse.data);
             } catch (error) {

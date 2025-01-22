@@ -37,31 +37,38 @@ const createUser = async (req, res) => {
             const { userName, name, email, password } = req.body;
             const profilePicture = req.file ? req.file.path : null;
 
-            const user = await userService.createUser({
-                userName,
-                name,
-                email,
-                password,
-                image: profilePicture,
-            });
+            try {
+                // Try to create the user
+                const user = await userService.createUser({
+                    userName,
+                    name,
+                    email,
+                    password,
+                    image: profilePicture,
+                });
 
-            return res.status(201)
-                      .location(`/users/${user._id}`) 
-                      .json(user); 
+                // Respond with created user
+                return res.status(201)
+                          .location(`/users/${user._id}`) 
+                          .json(user); 
+            } catch (err) {
+                if (err.code === 11000) {
+                    // Duplicate username error
+                    return res.status(400).json({ error: 'Username must be unique' });
+                } else if (err.name === 'ValidationError') {
+                    // Handle Mongoose validation errors
+                    const errors = Object.values(err.errors).map(e => e.message);
+                    return res.status(400).json({ errors });
+                } else {
+                    // Handle other errors
+                    console.error(err);
+                    return res.status(500).json({ errors: ['Internal Server Error'] });
+                }
+            }
         });
     } catch (err) {
-        if (err.code === 11000) {
-            // userName must be unique
-            return res.status(400).json({ error: 'Username must be unique' });
-        } else if (err.name === 'ValidationError') {
-            // Handle Mongoose validation errors
-            const errors = Object.values(err.errors).map(e => e.message);
-            res.status(400).json({ errors }); // Respond with 400 Bad Request
-        } else {
-            // Handle other errors
-            console.error(err);
-            res.status(500).json({ errors: ['Internal Server Error'] });
-        }
+        console.error(err);
+        return res.status(500).json({ errors: ['Internal Server Error'] });
     }
 };
 
