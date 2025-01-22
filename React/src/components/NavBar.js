@@ -4,7 +4,8 @@ import axios from 'axios';
 import { FaSearch } from 'react-icons/fa'; // Importing the search icon
 import '../styles/NavBar.css';
 
-function Navbar( { onSearchResults, clearSearchResults } ) {
+function Navbar( { onSearchResults, clearSearchResults, userInfo, loading} ) {
+  
     const [searchOpen, setSearchOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const [noResults, setNoResults] = useState(false);
@@ -19,7 +20,7 @@ function Navbar( { onSearchResults, clearSearchResults } ) {
       const fetchCategories = async () => {
         try {
           const response = await axios.get('http://localhost:4000/api/categories', {
-            headers: { 'user-id': '678f5239892efc5766c18798' }
+            headers: { 'user-id': userInfo.userId }
           });
           setCategories(response.data.categories || []);
         } catch (error) {
@@ -172,8 +173,16 @@ function Navbar( { onSearchResults, clearSearchResults } ) {
         )}
         {/* Profile Icon */}
         <div className="profile-icon" onClick={handleProfileClick}>
-          <img src="https://example.com/profile-pic.jpg" alt="Profile" />
+          {loading ? (
+            <div>Loading...</div>
+          ) : (
+            <div className="profile-details">
+              <span className="username">Hello, {userInfo?.name}</span>
+              <img src={userInfo?.avatar} alt="Profile" />
+            </div>
+          )}
         </div>
+
         {dropdownOpen && (
           <div className="dropdown-menu" ref={dropdownRef}>
             <Link to="/profile">Profile</Link>

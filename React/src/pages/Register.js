@@ -14,9 +14,9 @@ const Welcome = () => {
     const [password, setPassword] = useState('');
     const [profilePicture, setProfilePicture] = useState(null);
     const [error, setError] = useState('');
-    const [imagePreview, setImagePreview] = useState(null); // Add this line
+    const [imagePreview, setImagePreview] = useState(null); 
 
-    const handleImageChange = (e) => {  // Add this function
+    const handleImageChange = (e) => { 
         const file = e.target.files[0];
         if (file) {
             setProfilePicture(file);
@@ -173,11 +173,12 @@ const Welcome = () => {
             </div> */}
 
 <AuthForm 
-            title="Register"
-            inputs={inputs}
-            handleSubmit={handleSubmit}
-            buttonText="Register"
-        />
+    title="Register"
+    inputs={inputs}
+    handleSubmit={handleSubmit}
+    buttonText="Register"
+    imagePreview={imagePreview}
+/>
         </div>
     );
 };
