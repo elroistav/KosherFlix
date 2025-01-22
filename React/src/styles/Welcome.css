@@ -1,0 +1,72 @@
+.welcome-page {
+    text-align: center;
+    margin-top: 50px;
+}
+.welcome-content {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 20px;
+    padding: 50px;
+}
+
+h1 {
+    font-size: 2.5rem;
+    color: #faf8f8;
+    margin-top: 220px;
+}
+
+h2 {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+    color: #f8f5f5;
+    font-size: 2rem;
+}
+
+.register {
+    justify-content: center;
+    display: flex; /* תצוגת Flexbox */
+    align-items: center; /* יישור אנכי */
+    gap: 10px; /* מרווח בין הטקסט לכפתור */
+    color: white;
+}
+
+.register p {
+    margin: 0; /* ביטול מרווחים פנימיים חיצוניים */
+    font-size: 1.2rem; /* התאמת גודל הפונט, אם צריך */
+}
+
+.register .btn {
+    text-decoration: none;
+    color: white;
+    font-size: 1.2rem;
+    font-weight: bold;
+    padding: 10px 15px; /* הגדרת מרווח פנימי סביר */
+    border: 1px solid #fff;
+    border-radius: 5px;
+    background-color: #e50914;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.register .btn:hover {
+    background-color: #b30000;
+}
+
+
+.btn-secondary {
+    background-color: #6c757d;
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268;
+}
+
+.preview-image {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 50%;
+    margin-top: 10px;
+}

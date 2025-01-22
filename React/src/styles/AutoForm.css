@@ -1,0 +1,95 @@
+.auth-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    text-align: center;
+    margin-top: 100px; /* מרווח מלמעלה */
+    color: white;
+}
+
+.auth {
+    background-color: #333; /* צבע רקע אפור כהה */
+    padding: 20px; /* ריפוד פנימי */
+    border-radius: 10px; /* פינות מעוגלות */
+    max-width: 500px; /* רוחב מקסימלי */
+    width: 100%; /* רוחב מלא עד גבול המקסימלי */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* אפקט הצללה */
+}
+
+.auth h1 {
+    font-size: 2.5rem;
+    color: #faf8f8;
+    margin-bottom: 20px; /* רווח מתחת לכותרת */
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px; /* מרווח בין השדות */
+    width: 100%;
+    max-width: 400px; /* גבול רוחב הטופס */
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #494646; /* צבע רקע לטופס */
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+form input {
+    padding: 10px;
+    font-size: 1rem;
+    border-radius: 5px; /* פינות מעוגלות לשדות */
+    border: 1px solid #ccc;
+    width: 100%;
+    box-sizing: border-box; /* חישוב נכון של רוחב */
+}
+
+form button {
+    padding: 10px 20px;
+    font-size: 1.1rem;
+    border: none;
+    background-color: #e50914; /* צבע רקע לכפתור */
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+form button:hover {
+    background-color: #b30000; /* צבע רקע לכפתור במצב ריחוף */
+}
+
+.file-upload {
+    display: flex;
+    align-items: center; /* יישור אנכי */
+    gap: 10px; /* רווח בין הכיתוב לקלט */
+}
+
+.file-upload input {
+    padding: 5px;
+}
+
+.preview-image {
+    max-width: 100px;
+    max-height: 100px;
+    border-radius: 10px; /* פינות מעוגלות לתמונה */
+    margin-top: 10px;
+    object-fit: cover; /* חיתוך התמונה כך שתתאים לממדים */
+}
+
+.auth-content .btn {
+    text-decoration: none;
+    color: white;
+    font-size: 1.2rem;
+    font-weight: bold;
+    padding: 10px 15px;
+    border: 1px solid #fff;
+    border-radius: 5px;
+    background-color: #e50914;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.auth-content .btn:hover {
+    background-color: #b30000;
+}

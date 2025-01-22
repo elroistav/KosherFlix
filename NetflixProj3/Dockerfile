@@ -13,6 +13,10 @@ RUN npm install
 # Copy the rest of the application code
 COPY . .
 
+# Create uploads directory
+RUN mkdir -p /usr/src/app/uploads && \
+    chmod 777 /usr/src/app/uploads
+
 # Expose the port your app runs on
 EXPOSE 3000
 
