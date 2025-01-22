@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Netflix_App4</string>
+    <string name="movie_thumbnail">thumbnail</string>
 </resources>
