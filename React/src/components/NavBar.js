@@ -5,6 +5,7 @@ import { FaSearch } from 'react-icons/fa'; // Importing the search icon
 import '../styles/NavBar.css';
 
 function Navbar( { onSearchResults, clearSearchResults, userInfo, loading} ) {
+  
     const [searchOpen, setSearchOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const [noResults, setNoResults] = useState(false);
@@ -19,7 +20,7 @@ function Navbar( { onSearchResults, clearSearchResults, userInfo, loading} ) {
       const fetchCategories = async () => {
         try {
           const response = await axios.get('http://localhost:4000/api/categories', {
-            headers: { 'user-id': '678f5239892efc5766c18798' }
+            headers: { 'user-id': userInfo.userId }
           });
           setCategories(response.data.categories || []);
         } catch (error) {
