@@ -7,7 +7,7 @@ import MoviePage from './pages/MoviePage';
 import MockMoviePage from "./pages/MockMoviePage"; // Import the mock version
 import ErrorPage from './components/ErrorPage';  // Import the ErrorPage component
 import Welcome from './pages/Welcome';  // Import the Welcome component
-//import Login from './pages/Login';  // Import the Login component
+import Login from './pages/Login';  // Import the Login component
 import Register from './pages/Register';  // Import the Register component
 
 
@@ -22,9 +22,11 @@ function App() {
           <Route path="/admin" element={<AdminCategoryPage />} />
           <Route path="/movies/:movieId" element={<MoviePage />} />
           <Route path="/mock-movie" element={<MockMoviePage />} />
-          <Route path="*" element={<ErrorPage />} /> {/* Catch-all route for undefined paths */}
           <Route path="/" element={<Welcome />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="*" element={<ErrorPage />} /> {/* Catch-all route for undefined paths */}
+
           
 
           {/* Add more routes as needed */}

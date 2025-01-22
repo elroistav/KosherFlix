@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom'; 
 import { Link } from 'react-router-dom';
 import RandomMovie from '../components/RandomMovie';
 import CategoryRow from '../components/CategoryRow';
@@ -8,12 +9,40 @@ import MovieCard from '../components/MovieCard';
 import MoviePopup from '../components/MoviePopup';  // assuming you already have the modal component
 import SearchResults from '../components/SearchResults';  // assuming you already have the search results component
 import '../styles/HomeScreen.css';
+import { useLocation } from 'react-router-dom';
+
 
 function HomeScreen() {
   const [movies, setMovies] = useState([]);
   const [randomMovie, setRandomMovie] = useState(null);
   const [searchResults, setSearchResults] = useState([]);
   const [selectedMovie, setSelectedMovie] = useState(null);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const token = location.state?.token;
+
+  useEffect(() => {
+    async function checkToken() {
+      try {
+        //const token = localStorage.getItem('token'); // Retrieve token from localStorage (or cookies)
+        if (!token) throw new Error('Token not found'); // No token? Redirect to login.
+
+        const response = await axios.get('http://localhost:3000/api/tokens', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (response.status === 200) {
+          console.log('User is logged in');
+        }
+      } catch (error) {
+        console.error('Token validation failed:', error);
+        navigate('/'); // Redirect to login page if validation fails
+      }
+    }
+
+    checkToken();
+  }, [navigate]);
+
 
   // Fetch movies data from API and details for each movie
   useEffect(() => {

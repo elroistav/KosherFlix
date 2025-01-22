@@ -63,10 +63,9 @@ form {
     gap: 20px;
     width: 100%;
     max-width: 400px;
-    margin: 0 auto;
-    margin-right: 40px;
+    margin: 0 auto; 
     padding: 20px;
-    background-color: #333;
+    background-color: #494646;
     border-radius: 10px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
@@ -77,6 +76,7 @@ form input {
     border-radius: 5px;
     border: 1px solid #ccc;
     width: 100%;
+    box-sizing: border-box; 
 }
 
 form button {

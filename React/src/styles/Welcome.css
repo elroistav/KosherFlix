@@ -2,6 +2,15 @@
     text-align: center;
     margin-top: 50px;
 }
+.welcome-content {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 20px;
+    padding: 50px;
+}
 
 h1 {
     font-size: 2.5rem;
@@ -52,4 +61,12 @@ h2 {
 
 .btn-secondary:hover {
     background-color: #5a6268;
+}
+
+.preview-image {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 50%;
+    margin-top: 10px;
 }
