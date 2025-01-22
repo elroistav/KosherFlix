@@ -20,14 +20,13 @@ function HomeScreen() {
   const navigate = useNavigate();
   const location = useLocation();
   const token = location.state?.token;
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function checkToken() {
       try {
-        //const token = localStorage.getItem('token'); // Retrieve token from localStorage (or cookies)
-        if (!token) throw new Error('Token not found'); // No token? Redirect to login.
-
-        const response = await axios.get('http://localhost:3000/api/tokens', {
+        if (!token) throw new Error('Token not found');
+        const response = await axios.get('http://localhost:4000/api/tokens', {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -36,7 +35,9 @@ function HomeScreen() {
         }
       } catch (error) {
         console.error('Token validation failed:', error);
-        navigate('/'); // Redirect to login page if validation fails
+        navigate('/'); 
+      } finally {
+        setLoading(false); 
       }
     }
 
@@ -103,6 +104,10 @@ function HomeScreen() {
       : movies.flatMap(category => category.movies).find(m => m._id === movieId);
     setSelectedMovie(movie);
   };
+
+  if (loading) {
+    return <div>Loading...</div>; // Show a loading spinner or message
+  }
 
   return (
     <div className="homeScreenBody">

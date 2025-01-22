@@ -94,7 +94,7 @@ const Welcome = () => {
         console.log('User data:', formData);
     
         try {
-            const response = await axios.post('http://localhost:3000/api/users', formData, {
+            const response = await axios.post('http://localhost:4000/api/users', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }

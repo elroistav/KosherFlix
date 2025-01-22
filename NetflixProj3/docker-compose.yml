@@ -24,7 +24,7 @@ services:
       - /usr/src/app/node_modules  
       - ./uploads:/usr/src/app/uploads
     ports:
-      - "3000:3000"  # Adjust the port if needed
+      - "4000:4000"  # Adjust the port if needed
     depends_on:
       - server
       - mongo

@@ -39,7 +39,7 @@ const Welcome = () => {
         console.log('User data:', dataToSend);
     
         try {
-            const response = await axios.post('http://localhost:3000/api/tokens', dataToSend, {
+            const response = await axios.post('http://localhost:4000/api/tokens', dataToSend, {
                 headers: {
                     'Content-Type': 'application/json'
                 }
@@ -87,7 +87,7 @@ const Welcome = () => {
                     </form>
                 </div>
             </div> */}
-            <AuthForm title="Welcome" inputs={inputs} handleSubmit={handleSubmit} buttonText="Login" />
+            <AuthForm title="Login" inputs={inputs} handleSubmit={handleSubmit} buttonText="Login" />
         </div>
     );
 };
