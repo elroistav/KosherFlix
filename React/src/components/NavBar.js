@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { FaSearch } from 'react-icons/fa'; // Importing the search icon
 import '../styles/NavBar.css';
-import user from '../../../NetflixProj3/models/user';
+//import user from '../../../NetflixProj3/models/user';
 
 function Navbar( { onSearchResults, clearSearchResults, userInfo, loading} ) {
   
