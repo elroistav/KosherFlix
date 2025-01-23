@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { FaSearch } from 'react-icons/fa'; // Importing the search icon
 import '../styles/NavBar.css';
+import user from '../../../NetflixProj3/models/user';
 
 function Navbar( { onSearchResults, clearSearchResults, userInfo, loading} ) {
   
@@ -20,7 +21,7 @@ function Navbar( { onSearchResults, clearSearchResults, userInfo, loading} ) {
       const fetchCategories = async () => {
         try {
           const response = await axios.get('http://localhost:4000/api/categories', {
-            headers: { 'user-id': '679145dc2af1fd8ab3650de9' }
+            headers: { 'user-id': userInfo.userId }
           });
           setCategories(response.data.categories || []);
         } catch (error) {
@@ -35,14 +36,13 @@ function Navbar( { onSearchResults, clearSearchResults, userInfo, loading} ) {
       try {
         // First get the category details
         const categoryResponse = await axios.get(`http://localhost:4000/api/categories/${categoryId}`, {
-          headers: { 'user-id': '679145dc2af1fd8ab3650de9' }
-          headers: { 'user-id': '679145dc2af1fd8ab3650de9' }
+          headers: { 'user-id': userInfo.userId }
         });
 
         // Get movie details for each movie ID
         const moviePromises = categoryResponse.data.movies.map(movieId => 
           axios.get(`http://localhost:4000/api/movies/${movieId}`, {
-            headers: { 'user-id': '679145dc2af1fd8ab3650de9' }
+            headers: { 'user-id': userInfo.userId }
           })
         );
 
@@ -69,8 +69,7 @@ function Navbar( { onSearchResults, clearSearchResults, userInfo, loading} ) {
       console.log('Searching for:', searchQuery);
       try {
         const response = await axios.get(`http://localhost:4000/api/movies/search/${searchQuery}`, {
-          headers: { 'user-id': '679145dc2af1fd8ab3650de9' }
-          headers: { 'user-id': '679145dc2af1fd8ab3650de9' }
+          headers: { 'user-id': userInfo.userId }
         });
         if (response.data.length === 0) {
             setNoResults(true);
