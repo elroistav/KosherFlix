@@ -6,6 +6,7 @@ import RandomMovie from '../components/RandomMovie';
 import CategoryRow from '../components/CategoryRow';
 import Navbar from '../components/NavBar';  // Importing the Navbar component
 import AdminCategoryRow from '../components/AdminCategoryRow';  // Importing the AdminCategoryRow component
+import AdminCategoryRow from '../components/AdminCategoryRow';  // Importing the AdminCategoryRow component
 import MoviePopup from '../components/MoviePopup';  // assuming you already have the modal component
 import SearchResults from '../components/SearchResults';  // assuming you already have the search results component
 import '../styles/HomeScreen.css';
@@ -14,6 +15,7 @@ import { useLocation } from 'react-router-dom';
 //import user from '../../../NetflixProj3/models/user';
 
 
+function HomeScreen( {isAdmin} ) {
 function HomeScreen( {isAdmin} ) {
   const [movies, setMovies] = useState([]);
   const [randomMovie, setRandomMovie] = useState(null);
@@ -196,6 +198,8 @@ function HomeScreen( {isAdmin} ) {
       {/* Movie Categories Section */}
         {searchResults.length === 0 ? (
           <div className="movieCategories">
+        {searchResults.length === 0 ? (
+          <div className="movieCategories">
           {movies.length > 0 && movies.map((category, index) => (
             isAdmin ? (
                 <AdminCategoryRow 
@@ -219,7 +223,30 @@ function HomeScreen( {isAdmin} ) {
         ) : (
           <SearchResults searchResults={searchResults} handleMovieClick={handleMovieClick} isAdmin={isAdmin} />
         )}
+            isAdmin ? (
+                <AdminCategoryRow 
+                    key={index} 
+                    category={category}  // Remove movies prop since it's included in category
+                    onMovieClick={handleMovieClick}
+                    onMovieUpdate={handleMovieUpdate} 
+                    onMovieDelete={handleMovieDelete}
+                    onCategoryDelete={handleCategoryDelete}
+                />
+            ) : (
+                <CategoryRow 
+                    key={index} 
+                    categoryName={category.category} 
+                    movies={category.movies} 
+                    onMovieClick={handleMovieClick} 
+                />
+            )
+        ))}
+          </div>
+        ) : (
+          <SearchResults searchResults={searchResults} handleMovieClick={handleMovieClick} isAdmin={isAdmin} />
+        )}
 
+        {/* Movie Popup */}
         {/* Movie Popup */}
       {selectedMovie && (
         <MoviePopup initialMovie={selectedMovie} onClose={() => setSelectedMovie(null)} />
