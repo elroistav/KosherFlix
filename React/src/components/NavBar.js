@@ -78,6 +78,7 @@ function Navbar( { onSearchResults, clearSearchResults, userInfo, loading} ) {
             setNoResults(false);
         }
         onSearchResults(response.data);
+        setSearchOpen(false);
       } catch (error) {
         console.error('Error fetching search results:', error);
       }
@@ -114,7 +115,7 @@ function Navbar( { onSearchResults, clearSearchResults, userInfo, loading} ) {
   return (
     <div className="navbar">
       {/* Logo */}
-      <Link to="/" className="logo" onClick={clearSearchResults}>
+      <Link to="/homescreen" className="logo" onClick={clearSearchResults}>
         Notflicks
       </Link>
 
