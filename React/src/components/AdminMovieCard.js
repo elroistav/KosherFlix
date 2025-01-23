@@ -4,8 +4,9 @@ import axios from 'axios';
 import { FaEdit, FaTrash } from 'react-icons/fa';
 import MovieEditModal from './MovieEditModal';
 import '../styles/AdminMovieCard.css';
+//import user from '../../../NetflixProj3/models/user';
 
-function AdminMovieCard({ movie, onClick, onMovieUpdate, onMovieDelete }) {
+function AdminMovieCard({ movie, onClick, onMovieUpdate, onMovieDelete, userInfo, loading }) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
     const [error, setError] = useState(null);
@@ -17,6 +18,11 @@ function AdminMovieCard({ movie, onClick, onMovieUpdate, onMovieDelete }) {
     }, [movie]);
   
     const handleEditClick = (e) => {
+      if (loading || !userInfo) {
+        console.error('Cannot edit movie: userInfo is not ready yet.');
+        setError('Cannot edit movie while data is loading.');
+        return;
+    }
         console.log('Edit clicked:', movie);
         console.log('Movie data:', movieData);
       e.stopPropagation();
@@ -52,6 +58,12 @@ function AdminMovieCard({ movie, onClick, onMovieUpdate, onMovieDelete }) {
       };
     
     const handleSave = async (updatedMovie) => {
+      if (loading || !userInfo) {
+        console.error('Cannot save movie: userInfo is not ready yet.');
+        setError('Cannot save movie while data is loading.');
+        return;
+    }
+    
       try {
         console.log('Starting save with data:', updatedMovie);
         setIsSaving(true);
@@ -68,7 +80,7 @@ function AdminMovieCard({ movie, onClick, onMovieUpdate, onMovieDelete }) {
         const response = await axios.put(
             `http://localhost:4000/api/movies/${movie._id}`, 
             updatedMovie, 
-            { headers: { 'user-id': '6790aeff2af1fd8ab364f8f3' }}
+            { headers: { 'user-id': userInfo.userId }}
         );
 
         console.log('API Response:', response.data);
@@ -94,13 +106,19 @@ function AdminMovieCard({ movie, onClick, onMovieUpdate, onMovieDelete }) {
 
     const handleDelete = async (e) => {
         e.stopPropagation(); // Prevent card click
+
+        if (loading || !userInfo) {
+          console.error('Cannot delete category: userInfo is not ready yet.');
+          return;
+      }
         
         if (window.confirm('Are you sure you want to delete this movie?')) {
             try {
+              console.log('user id is: ' + JSON.stringify(userInfo));
                 await axios.delete(
                     `http://localhost:4000/api/movies/${movie._id}`,
-                    { headers: { 'user-id': '6790aeff2af1fd8ab364f8f3' }}
-                );
+                    { headers: { 'user-id': userInfo.userId }}
+                  );
                 
                 // Notify parent of deletion
                 if (onMovieDelete) {

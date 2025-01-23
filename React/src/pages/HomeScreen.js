@@ -42,6 +42,7 @@ function HomeScreen() {
             name: response.data.name,
             avatar: avatarUrl, 
             userId: response.data.userId,
+            token: token
           });
 
           console.log('the userInfo ' + JSON.stringify(userInfo));

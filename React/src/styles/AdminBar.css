@@ -1,0 +1,32 @@
+/* AdminBar.css */
+
+.admin-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #222;
+    padding: 15px;
+    color: white;
+  }
+  
+  .admin-mode-text {
+    font-size: 20px;
+    font-weight: bold;
+  }
+  
+  .admin-btn {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 16px;
+    margin-left: 10px;
+    transition: background-color 0.3s;
+  }
+  
+  .admin-btn:hover {
+    background-color: #45a049;
+  }
+  

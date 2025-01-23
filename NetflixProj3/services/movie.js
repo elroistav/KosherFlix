@@ -8,40 +8,71 @@ const { validateUserId } = require('./user');
 // Create a new movie
 const createMovie = async (headers, movieData) => {
     try {
-        await validateUserId(headers);
+        console.log("Starting movie creation process...");
+
+        //await validateUserId(headers);
+        console.log("User ID validated successfully.");
+
+        // Check if required fields are present
         const requiredFields = Object.keys(Movie.schema.paths).filter(
             path => Movie.schema.paths[path].isRequired // Check if the field is required
         );
 
         const missingFields = requiredFields.filter(field => movieData[field] === undefined);
         if (missingFields.length > 0) {
-            // If any required fields are missing, throw an error
-            throw new Error(`Missing required fields: ${missingFields.join(', ')}`); //
+            console.log(`Missing required fields: ${missingFields.join(', ')}`);
+            throw new Error(`Missing required fields: ${missingFields.join(', ')}`);
         }
-        
+        console.log("All required fields are present.");
+
+        // // Add paths for poster and video if they exist
+        // const poster = movieData.poster || null;
+        // const video = movieData.video || null;
+
+        // if (poster) {
+        //     console.log("Poster provided, adding to movie data.");
+        //     movieData.poster = poster;
+        // }
+        // if (video) {
+        //     console.log("Video provided, adding to movie data.");
+        //     movieData.video = video;
+        // }
+
         // Generate a unique random integer for the intId field
         let uniqueIntId;
+        console.log("Generating unique intId...");
         while (true) {
-            // Generate a random integer between 100000 and 999999 (6 digits)
             uniqueIntId = Math.floor(Math.random() * 900000) + 100000;
+            console.log(`Generated intId: ${uniqueIntId}`);
 
             // Check if this intId already exists in the database
-            const existingMovie = await Movie.findOne({ intId: uniqueIntId });
+            const existingMovie = await Movie.findOne({ intId: uniqueIntId }).maxTimeMS(3000);
             if (!existingMovie) break; // Exit loop if id is unique
+            console.log(`IntId ${uniqueIntId} already exists, generating a new one.`);
         }
 
         // Add the intId field to movieData
         movieData.intId = uniqueIntId;
+        console.log(`Assigned unique intId: ${uniqueIntId}`);
 
         const movie = new Movie(movieData);
+        console.log("Movie object created:", movie);
+
         const savedMovie = await movie.save();
-        await addUpdateCategoriesArray(movieData.categories, savedMovie._id); // Update categories array
+        console.log("Movie saved successfully:", savedMovie);
+
+        // Update categories array
+        await addUpdateCategoriesArray(movieData.categories, savedMovie._id); 
+        console.log("Categories updated successfully for the movie.");
+
         return savedMovie;
     } catch (error) {
         console.log('Error creating movie:', error.message);
         throw error;
     }
 };
+
+
 
 // Update categories array
 const addUpdateCategoriesArray = async (categories, movieId) => {

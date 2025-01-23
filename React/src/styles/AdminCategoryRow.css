@@ -35,6 +35,23 @@
     transition: all 0.2s ease;
     box-shadow: 0 2px 4px rgba(255, 0, 0, 0.1);
   }
+
+  .edit-category-button {
+    background-color: #ff000015;
+    color: #ff0000;
+    border: 1px solid #ff0000;
+    border-radius: 4px;
+    width: 32px;
+    height: 32px;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(255, 0, 0, 0.1);
+  }
   
   .delete-category-button:hover {
     background-color: #ff0000;

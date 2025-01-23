@@ -1,28 +1,85 @@
 const movieService = require('../services/movie');
+const multer = require('multer');
+const fs = require('fs');
+const path = require('path');
+
+const uploadDir = path.join(__dirname, 'uploads');
+
+if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir);
+}
+
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'uploads/');
+    },
+    filename: (req, file, cb) => {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        const sanitizedOriginalName = file.originalname.replace(/\s/g, '-');
+        cb(null, `${file.fieldname}-${uniqueSuffix}-${sanitizedOriginalName}`);
+    },
+});
+
+// **הוסף את הקונפיגורציה של multer**
+const upload = multer({ storage }).fields([
+    { name: 'videoUrl', maxCount: 1 }, // עבור קובץ הסרט
+    { name: 'thumbnail', maxCount: 1 } // עבור תמונת העטיפה
+]);
 
 // Create a new movie
 const createMovie = async (req, res) => {
-    try {
-        const movie = await movieService.createMovie(req.headers, req.body);
-        return res.status(201)
-                .location(`/movies/${movie._id}`) 
-                  .json(movie); 
-    } catch (error) {
-        if (error.message === 'No user ID found in headers' || error.message === 'Invalid user ID') {
-            return res.status(401).json({ error: error.message });
+    console.log('Creating movie...');
+    upload(req, res, async (err) => {
+        if (err) {
+            console.error('File upload failed:', err);
+            return res.status(400).json({ error: 'File upload failed' });
         }
-        if(error.message.includes("Missing required fields")) {
-            return res.status(400).json({ error: error.message });
+
+        const { title, description, categories, length, director, releaseDate, language } = req.body;
+        console.log('Received body data:', { title, description, categories, length, director, releaseDate, language });
+
+
+        const videoUrl = req.files?.videoUrl ? req.files.videoUrl[0].path : null;
+        const thumbnail = req.files?.thumbnail ? req.files.thumbnail[0].path : null;
+
+        console.log('File paths:', { videoUrl, thumbnail });
+
+        try {
+            console.log('Calling movieService.createMovie...');
+            const movie = await movieService.createMovie(req.headers, {
+                title,
+                description,
+                categories,
+                length, // אורך הסרט
+                director, // במאי
+                releaseDate, // תאריך יציאה
+                language, // שפה
+                videoUrl, // נתיב קובץ הסרט
+                thumbnail // נתיב תמונת העטיפה
+            });
+
+
+            console.log('Movie created successfully:', movie);
+
+            return res.status(201)
+                .location(`/movies/${movie._id}`)
+                .json(movie);
+        } catch (error) {
+            console.error('Error occurred during movie creation:', error);
+            if (error.message === 'No user ID found in headers' || error.message === 'Invalid user ID') {
+                return res.status(401).json({ error: error.message });
+            }
+            if (error.message.includes("Missing required fields")) {
+                return res.status(400).json({ error: error.message });
+            }
+            if (error.message.includes("Category with ID")) {
+                return res.status(404).json({ error: error.message });
+            } else {
+                console.error('Unexpected error:', error);
+                return res.status(500).json({ error: 'An unexpected error occurred.' });
+            }
         }
-        if(error.message.includes("Category with ID")) {
-            return res.status(404).json({ error: error.message });
-        }
-        else {
-            // Default error handler for unexpected errors
-            console.error('Unexpected error:', error);
-            res.status(500).json({ error: 'An unexpected error occurred.' });
-        }
-    }
+    });
 };
 
 // Get a movie by ID

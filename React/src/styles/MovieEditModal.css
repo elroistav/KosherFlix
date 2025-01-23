@@ -93,3 +93,10 @@
     border-radius: 4px;
     font-size: 14px;
   }
+
+  .form-group input[type="checkbox"] {
+    width: 20px; /* הגדרת רוחב גודל ה-checkbox */
+    height: 20px; /* הגדרת גובה ה-checkbox */
+    cursor: pointer; /* שינויים בעת חיבור העכבר */
+    margin-right: 10px; /* מרווח בין ה-checkbox לשם המאפיין */
+}
