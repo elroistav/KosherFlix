@@ -55,10 +55,18 @@ const Welcome = () => {
                 });
             }
         } catch (error) {
-            if (error.response.status === 401) {
-                alert('Login failed - Invalid username or password');
+            if (error.response) {
+                // server error
+                if (error.response.status === 401) {
+                    alert('Login failed - Invalid username or password');
+                }
+                setError('Login failed');
+            } else {
+                // no server connection error
+                console.error('An error occurred:', error.message || 'Unknown error');
+                alert('No connection to server. Please try again later.');
+                setError('No connection to server');
             }
-            setError('Login failed');
             console.error('Login failed:', error);
         }
     };
