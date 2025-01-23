@@ -1,6 +1,7 @@
-package com.example.netflix_app4;
+package com.example.netflix_app4.network;
 
-import java.util.List;
+import com.example.netflix_app4.model.CategoriesResponse;
+import com.example.netflix_app4.model.MovieModel;
 
 import retrofit2.Call;
 import retrofit2.http.GET;

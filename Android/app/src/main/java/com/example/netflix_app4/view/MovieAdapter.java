@@ -1,4 +1,4 @@
-package com.example.netflix_app4;
+package com.example.netflix_app4.view;
 
 import android.content.Context;
 import android.util.Log;
@@ -13,8 +13,9 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.netflix_app4.R;
+import com.example.netflix_app4.model.MovieModel;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHolder> {

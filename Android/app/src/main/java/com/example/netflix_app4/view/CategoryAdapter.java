@@ -1,6 +1,5 @@
-package com.example.netflix_app4;
+package com.example.netflix_app4.view;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,6 +10,12 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.netflix_app4.network.MovieApiService;
+import com.example.netflix_app4.R;
+import com.example.netflix_app4.network.RetrofitClient;
+import com.example.netflix_app4.model.CategoryPromoted;
+import com.example.netflix_app4.model.MovieModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,7 +61,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
 
         for (String movieId : movieIds) {
             MovieApiService apiService = RetrofitClient.getRetrofitInstance().create(MovieApiService.class);
-            apiService.getMovieById(movieId, "678c10fe72b00e76a2d02581").enqueue(new Callback<MovieModel>() {
+            apiService.getMovieById(movieId, "679145dc2af1fd8ab3650de9").enqueue(new Callback<MovieModel>() {
                 @Override
                 public void onResponse(Call<MovieModel> call, Response<MovieModel> response) {
                     if (response.isSuccessful() && response.body() != null) {

@@ -1,4 +1,4 @@
-package com.example.netflix_app4;
+package com.example.netflix_app4.network;
 
 import java.util.concurrent.TimeUnit;
 import okhttp3.OkHttpClient;
