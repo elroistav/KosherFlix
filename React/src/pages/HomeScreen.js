@@ -107,7 +107,7 @@ function HomeScreen() {
     }
 
     fetchMovies();
-  }, []);
+  }, [loading, userInfo]);
 
   // Handle search results
   const handleSearchResults = (results) => {
