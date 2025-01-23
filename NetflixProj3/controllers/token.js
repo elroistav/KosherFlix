@@ -26,7 +26,7 @@ const isLoggedIn = async (req, res) => {
         const token = req.headers.authorization.split(" ")[1];
         try {
             const data = jwt.verify(token, key);
-            console.log('The logged in user is: ' + data.username);
+            console.log('The logged in user is: ' + data.name);
             const user = {
                 name: data.name,
                 avatar: data.image ? `${data.image}` : null,
