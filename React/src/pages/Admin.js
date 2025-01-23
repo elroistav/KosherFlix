@@ -53,8 +53,13 @@ function HomeScreen() {
             name: response.data.name,
             avatar: avatarUrl, 
             userId: response.data.userId,
+            token: token,
+            isAdmin: response.data.isAdmin
           });
 
+          if (response.data.isAdmin === false) {
+            navigate('/'); 
+          }
           console.log('the userInfo ' + JSON.stringify(userInfo));
 
         }

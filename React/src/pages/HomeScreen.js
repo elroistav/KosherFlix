@@ -42,7 +42,8 @@ function HomeScreen() {
             name: response.data.name,
             avatar: avatarUrl, 
             userId: response.data.userId,
-            token: token
+            token: token,
+            isAdmin: response.data.isAdmin
           });
 
           console.log('the userInfo ' + JSON.stringify(userInfo));
@@ -158,7 +159,7 @@ function HomeScreen() {
 
       {/* Movie Popup */}
       {selectedMovie && (
-        <MoviePopup initialMovie={selectedMovie} onClose={() => setSelectedMovie(null)} />
+        <MoviePopup userInfo = {userInfo} initialMovie={selectedMovie} onClose={() => setSelectedMovie(null)} />
       )}
       <Link to="/another">Go to Another Page</Link>
     </div>

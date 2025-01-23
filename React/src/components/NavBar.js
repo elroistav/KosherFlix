@@ -189,12 +189,14 @@ function Navbar( { onSearchResults, clearSearchResults, userInfo, loading} ) {
             <Link to="/profile">Profile</Link>
             <Link to="/settings">Settings</Link>
             <Link to="/logout">Logout</Link>
-            <Link 
-              to="/admin" 
-              state={{ token: userInfo?.token }}
-          >
-              Admin
-          </Link>
+            {userInfo?.isAdmin && (
+        <Link 
+            to="/admin" 
+            state={{ token: userInfo?.token }}
+        >
+            Admin
+        </Link>
+    )}
           </div>
         )}
       </div>

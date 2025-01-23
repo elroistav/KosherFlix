@@ -13,7 +13,8 @@ const login = async (req, res) => {
     const data = { username: req.body.username,
                    name: user.name,
                    image: user.image,
-                   userId: user._id
+                   userId: user._id,
+                    isAdmin: user.isAdmin
      }
      console.log('LOGIN The data is: ' + JSON.stringify(data));
      const token = jwt.sign(data, key)
@@ -30,7 +31,8 @@ const isLoggedIn = async (req, res) => {
             const user = {
                 name: data.name,
                 avatar: data.image ? `${data.image}` : null,
-                userId: data.userId
+                userId: data.userId,
+                isAdmin: data.isAdmin
             };
             console.log('The user is: ' + JSON.stringify(user));
             return res.status(200).json(user);

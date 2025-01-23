@@ -5,10 +5,12 @@ import { useNavigate } from 'react-router-dom';
 import MoviePlayer from './MoviePlayer'; // Import your existing MoviePlayer component
 import MovieInfo from './MovieInfo';
 import '../styles/MoviePopup.css';
+//import user from '../../../NetflixProj3/models/user';
 
-function MoviePopup({ initialMovie, onClose }) {
+function MoviePopup({ userInfo, initialMovie, onClose }) {
   const [movie, setMovie] = useState(initialMovie);
   const [recommendations, setRecommendations] = useState([]);
+  const [loadingRecommendations, setLoadingRecommendations] = useState(false);
   const [show, setShow] = useState(false);
 
   const navigate = useNavigate();
@@ -18,11 +20,17 @@ function MoviePopup({ initialMovie, onClose }) {
     async function fetchRecommendations() {
       if (!movie?._id) return;
 
+      setLoadingRecommendations(true);
+
       try {
         console.log('Fetching recommendations for movie:', movie.title, movie._id);
-        const response = await axios.get(`http://localhost:4000/api/movies/${movie._id}/recommend`, {
-          headers: { 'user-id': '6790aeff2af1fd8ab364f8f3' }
-        });
+        console.log('fetch User ID:', userInfo.userId);
+        const response = await axios.get(
+          `http://localhost:4000/api/movies/${movie._id}/recommend`,
+          {
+              headers: { 'user-id': userInfo.userId } // כאן מעבירים את ה-Headers
+          }
+      );
         const recommendedMovieIds = response.data; // Assuming the response is a list of movie IDs
 
         // Fetch details for each recommended movie
@@ -30,7 +38,7 @@ function MoviePopup({ initialMovie, onClose }) {
           recommendedMovieIds.map(async (id) => {
             try {
               const movieResponse = await axios.get(`http://localhost:4000/api/movies/${id}`, {
-                headers: { 'user-id': '6790aeff2af1fd8ab364f8f3' }
+                headers: { 'user-id': userInfo.userId }
               });
               return movieResponse.data;
             } catch (error) {
@@ -43,6 +51,8 @@ function MoviePopup({ initialMovie, onClose }) {
         setRecommendations(recommendedMovies.filter((rec) => rec !== null)); // Filter out null responses
       } catch (error) {
         console.error("Error fetching recommendations:", error);
+      } finally {
+        setLoadingRecommendations(false); 
       }
     }
 
@@ -71,6 +81,24 @@ function MoviePopup({ initialMovie, onClose }) {
     }
   };
 
+  const handleWatchClick = async () => {
+    try {
+        console.log('post User ID:', userInfo.userId);
+        await axios.post(
+            `http://localhost:4000/api/movies/${movie._id}/recommend`,
+            {}, // גוף הבקשה (אם אין מידע בגוף, העבר אובייקט ריק)
+            {
+                headers: { 'user-id': userInfo.userId } // כאן מעבירים את ה-Headers
+            }
+        );
+        navigate('/movie', { state: { movie } });
+    } catch (error) {
+        console.error('Failed to update recommendations:', error);
+        navigate('/movie', { state: { movie } });
+    }
+};
+
+
   return (
     <div className="movie-popup-overlay" onClick={onClose}>
       <div className="movie-popup-content" onClick={(e) => e.stopPropagation()}>
@@ -86,13 +114,15 @@ function MoviePopup({ initialMovie, onClose }) {
           </div>
         )}
         <MovieInfo movie={movie} />
-      <button className="watch-button" onClick={() => {navigate('/movie', { state: { movie } });}}>
-        Watch Movie
-        </button>
+        <button className="watch-button" onClick={handleWatchClick}>
+          Watch Now
+      </button>
         <div className="movie-popup-recommendations">
-          <h3>Movie recommendations based of your previous watches:</h3>
+        <h3>Movie recommendations based of your previous watches:</h3>
           <div className="recommendations-container">
-            {recommendations.length > 0 ? (
+            {loadingRecommendations ? ( 
+              <p>Loading recommendations...</p> 
+            ) : recommendations.length > 0 ? (
               recommendations.map((rec) => (
                 <MovieCard key={rec._id} movie={rec} onClick={() => setMovie(rec)} />
               ))

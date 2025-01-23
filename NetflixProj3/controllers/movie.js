@@ -219,13 +219,15 @@ const handleGetrecommend = async (req, res) => {
 // Get a movie by ID
 const handlePostrecommend = async (req, res) => {
     try {
+        console.log('Handling POST recommend...');
         const userHexId = req.headers['user-id'];
         const movieHexId = req.params.id;
-
+        console.log('User hex ID:', userHexId);
+        console.log('Movie hex ID:', movieHexId);
         const command = await movieService.postToString(userHexId, movieHexId);
-
+        console.log('Command:', command);
         await movieService.sendToServer(command);
-
+        console.log('Recommendation sent successfully');
         res.status(204).send();
         
     } catch (error) {
