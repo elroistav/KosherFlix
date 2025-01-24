@@ -8,6 +8,9 @@ material = "1.10.0"
 activity = "1.9.3"
 constraintlayout = "2.1.4"
 retrofit = "2.9.0"
+roomCommon = "2.6.1"
+roomRuntime = "2.6.1"
+roomCompiler = "2.6.1"
 
 [libraries]
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "retrofit" }
@@ -21,6 +24,9 @@ constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayo
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 glide = { group = "com.github.bumptech.glide", name = "glide", version = "4.16.0" }
 glide-compiler = { group = "com.github.bumptech.glide", name = "compiler", version = "4.16.0" }
+room-common = { group = "androidx.room", name = "room-common", version.ref = "roomCommon" }
+room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "roomRuntime" }
+room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "roomCompiler" }
 
 
 [plugins]

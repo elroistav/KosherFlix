@@ -1,5 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Base colors -->
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="netflix_red">#E50914</color>
+    <color name="netflix_red_dark">#B30000</color>
+
+    <!-- Light theme colors -->
+    <color name="background_light">#FFFFFF</color>
+    <color name="surface_light">#494646</color>
+    <color name="text_primary_light">#000000</color>
+    <color name="text_secondary_light">#666666</color>
+
+    <!-- Dark theme colors -->
+    <color name="background_dark">#000000</color>
+    <color name="surface_dark">#333333</color>
+    <color name="text_primary_dark">#FFFFFF</color>
+    <color name="text_secondary_dark">#CCCCCC</color>
+
+    <!-- Standard Material Design colors (required) -->
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
 </resources>
