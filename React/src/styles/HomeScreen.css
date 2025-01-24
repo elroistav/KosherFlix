@@ -32,3 +32,17 @@ body {
   padding: 20px;
   margin-top: 30px; /* Add space between random movie and categories */
 }
+
+.categoriesScreenTitle {
+  font-size: 3rem;
+  margin-top: 50px;
+  margin-bottom: 20px; /* להוסיף אם צריך ריווח תחתון */
+  color: #c00b0b;
+
+  /* יישור למרכז */
+  text-align: center;
+
+  /* למרכז את הטקסט בתוך ההורה */
+  display: block; /* ודא שהכותרת מתנהגת כמו בלוק */
+  width: 100%; /* כדי שתשתמש בכל הרוחב */
+}

@@ -10,6 +10,7 @@ import Welcome from './pages/Welcome';  // Import the Welcome component
 import Login from './pages/Login';  // Import the Login component
 import Register from './pages/Register';  // Import the Register component
 import Admin from './pages/Admin';  // Import the Admin component
+import Categories from './pages/Categories';  // Import the Categories component
 
 
 function AppRoutes() {
@@ -34,6 +35,7 @@ function AppRoutes() {
       <Route path="/" element={<Welcome />} />
       <Route path="/register" element={<Register />} />
       <Route path="/login" element={<Login />} />
+      <Route path="/categories" element={<Categories />} />
       <Route path="*" element={<ErrorPage />} />
     </Routes>
   );

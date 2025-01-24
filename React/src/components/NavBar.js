@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { FaSearch } from 'react-icons/fa'; // Importing the search icon
 import '../styles/NavBar.css';
@@ -16,6 +17,8 @@ function Navbar( { onSearchResults, clearSearchResults, userInfo, loading} ) {
     const [categories, setCategories] = useState([]);
     const [categoriesOpen, setCategoriesOpen] = useState(false);
     const categoriesRef = useRef(null);
+    const navigate = useNavigate();  
+
 
     useEffect(() => {
       const fetchCategories = async () => {
@@ -112,97 +115,118 @@ function Navbar( { onSearchResults, clearSearchResults, userInfo, loading} ) {
       setDropdownOpen(!dropdownOpen);
       };   
 
-  return (
-    <div className="navbar">
-      {/* Logo */}
-      <Link to="/homescreen" className="logo" onClick={clearSearchResults}>
-        Notflicks
-      </Link>
+      const handleLogoClick = () => {
+        // כאן אנחנו שולחים את הטוקן יחד עם הנווט
+        navigate('/homescreen', { state: { token: userInfo?.token } });
+      };
 
-      {/* Navbar Links */}
-      <div className="nav-links" onClick={clearSearchResults}>
-        <div className="categories-dropdown" ref={categoriesRef}>
-        <button 
-          className="categories-button"
-          onClick={(e) => {
-            e.stopPropagation(); // Prevent event bubbling
-            setCategoriesOpen(!categoriesOpen);
-          }}
-        >
-            Categories ▼
-          </button>
-          {categoriesOpen && (
-            <div className="categories-menu">
-              {categories.map(category => (
-                <button 
-                  key={category._id}
-                  onClick={(e) => {
-                    e.stopPropagation(); // Prevent event bubbling
-                    handleCategoryClick(category._id);
-                  }}
-                  className="category-item"
-                >
-                  {category.name}
-                </button>
-              ))}
+      return (
+        <>
+          {/* Check if loading is complete before rendering */}
+          {!loading && (
+            <div className="navbar">
+              {/* Logo */}
+              <div className="logo" onClick={handleLogoClick}>
+              Notflicks
+            </div>
+      
+              {/* Navbar Links */}
+              <div className="nav-links" onClick={clearSearchResults}>
+                <div className="categories-dropdown" ref={categoriesRef}>
+                  <button 
+                    className="categories-button"
+                    onClick={(e) => {
+                      e.stopPropagation(); // Prevent event bubbling
+                      setCategoriesOpen(!categoriesOpen);
+                    }}
+                  >
+                    Categories ▼
+                  </button>
+                  {categoriesOpen && (
+                    <div className="categories-menu">
+                      <button 
+                        onClick={(e) => {
+                          e.stopPropagation(); // Prevent event bubbling
+                          navigate('/categories', { state: { token: userInfo?.token } }); 
+                        }}
+                        className="category-item all-categories"
+                      >
+                        All
+                      </button>
+      
+                      {categories.map(category => (
+                        <button 
+                          key={category._id}
+                          onClick={(e) => {
+                            e.stopPropagation(); // Prevent event bubbling
+                            handleCategoryClick(category._id);
+                          }}
+                          className="category-item"
+                        >
+                          {category.name}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                <Link to="/">Home</Link>
+                <Link to="/movies">Movies</Link>
+                <Link to="/tv-shows">TV Shows</Link>
+                <Link to="/my-list">My List</Link>
+              </div>
+      
+              {/* Profile and Search Icons */}
+              <div className="profile-and-search">
+                {/* Search Icon */}
+                <FaSearch className="search-icon" onClick={handleSearchClick} />
+                {/* Search Panel */}
+                {searchOpen && (
+                  <div className="search-panel" ref={searchPanelRef}>
+                    <form onSubmit={handleSearchSubmit}>
+                      <input
+                        type="text"
+                        value={searchQuery}
+                        onChange={handleSearchChange}
+                        placeholder="Search for movies, TV shows..."
+                      />
+                      <button type="submit">Search</button>
+                    </form>
+                    {noResults && <div className="no-results-toast">No results found</div>}
+                  </div>
+                )}
+                {/* Profile Icon */}
+                <div className="profile-icon" onClick={handleProfileClick}>
+                  {loading ? (
+                    <div>Loading...</div>
+                  ) : (
+                    <div className="profile-details">
+                      <span className="username">Hello, {userInfo?.name}</span>
+                      <img src={userInfo?.avatar} alt="Profile" />
+                    </div>
+                  )}
+                </div>
+      
+                {dropdownOpen && (
+                  <div className="dropdown-menu" ref={dropdownRef}>
+                    <Link to="/profile">Profile</Link>
+                    <Link to="/settings">Settings</Link>
+                    <Link to="/logout">Logout</Link>
+                    {userInfo?.isAdmin && (
+                      <Link 
+                        to="/admin" 
+                        state={{ token: userInfo?.token }}
+                      >
+                        Admin
+                      </Link>
+                    )}
+                  </div>
+                )}
+              </div>
             </div>
           )}
-        </div>
-        <Link to="/">Home</Link>
-        <Link to="/movies">Movies</Link>
-        <Link to="/tv-shows">TV Shows</Link>
-        <Link to="/my-list">My List</Link>
-      </div>
-
-      {/* Profile and Search Icons */}
-      <div className="profile-and-search">
-        {/* Search Icon */}
-        <FaSearch className="search-icon" onClick={handleSearchClick} />
-        {/* Search Panel */}
-        {searchOpen && (
-            <div className="search-panel" ref={searchPanelRef}>
-            <form onSubmit={handleSearchSubmit}>
-                <input
-                type="text"
-                value={searchQuery}
-                onChange={handleSearchChange}
-                placeholder="Search for movies, TV shows..."
-                />
-                <button type="submit">Search</button>
-            </form>
-            {noResults && <div className="no-results-toast">No results found</div>}
-            </div>
-        )}
-        {/* Profile Icon */}
-        <div className="profile-icon" onClick={handleProfileClick}>
-          {loading ? (
-            <div>Loading...</div>
-          ) : (
-            <div className="profile-details">
-              <span className="username">Hello, {userInfo?.name}</span>
-              <img src={userInfo?.avatar} alt="Profile" />
-            </div>
-          )}
-        </div>
-
-        {dropdownOpen && (
-          <div className="dropdown-menu" ref={dropdownRef}>
-            <Link to="/profile">Profile</Link>
-            <Link to="/settings">Settings</Link>
-            <Link to="/logout">Logout</Link>
-            {userInfo?.isAdmin && (
-        <Link 
-            to="/admin" 
-            state={{ token: userInfo?.token }}
-        >
-            Admin
-        </Link>
-    )}
-          </div>
-        )}
-      </div>
-    </div>
-  );
+        </>
+      );
+      
 }
 
 export default Navbar;

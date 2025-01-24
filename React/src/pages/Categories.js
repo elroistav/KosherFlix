@@ -49,7 +49,7 @@ function HomeScreen() {
           const avatarUrl = `http://localhost:4000/${response.data.avatar}`;
           console.log('the returned data is ' + JSON.stringify(response.data));
 
-          setUserInfo({
+          await setUserInfo({
             name: response.data.name,
             avatar: avatarUrl, 
             userId: response.data.userId,
@@ -57,9 +57,7 @@ function HomeScreen() {
             isAdmin: response.data.isAdmin
           });
 
-          if (response.data.isAdmin === false) {
-            navigate('/'); 
-          }
+          
           console.log('the userInfo ' + JSON.stringify(userInfo));
 
         }
@@ -302,27 +300,8 @@ function HomeScreen() {
         loading={loading}
       /> 
 
-        <AdminBar 
-        onAddMovie={handleAddMovieClick} 
-        onAddCategory={handleAddCategoryClick}
-      />
+       <h1 className="categoriesScreenTitle">Categories</h1>
 
-        <MovieAddModal 
-        isOpen={isMovieAddModalOpen} 
-        onClose={() => setIsMovieAddModalOpen(false)} 
-        onSave={handleAddMovie} 
-        isSaving={isSaving} 
-        movie={selectedMovieForModal} 
-        userInfo={userInfo}
-      />
-
-        <CategoryAddModal 
-        isOpen={isCategoryAddModalOpen} 
-        onClose={() => setIsCategoryAddModalOpen(false)} 
-        onSave={handleAddCategory} 
-        isSaving={isSaving} 
-        category={selectedCategoryForModal} 
-      />
 
       {/* Random Movie Section */}
 
@@ -334,18 +313,8 @@ function HomeScreen() {
       {searchResults.length === 0 ? (
         <div className="movieCategories">
           {movies.length > 0 && movies.map((category, index) => (
-            <AdminCategoryRow 
-                    key={index} 
-                    category={category}  // Remove movies prop since it's included in category
-                    onMovieClick={handleMovieClick}
-                    onMovieUpdate={handleMovieUpdate} 
-                    onMovieDelete={handleMovieDelete}
-                    onCategoryDelete={handleCategoryDelete}
-                    onCategoryUpdate={handleCategoryUpdate}
-                    userInfo={userInfo}
-                    loading={loading}
-
-                />          ))}
+                        <CategoryRow key={index} categoryName={category.category} movies={category.movies} onMovieClick={handleMovieClick} />
+            ))}
         </div>
       ) : (
         <SearchResults searchResults={searchResults} handleMovieClick={handleMovieClick} />
