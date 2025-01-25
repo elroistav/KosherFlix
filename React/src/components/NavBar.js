@@ -210,7 +210,7 @@ function Navbar( { onSearchResults, clearSearchResults, userInfo, loading} ) {
                   <div className="dropdown-menu" ref={dropdownRef}>
                     <Link to="/profile">Profile</Link>
                     <Link to="/settings">Settings</Link>
-                    <Link to="/logout">Logout</Link>
+                    <Link to="/">Logout</Link>
                     {userInfo?.isAdmin && (
                       <Link 
                         to="/admin" 
