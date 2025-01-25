@@ -150,3 +150,28 @@
 .recommendations-container::-webkit-scrollbar {
   display: none; /* Safari and Chrome */
 }
+
+.carousel-container {
+  overflow-x: auto; /* גלילה אופקית */
+  display: flex;
+  padding: 10px;
+  scroll-behavior: smooth; /* גלילה חלקה */
+}
+
+.carousel {
+  display: flex;
+  gap: 10px; /* רווח בין הסרטים */
+}
+
+.carousel-container::-webkit-scrollbar {
+  height: 8px;
+}
+
+.carousel-container::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 10px;
+}
+
+.carousel-container::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}

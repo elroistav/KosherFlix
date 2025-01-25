@@ -123,9 +123,15 @@ function MoviePopup({ userInfo, initialMovie, onClose }) {
             {loadingRecommendations ? ( 
               <p>Loading recommendations...</p> 
             ) : recommendations.length > 0 ? (
-              recommendations.map((rec) => (
-                <MovieCard key={rec._id} movie={rec} onClick={() => setMovie(rec)} />
-              ))
+              <div className="carousel">
+                {recommendations.map((rec) => (
+                  <MovieCard
+                    key={rec._id}
+                    movie={rec}
+                    onClick={() => setMovie(rec)}
+                  />
+                ))}
+              </div>
             ) : (
               <p>No recommendations available.</p>
             )}
