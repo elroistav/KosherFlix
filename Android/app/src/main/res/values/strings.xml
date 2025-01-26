@@ -20,4 +20,8 @@
     <string name="error_password_length">Password must be at least 8 characters</string>
     <string name="error_password_format">Password must contain at least one letter and one number</string>
     <string name="error_prefix">Error: %1$s</string>
+    <string name="movie_preview">Movie Preview</string>
+    <string name="play_movie">Play Movie</string>
+    <string name="close_popup">Close</string>
+    <string name="back_button">Back</string>
 </resources>

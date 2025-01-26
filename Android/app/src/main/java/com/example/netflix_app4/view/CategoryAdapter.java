@@ -27,10 +27,12 @@ import retrofit2.Response;
 public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder> {
     private Context context;
     private List<CategoryPromoted> categoryList;
+    private OnMovieClickListener movieClickListener;
 
-    public CategoryAdapter(Context context, List<CategoryPromoted> categoryList) {
+    public CategoryAdapter(Context context, List<CategoryPromoted> categoryList, OnMovieClickListener movieClickListener) {
         this.context = context;
         this.categoryList = categoryList != null ? categoryList : new ArrayList<>();
+        this.movieClickListener = movieClickListener;
     }
 
     @NonNull
@@ -45,39 +47,29 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
         CategoryPromoted category = categoryList.get(position);
         holder.categoryTitle.setText(category.getCategory());
 
-        // Fetch movie details for movie IDs and pass them to MovieAdapter
         List<String> movieIds = category.getMovies();
-
-        // Check if there are any movie IDs to process
         if (movieIds == null || movieIds.isEmpty()) {
             Log.d("CategoryAdapter", "No movies to fetch for category " + category.getCategory());
             return;
         }
 
-        Log.d("CategoryAdapter", "Fetching movie details for category: " + category.getCategory());
-        Log.d("CategoryAdapter", "Movie IDs: " + movieIds);
-
         List<MovieModel> movieDetails = new ArrayList<>();
-
         for (String movieId : movieIds) {
             MovieApiService apiService = RetrofitClient.getRetrofitInstance().create(MovieApiService.class);
-            apiService.getMovieById(movieId, "679145dc2af1fd8ab3650de9").enqueue(new Callback<MovieModel>() {
+            apiService.getMovieById(movieId, "679615afd6aeeebe1038f023").enqueue(new Callback<MovieModel>() {
                 @Override
                 public void onResponse(Call<MovieModel> call, Response<MovieModel> response) {
                     if (response.isSuccessful() && response.body() != null) {
                         movieDetails.add(response.body());
                         Log.d("CategoryAdapter", "Fetched movie: " + response.body().getTitle());
                     } else {
-                        Log.e("CategoryAdapter", "Failed to fetch movie details: Response was not successful.");
+                        Log.e("CategoryAdapter", "Failed to fetch movie details.");
                     }
 
                     // Update RecyclerView when all details are fetched
                     if (movieDetails.size() == movieIds.size()) {
                         Log.d("CategoryAdapter", "All movies fetched for category " + category.getCategory());
-                        Log.d("CategoryAdapter", "Fetched movies: " + movieDetails);
-
-                        // Initialize and set the MovieAdapter
-                        MovieAdapter movieAdapter = new MovieAdapter(context, movieDetails);
+                        MovieAdapter movieAdapter = new MovieAdapter(context, movieDetails, movieClickListener);
                         holder.moviesRecyclerView.setAdapter(movieAdapter);
                         holder.moviesRecyclerView.setLayoutManager(
                                 new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
@@ -87,12 +79,11 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
 
                 @Override
                 public void onFailure(Call<MovieModel> call, Throwable t) {
-                    Log.e("CategoryAdapter", "Failed to fetch movie details for ID " + movieId + ": " + t.getMessage());
+                    Log.e("CategoryAdapter", "Failed to fetch movie details: " + t.getMessage());
                 }
             });
         }
     }
-
 
     @Override
     public int getItemCount() {
@@ -104,7 +95,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
         if (newCategories != null) {
             categoryList.addAll(newCategories);
         }
-        notifyDataSetChanged(); // Refresh the RecyclerView
+        notifyDataSetChanged();
     }
 
     public static class CategoryViewHolder extends RecyclerView.ViewHolder {
@@ -117,7 +108,12 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
             moviesRecyclerView = itemView.findViewById(R.id.moviesRecyclerView);
         }
     }
+
+    public interface OnMovieClickListener {
+        void onMovieClick(MovieModel movie);
+    }
 }
+
 
 
 

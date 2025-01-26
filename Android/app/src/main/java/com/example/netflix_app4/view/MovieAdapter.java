@@ -1,6 +1,8 @@
 package com.example.netflix_app4.view;
 
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,9 +12,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.CustomTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.example.netflix_app4.R;
 import com.example.netflix_app4.model.MovieModel;
 
@@ -20,13 +25,13 @@ import java.util.List;
 
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHolder> {
     private Context context;
-    private List<MovieModel> movieList;
+    private List<MovieModel> movies;
+    private CategoryAdapter.OnMovieClickListener movieClickListener;
 
-    public MovieAdapter(Context context, List<MovieModel> movieList) {
+    public MovieAdapter(Context context, List<MovieModel> movies, CategoryAdapter.OnMovieClickListener movieClickListener) {
         this.context = context;
-        this.movieList = movieList;
-        Log.d("MovieAdapter", "Adapter initialized with movie list size: " + movieList.size());
-
+        this.movies = movies;
+        this.movieClickListener = movieClickListener;
     }
 
     @NonNull
@@ -38,33 +43,47 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
 
     @Override
     public void onBindViewHolder(@NonNull MovieViewHolder holder, int position) {
-        MovieModel movie = movieList.get(position);
-        Log.d("MainActivity", "Binding movie: " + movie.getTitle()); // Debugging
-        Log.d("MainActivity", "Movie thumbnail: " + movie.getThumbnail()); // Debugging
-        Log.d("MainActivity", "Movie description: " + movie.getDescription()); // Debugging
-        Log.d("MainActivity", "Movie video URL: " + movie.getVideoUrl()); // Debugging
-        holder.movieTitle.setText(movie.getTitle());
-        Glide.with(context).load(movie.getThumbnail()).into(holder.movieThumbnail);
+        MovieModel movie = movies.get(position);
+        holder.bind(movie);
 
         holder.itemView.setOnClickListener(v -> {
-            Toast.makeText(context, "Clicked on: " + movie.getTitle(), Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(context, MovieDetailsActivity.class);
+            intent.putExtra("movieDetails", movie); // Pass the selected movie as an extra
+            context.startActivity(intent);
         });
     }
 
     @Override
     public int getItemCount() {
-        return movieList.size();
+        return movies.size();
     }
 
-    public static class MovieViewHolder extends RecyclerView.ViewHolder {
-        TextView movieTitle;
-        ImageView movieThumbnail;
+    public class MovieViewHolder extends RecyclerView.ViewHolder {
+        private ImageView movieThumbnail;
+        private TextView movieTitle;
 
-        public MovieViewHolder(@NonNull View itemView) {
+        public MovieViewHolder(View itemView) {
             super(itemView);
-            movieTitle = itemView.findViewById(R.id.movieTitle);
             movieThumbnail = itemView.findViewById(R.id.movieThumbnail);
+            movieTitle = itemView.findViewById(R.id.movieTitle);
+
+            // Handle item click
+            itemView.setOnClickListener(v -> {
+                int position = getAdapterPosition();
+                if (position != RecyclerView.NO_POSITION && movieClickListener != null) {
+                    movieClickListener.onMovieClick(movies.get(position));
+                }
+            });
+        }
+
+        public void bind(MovieModel movie) {
+            Glide.with(context)
+                    .load(movie.getThumbnail())
+                    .placeholder(R.drawable.placeholder_image) // Add a placeholder for better UX
+                    .into(movieThumbnail);
+            movieTitle.setText(movie.getTitle());
         }
     }
 }
+
 

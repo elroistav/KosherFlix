@@ -3,6 +3,8 @@ package com.example.netflix_app4.network;
 import com.example.netflix_app4.model.CategoriesResponse;
 import com.example.netflix_app4.model.MovieModel;
 
+import java.util.List;
+
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
@@ -20,5 +22,11 @@ public interface MovieApiService {
     @GET("movies/")
     Call<CategoriesResponse> getCategories(
             @Header("user-id") String userId // User ID passed in the header
+    );
+
+    @GET("movies/{id}/recommend")
+    Call<List<String>> getRecommendations(
+            @Path("id") String movieId,
+            @Header("user-id") String userId
     );
 }

@@ -2,15 +2,20 @@ package com.example.netflix_app4.view;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.util.Log;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.netflix_app4.R;
+import com.example.netflix_app4.model.MovieModel;
 import com.example.netflix_app4.viewmodel.CategoryViewModel;
 import com.example.netflix_app4.viewmodel.UserViewModel;
 import com.google.android.material.appbar.MaterialToolbar;
@@ -76,9 +81,20 @@ public class MainActivity extends AppCompatActivity {
 
     private void setupRecyclerView() {
         categoriesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        categoryAdapter = new CategoryAdapter(this, new ArrayList<>());
+
+        categoryAdapter = new CategoryAdapter(this, new ArrayList<>(), movie -> {
+            // Show popup dialog when a movie is clicked
+            showMoviePopup(movie);
+        });
         categoriesRecyclerView.setAdapter(categoryAdapter);
+
+        categoryViewModel = new ViewModelProvider(this).get(CategoryViewModel.class);
+        observeViewModel();
+
+        Button fetchButton = findViewById(R.id.fetchButton);
+        fetchButton.setOnClickListener(v -> categoryViewModel.fetchCategories("679615afd6aeeebe1038f023"));
     }
+
 
     private void observeViewModels() {
         // Observe categories
@@ -90,8 +106,8 @@ public class MainActivity extends AppCompatActivity {
 
         categoryViewModel.getLastWatchedLiveData().observe(this, lastWatched -> {
             if (lastWatched != null) {
-                Log.d(TAG, "Last watched category: " + lastWatched.getCategory());
-                Log.d(TAG, "Last watched movies: " + lastWatched.getMovies());
+                Log.d("MainActivity", "Last watched category: " + lastWatched.getCategory());
+                Log.d("MainActivity", "Last watched movies: " + lastWatched.getMovies());
             }
         });
 
@@ -113,6 +129,37 @@ public class MainActivity extends AppCompatActivity {
         userViewModel.logout();
         redirectToLogin();
     }
+
+    public void showMoviePopup(MovieModel movie) {
+        Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.movie_details);
+        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        // Bind views
+        ImageView moviePoster = dialog.findViewById(R.id.moviePreview);
+        TextView movieTitle = dialog.findViewById(R.id.movieTitle);
+        TextView movieDescription = dialog.findViewById(R.id.movieDescription);
+        Button watchButton = dialog.findViewById(R.id.watchButton);
+        Log.d("MainActivity", "Showing movie popup for: " + movie.getTitle());
+
+        // Set data
+        String thumbnailUrl = movie.getThumbnail();
+        Log.d("MainActivity", "Movie thumbnail URL: " + thumbnailUrl);
+        Log.d("MainActivity", "Movie Poster: " + moviePoster);
+
+        movieTitle.setText(movie.getTitle());
+        movieDescription.setText(movie.getDescription());
+
+        // Handle button click
+        watchButton.setOnClickListener(v -> {
+            Toast.makeText(this, "Watch Movie feature coming soon!", Toast.LENGTH_SHORT).show();
+        });
+
+        dialog.show();
+    }
+}
+
 
     private void redirectToLogin() {
         Intent intent = new Intent(this, LoginActivity.class);

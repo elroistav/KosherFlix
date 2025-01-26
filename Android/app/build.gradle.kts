@@ -4,7 +4,7 @@ plugins {
 
 android {
     namespace = "com.example.netflix_app4"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.example.netflix_app4"
@@ -41,6 +41,7 @@ dependencies {
     implementation(libs.constraintlayout)
     implementation(libs.room.common)
     implementation(libs.room.runtime)
+    implementation(libs.cardview)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
@@ -49,5 +50,5 @@ dependencies {
     implementation(libs.glide)
     annotationProcessor(libs.glide.compiler)
     annotationProcessor(libs.room.compiler)
-
+    implementation(libs.recyclerview)
 }
