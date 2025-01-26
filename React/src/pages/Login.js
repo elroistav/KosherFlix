@@ -51,8 +51,13 @@ const Welcome = () => {
                 alert('Login successful');
                 Promise.resolve().then(() => {
                 const token = response.data.token;
-                navigate('/homescreen', { state: { token } });
+                navigate('/homescreen', { 
+                    state: { 
+                        token: token,
+                        isDarkMode: false
+                    }
                 });
+                            });
             }
         } catch (error) {
             if (error.response) {
