@@ -22,5 +22,5 @@
         android:paddingTop="4dp"
         android:textSize="14sp"
         android:textColor="#000"
-        android:text="Movie Title" />
+        android:text="@string/movie_title" />
 </LinearLayout>

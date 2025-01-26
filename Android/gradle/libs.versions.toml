@@ -9,6 +9,9 @@ activity = "1.9.3"
 constraintlayout = "2.1.4"
 recyclerview = "1.4.0"
 retrofit = "2.9.0"
+roomCommon = "2.6.1"
+roomRuntime = "2.6.1"
+roomCompiler = "2.6.1"
 cardview = "1.0.0"
 
 [libraries]
@@ -25,6 +28,9 @@ retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit
 glide = { group = "com.github.bumptech.glide", name = "glide", version = "4.16.0" }
 glide-compiler = { group = "com.github.bumptech.glide", name = "compiler", version = "4.16.0" }
 cardview = { group = "androidx.cardview", name = "cardview", version.ref = "cardview" }
+room-common = { group = "androidx.room", name = "room-common", version.ref = "roomCommon" }
+room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "roomRuntime" }
+room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "roomCompiler" }
 
 
 [plugins]

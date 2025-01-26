@@ -39,6 +39,8 @@ dependencies {
     implementation(libs.material)
     implementation(libs.activity)
     implementation(libs.constraintlayout)
+    implementation(libs.room.common)
+    implementation(libs.room.runtime)
     implementation(libs.cardview)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
@@ -47,6 +49,6 @@ dependencies {
     implementation(libs.converter.gson)
     implementation(libs.glide)
     annotationProcessor(libs.glide.compiler)
-    implementation(libs.cardview)
+    annotationProcessor(libs.room.compiler)
     implementation(libs.recyclerview)
 }
