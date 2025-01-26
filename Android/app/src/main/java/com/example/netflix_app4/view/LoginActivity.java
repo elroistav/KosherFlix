@@ -8,17 +8,24 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.netflix_app4.R;
-import com.example.netflix_app4.model.User;
 import com.example.netflix_app4.viewmodel.LoginViewModel;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
+import java.util.regex.Pattern;
+
 public class LoginActivity extends AppCompatActivity {
+    // View references
     private TextInputLayout usernameLayout;
     private TextInputLayout passwordLayout;
     private TextInputEditText usernameInput;
     private TextInputEditText passwordInput;
     private LoginViewModel loginViewModel;
+
+    // Regex patterns and constants
+    private static final Pattern USERNAME_REGEX = Pattern.compile("^[A-Za-z0-9_-]{3,15}$");
+    private static final Pattern PASSWORD_REGEX = Pattern.compile("^(?=.*[a-zA-Z])(?=.*\\d)[A-Za-z\\d!@#$%^&*]{8,}$");
+    private static final int MIN_PASSWORD_LENGTH = 8;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,49 +50,62 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void observeViewModel() {
-        loginViewModel.getLoggedInUser().observe(this, user -> {
-            if (user != null && user.isLoggedIn()) {
-                startActivity(new Intent(this, MainActivity.class)
-                        .putExtra("userId", user.getId())
-                        .putExtra("token", user.getToken()));
+        loginViewModel.getLoginResult().observe(this, success -> {
+            if (success) {
+                startActivity(new Intent(this, MainActivity.class));
                 finish();
             }
         });
 
         loginViewModel.getError().observe(this, error -> {
             if (error != null) {
-                Toast.makeText(this, "Error: " + error, Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.error_prefix, error), Toast.LENGTH_SHORT).show();
             }
         });
     }
 
     private void attemptLogin() {
+        // Reset errors
         usernameLayout.setError(null);
         passwordLayout.setError(null);
 
-        CharSequence usernameText = usernameInput.getText();
-        CharSequence passwordText = passwordInput.getText();
-
-        String username = usernameText != null ? usernameText.toString() : "";
-        String password = passwordText != null ? passwordText.toString() : "";
+        String username = usernameInput.getText() != null ? usernameInput.getText().toString() : "";
+        String password = passwordInput.getText() != null ? passwordInput.getText().toString() : "";
 
         boolean cancel = false;
         TextInputLayout focusView = null;
 
-        if (TextUtils.isEmpty(password)) {
-            passwordLayout.setError(getString(R.string.error_password_required));
-            focusView = passwordLayout;
-            cancel = true;
-        } else if (password.length() < 8) {
-            passwordLayout.setError(getString(R.string.error_password_length));
-            focusView = passwordLayout;
+        // Validate username and password
+        if (TextUtils.isEmpty(username) || TextUtils.isEmpty(password)) {
+            if (TextUtils.isEmpty(username)) {
+                usernameLayout.setError(getString(R.string.error_username_required));
+                focusView = usernameLayout;
+            }
+            if (TextUtils.isEmpty(password)) {
+                passwordLayout.setError(getString(R.string.error_password_required));
+                if (focusView == null) focusView = passwordLayout;
+            }
             cancel = true;
         }
 
-        if (TextUtils.isEmpty(username)) {
-            usernameLayout.setError(getString(R.string.error_username_required));
-            focusView = usernameLayout;
+        // Username regex check
+        if (!TextUtils.isEmpty(username) && !USERNAME_REGEX.matcher(username).matches()) {
+            usernameLayout.setError(getString(R.string.error_username_format));
+            if (focusView == null) focusView = usernameLayout;
             cancel = true;
+        }
+
+        // Password validation
+        if (!TextUtils.isEmpty(password)) {
+            if (password.length() < MIN_PASSWORD_LENGTH) {
+                passwordLayout.setError(getString(R.string.error_password_length));
+                if (focusView == null) focusView = passwordLayout;
+                cancel = true;
+            } else if (!PASSWORD_REGEX.matcher(password).matches()) {
+                passwordLayout.setError(getString(R.string.error_password_format));
+                if (focusView == null) focusView = passwordLayout;
+                cancel = true;
+            }
         }
 
         if (cancel) {

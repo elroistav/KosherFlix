@@ -5,9 +5,6 @@
     <string name="login">Login</string>
     <string name="username">Username</string>
     <string name="password">Password</string>
-    <string name="error_password_required">Password is required</string>
-    <string name="error_password_length">Password must be at least 8 characters</string>
-    <string name="error_username_required">Username is required</string>
     <string name="loginTextView">Login</string>
     <string name="usernameHint">Username</string>
     <string name="passwordHint">Password</string>
@@ -15,4 +12,12 @@
     <string name="fetch_categories">Fetch Categories</string>
     <string name="movie_title">Movie Title</string>
     <string name="logout">Logout</string>
+
+    <!-- Validation messages -->
+    <string name="error_username_required">Username is required</string>
+    <string name="error_password_required">Password is required</string>
+    <string name="error_username_format">Username must be between 3 and 15 characters and can only contain letters, numbers, underscores, and hyphens</string>
+    <string name="error_password_length">Password must be at least 8 characters</string>
+    <string name="error_password_format">Password must contain at least one letter and one number</string>
+    <string name="error_prefix">Error: %1$s</string>
 </resources>

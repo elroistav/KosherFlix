@@ -13,6 +13,7 @@ public class LoginViewModel extends AndroidViewModel {
     private final UserRepository repository;
     private final MutableLiveData<String> error = new MutableLiveData<>();
     private final LiveData<User> loggedInUser;
+    private final MutableLiveData<Boolean> loginResult = new MutableLiveData<>();
 
     public LoginViewModel(@NonNull Application application) {
         super(application);
@@ -24,14 +25,19 @@ public class LoginViewModel extends AndroidViewModel {
         repository.login(username, password, new UserRepository.OnLoginCallback() {
             @Override
             public void onSuccess(String token) {
-                // Success is handled through loggedInUser LiveData
+                loginResult.postValue(true);
             }
 
             @Override
             public void onError(String message) {
                 error.postValue(message);
+                loginResult.postValue(false);
             }
         });
+    }
+
+    public LiveData<Boolean> getLoginResult() {
+        return loginResult;
     }
 
     public LiveData<User> getLoggedInUser() {
