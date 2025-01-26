@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import Navbar from '../components/RegisterLoginBar'; // ייבוא ה-navbar
+import RegisterLoginBar from '../components/RegisterLoginBar'; // ייבוא ה-navbar
 import '../styles/RegisterLogin.css';
 import AuthForm from '../components/AutoForm';
 
@@ -122,7 +122,7 @@ const Welcome = () => {
 
     return (
         <div className="register-page">
-            <Navbar />
+            <RegisterLoginBar />
             
             {/* <div className="register-content">
                 <div className="register">

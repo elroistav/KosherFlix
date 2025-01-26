@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import '../styles/WelcomeBar.css';
 
-function Navbar({ onSearchResults, clearSearchResults }) {
+function RegisterLoginBar({ onSearchResults, clearSearchResults }) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
   
@@ -11,7 +11,7 @@ function Navbar({ onSearchResults, clearSearchResults }) {
   };
 
   return (
-    <div className="navbar">
+    <div className="WelcomeBar">
       {/* Logo */}
       <Link to="/" className="logo" onClick={clearSearchResults}>
         Netflick
@@ -23,4 +23,4 @@ function Navbar({ onSearchResults, clearSearchResults }) {
   );
 }
 
-export default Navbar;
+export default RegisterLoginBar;

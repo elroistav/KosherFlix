@@ -1,6 +1,26 @@
-.welcome-page {
+
+
+.login-page {
+    min-height: 100vh;    text-align: center;
+    background-color: #080909;
+    display: flex; /* כדי למרכז את התוכן */
+    flex-direction: column; /* שמירה על מתווה אנכי */
+    justify-content: center; /* ממרכז תוכן אנכית */
+}
+
+.register-page {
+    min-height: 100vh;
     text-align: center;
-    margin-top: 50px;
+    background-color: #080909;
+    display: flex; /* כדי למרכז את התוכן */
+    flex-direction: column; /* שמירה על מתווה אנכי */
+    justify-content: center; /* ממרכז תוכן אנכית */
+}
+
+body, html {
+    height: 100%;
+    margin: 0;
+    background-color: #080909;
 }
 
 h1 {

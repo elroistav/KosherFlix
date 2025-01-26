@@ -15,8 +15,6 @@ import Navbar from './components/NavBar';
 import './styles/global.css';
 
 function AppRoutes({ isDarkMode, setIsDarkMode }) {
-  const location = useLocation();
-
   return (
     <Routes>
       <Route path="/homescreen" element={<HomeScreen isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />} />
@@ -26,7 +24,6 @@ function AppRoutes({ isDarkMode, setIsDarkMode }) {
         element={
           <Admin 
             isAdmin={true} 
-            token={location?.state?.token}
             isDarkMode={isDarkMode}
             setIsDarkMode={setIsDarkMode} 
           />
@@ -46,8 +43,26 @@ function AppRoutes({ isDarkMode, setIsDarkMode }) {
             setIsDarkMode={setIsDarkMode} 
           />
         } 
-      />      <Route path="*" element={<ErrorPage />} />
+      />      
+      <Route path="*" element={<ErrorPage />} />
     </Routes>
+  );
+}
+
+function Layout({ isDarkMode, setIsDarkMode }) {
+  const location = useLocation();
+
+  // רשימת עמודים שבהם לא נרצה להציג את ה-NAVBAR
+  const hiddenNavbarPaths = ['/', '/login', '/register'];
+  
+  // בדיקה האם ה-NAVBAR צריך להיות מוסתר
+  const isNavbarHidden = hiddenNavbarPaths.includes(location.pathname);
+
+  return (
+    <>
+      {!isNavbarHidden && <Navbar isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />}
+      <AppRoutes isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />
+    </>
   );
 }
 
@@ -61,8 +76,7 @@ function App() {
   return (
     <Router>
       <div className="App">
-        <Navbar isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />
-        <AppRoutes isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />
+        <Layout isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />
       </div>
     </Router>
   );

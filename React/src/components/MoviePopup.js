@@ -107,6 +107,7 @@ function MoviePopup({ userInfo, initialMovie, onClose }) {
         {movie.videoUrl && (
           <div className="movie-video-prview">
             <MoviePlayer 
+              key={movie.videoUrl}
               videoUrl={movie.videoUrl} 
               controlsAppear={false}
               onEnded={handleVideoEnd} 
