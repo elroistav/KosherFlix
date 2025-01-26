@@ -18,6 +18,10 @@ function Navbar( { onSearchResults, clearSearchResults, userInfo, loading} ) {
     const [categoriesOpen, setCategoriesOpen] = useState(false);
     const categoriesRef = useRef(null);
     const navigate = useNavigate();  
+    const [darkMode, setDarkMode] = useState(false);
+    const [isDarkMode, setIsDarkMode] = useState(false);
+
+
 
 
     useEffect(() => {
@@ -116,9 +120,22 @@ function Navbar( { onSearchResults, clearSearchResults, userInfo, loading} ) {
       };   
 
       const handleLogoClick = () => {
-        // כאן אנחנו שולחים את הטוקן יחד עם הנווט
         navigate('/homescreen', { state: { token: userInfo?.token } });
       };
+
+
+      const toggleDarkMode = () => {
+        setDarkMode(prevMode => {
+          const newMode = !prevMode;
+          document.body.classList.toggle('dark-mode', newMode);
+          return newMode;
+        });
+      };
+
+
+  useEffect(() => {
+    document.body.className = isDarkMode ? 'dark-mode' : 'light-mode';
+  }, [isDarkMode]);
 
       return (
         <>
@@ -129,6 +146,10 @@ function Navbar( { onSearchResults, clearSearchResults, userInfo, loading} ) {
               <div className="logo" onClick={handleLogoClick}>
               Notflicks
             </div>
+
+            <button onClick={() => setIsDarkMode(!isDarkMode)}>
+              {isDarkMode ? 'Light Mode' : 'Dark Mode'}
+            </button>
       
               {/* Navbar Links */}
               <div className="nav-links" onClick={clearSearchResults}>

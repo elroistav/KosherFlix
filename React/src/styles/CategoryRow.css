@@ -3,6 +3,7 @@
   width: 100%;
   margin-bottom: 40px;
   text-align: left;
+  
 }
 
 /* Category Title */
@@ -13,7 +14,7 @@
   font-weight: bold;
   letter-spacing: 1px; /* Adding some letter spacing for style */
   text-transform: none !important; /* Make the category title uppercase */
-  color: #e50914; /* Highlight category titles in red */
+  color: var(--accent-color) !important; /* Highlight category titles in red */
 }
 
 /* Movies container */

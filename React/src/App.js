@@ -11,6 +11,8 @@ import Login from './pages/Login';  // Import the Login component
 import Register from './pages/Register';  // Import the Register component
 import Admin from './pages/Admin';  // Import the Admin component
 import Categories from './pages/Categories';  // Import the Categories component
+import './styles/global.css';
+
 
 
 function AppRoutes() {

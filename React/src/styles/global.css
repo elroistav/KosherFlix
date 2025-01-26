@@ -1,0 +1,26 @@
+:root {
+    --background-color: #ffffff;
+    --text-color: #000000;
+    --primary-color: #e50914;
+  }
+  
+  body.dark-mode {
+    --background-color: #141414;
+    --text-color: #ffffff;
+    --primary-color: #f40612;
+  }
+  
+  body {
+    background-color: var(--background-color);
+    color: var(--text-color);
+  }
+  
+  button {
+    background-color: var(--primary-color);
+    color: var(--text-color);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  

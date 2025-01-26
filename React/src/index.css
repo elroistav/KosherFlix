@@ -11,3 +11,25 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+body.light-mode {
+  --background-primary: rgb(232, 184, 184);
+  --background-secondary: #cc6c6c;
+  --text-primary: black;
+  --text-secondary: #333;
+  --accent-color: #c00b0b;
+  --card-background: rgb(188, 114, 114);
+  --shadow-color: rgba(0,0,0,0.1);
+  --background-BACK: rgba(217, 126, 126, 0.8); /* שקיפות על צבע כהה */
+}
+
+body.dark-mode {
+  --background-primary: #121212;
+  --background-secondary: #2a2727;
+  --text-primary: white;
+  --text-secondary: #bbb;
+  --accent-color: #c61b1b;
+  --card-background: #1f1f1f;
+  --shadow-color: rgba(255,255,255,0.1);
+  --background-BACK: rgba(18, 18, 18, 0.8); /* שקיפות על צבע כהה */
+}
