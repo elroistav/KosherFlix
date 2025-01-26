@@ -6,7 +6,7 @@ import { FaSearch } from 'react-icons/fa'; // Importing the search icon
 import '../styles/NavBar.css';
 //import user from '../../../NetflixProj3/models/user';
 
-function Navbar( { onSearchResults, clearSearchResults, userInfo, loading} ) {
+function Navbar( { onSearchResults, clearSearchResults, userInfo, loading, isDarkMode, setIsDarkMode} ) {
   
     const [searchOpen, setSearchOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
@@ -18,25 +18,27 @@ function Navbar( { onSearchResults, clearSearchResults, userInfo, loading} ) {
     const [categoriesOpen, setCategoriesOpen] = useState(false);
     const categoriesRef = useRef(null);
     const navigate = useNavigate();  
-    const [darkMode, setDarkMode] = useState(false);
-    const [isDarkMode, setIsDarkMode] = useState(false);
+    // const [darkMode, setDarkMode] = useState(false);
+    // const [isDarkMode, setIsDarkMode] = useState(false);
 
 
 
 
     useEffect(() => {
-      const fetchCategories = async () => {
-        try {
-          const response = await axios.get('http://localhost:4000/api/categories', {
-            headers: { 'user-id': userInfo.userId }
-          });
-          setCategories(response.data.categories || []);
-        } catch (error) {
-          console.error('Error fetching categories:', error);
-        }
-      };
-      fetchCategories();
-    }, []);
+      if (userInfo) {
+        const fetchCategories = async () => {
+          try {
+            const response = await axios.get('http://localhost:4000/api/categories', {
+              headers: { 'user-id': userInfo.userId }
+            });
+            setCategories(response.data.categories || []);
+          } catch (error) {
+            console.error('Error fetching categories:', error);
+          }
+        };
+        fetchCategories();
+      }
+    }, [userInfo]); // Now it will re-run when userInfo changes
   
     // Add categories click handler
     const handleCategoryClick = async (categoryId) => {
@@ -56,7 +58,7 @@ function Navbar( { onSearchResults, clearSearchResults, userInfo, loading} ) {
         const movieResponses = await Promise.all(moviePromises);
         const movies = movieResponses.map(response => response.data);
 
-        onSearchResults(movies);
+        onSearchResults(movies, categoryResponse.data.name);
         setCategoriesOpen(false);
       } catch (error) {
         console.error('Error fetching category movies:', error);
@@ -84,7 +86,7 @@ function Navbar( { onSearchResults, clearSearchResults, userInfo, loading} ) {
         } else {
             setNoResults(false);
         }
-        onSearchResults(response.data);
+        onSearchResults(response.data, 'Search Results');
         setSearchOpen(false);
       } catch (error) {
         console.error('Error fetching search results:', error);
@@ -120,24 +122,27 @@ function Navbar( { onSearchResults, clearSearchResults, userInfo, loading} ) {
       };   
 
       const handleLogoClick = () => {
+        clearSearchResults();
         navigate('/homescreen', { state: { token: userInfo?.token } });
       };
 
 
-      const toggleDarkMode = () => {
-        setDarkMode(prevMode => {
-          const newMode = !prevMode;
-          document.body.classList.toggle('dark-mode', newMode);
-          return newMode;
-        });
-      };
+
 
 
   useEffect(() => {
     document.body.className = isDarkMode ? 'dark-mode' : 'light-mode';
   }, [isDarkMode]);
 
+  
+  useEffect(() => {
+    console.log('Categories in Navbar:', categories);
+    console.log('Current pathname:', window.location.pathname);
+    console.log('UserInfo in Navbar:', userInfo);
+  }, [categories, userInfo]);
+
       return (
+        
         <>
           {/* Check if loading is complete before rendering */}
           {!loading && (
@@ -165,10 +170,11 @@ function Navbar( { onSearchResults, clearSearchResults, userInfo, loading} ) {
                   </button>
                   {categoriesOpen && (
                     <div className="categories-menu">
+                      
                       <button 
                         onClick={(e) => {
                           e.stopPropagation(); // Prevent event bubbling
-                          navigate('/categories', { state: { token: userInfo?.token } }); 
+                          navigate('/categories', { state: { token: userInfo?.token, isDarkMode: isDarkMode } }); 
                         }}
                         className="category-item all-categories"
                       >
@@ -235,7 +241,7 @@ function Navbar( { onSearchResults, clearSearchResults, userInfo, loading} ) {
                     {userInfo?.isAdmin && (
                       <Link 
                         to="/admin" 
-                        state={{ token: userInfo?.token }}
+                        state={{ token: userInfo?.token, isDarkMode: isDarkMode }}
                       >
                         Admin
                       </Link>

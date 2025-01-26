@@ -3,10 +3,10 @@ import MovieCard from './MovieCard';
 import AdminMovieCard from './AdminMovieCard';
 import '../styles/SearchResults.css';
 
-function SearchResults({ searchResults, handleMovieClick, isAdmin }) {
+function SearchResults({ searchResults, handleMovieClick, searchText, isAdmin }) {
   return (
     <div className="search-results">
-      <h2>Search Results</h2>
+      <h2>{searchText}</h2>
       <div className="category-row">
         {searchResults.map((movie) => (
           isAdmin ? 

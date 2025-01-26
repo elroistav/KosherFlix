@@ -19,7 +19,7 @@ import CategoryAddModal from '../components/CategoryAddModal';
 //import user from '../../../NetflixProj3/models/user';
 
 
-function HomeScreen() {
+function HomeScreen({ isDarkMode, setIsDarkMode }) {
   const [movies, setMovies] = useState([]);
   const [randomMovie, setRandomMovie] = useState(null);
   const [searchResults, setSearchResults] = useState([]);
@@ -291,6 +291,10 @@ function HomeScreen() {
     setIsCategoryAddModalOpen(true);
   };
 
+  useEffect(() => {
+    document.body.className = isDarkMode ? 'dark-mode' : 'light-mode';
+  }, [isDarkMode]);
+
   return (
     <div className="homeScreenBody">
         <Navbar 
@@ -298,6 +302,8 @@ function HomeScreen() {
         clearSearchResults={clearSearchResults}
         userInfo={userInfo} 
         loading={loading}
+        isDarkMode={isDarkMode}
+        setIsDarkMode={setIsDarkMode}
       /> 
 
        <h1 className="categoriesScreenTitle">Categories</h1>
