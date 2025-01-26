@@ -4,7 +4,7 @@ plugins {
 
 android {
     namespace = "com.example.netflix_app4"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.example.netflix_app4"
@@ -48,4 +48,5 @@ dependencies {
     implementation(libs.glide)
     annotationProcessor(libs.glide.compiler)
     implementation(libs.cardview)
+    implementation(libs.recyclerview)
 }

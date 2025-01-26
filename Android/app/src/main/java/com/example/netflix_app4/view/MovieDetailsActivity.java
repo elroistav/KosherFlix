@@ -49,6 +49,8 @@ public class MovieDetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.movie_details);
 
+        hideSystemUI();
+
         // Initialize UI elements
         moviePreview = findViewById(R.id.moviePreview);
         movieTitle = findViewById(R.id.movieTitle);
@@ -69,6 +71,18 @@ public class MovieDetailsActivity extends AppCompatActivity {
         backButton.setOnClickListener(v -> finish());
         recommendationTitle = findViewById(R.id.recommendationTitle);
         recommendationTitle.setVisibility(View.GONE); // Initially hidden
+    }
+
+    // Function to hide the navigation bar and status bar
+    private void hideSystemUI() {
+        getWindow().getDecorView().setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                        | View.SYSTEM_UI_FLAG_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+        );
     }
 
     private void setupMovieDetails(MovieModel movie) {

@@ -88,17 +88,6 @@ public class MainActivity extends AppCompatActivity {
         Log.d("MainActivity", "Movie thumbnail URL: " + thumbnailUrl);
         Log.d("MainActivity", "Movie Poster: " + moviePoster);
 
-//        if (thumbnailUrl != null && !thumbnailUrl.isEmpty()) {
-//            // Only load the image if the URL is not null or empty
-//            Glide.with(this)
-//                    .load(R.drawable.placeholder_image) // Your placeholder image here
-//                    .into(moviePoster);
-//        } else {
-//            // Optionally, load a placeholder image if the thumbnail is null or empty
-//            Glide.with(this)
-//                    .load(R.drawable.placeholder_image) // Your placeholder image here
-//                    .into(moviePoster);
-//        }
         movieTitle.setText(movie.getTitle());
         movieDescription.setText(movie.getDescription());
 

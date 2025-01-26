@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"> <!-- Ensures content fills the viewport -->
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"> <!-- No match_parent, scrolls with content -->
+
+        <!-- Random Movie Section -->
+        <RelativeLayout
+            android:id="@+id/randomMovieSection"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#000"
+            android:layout_alignParentTop="true">
+
+            <!-- Movie Player -->
+            <FrameLayout
+                android:id="@+id/moviePlayerWrapper"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:background="@drawable/placeholder_image">
+                <!-- Placeholder for Movie Player -->
+            </FrameLayout>
+
+            <!-- Movie Info Section -->
+            <LinearLayout
+                android:id="@+id/movieInfoContainer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginBottom="16dp"
+                android:orientation="vertical"
+                android:layout_below="@id/moviePlayerWrapper"
+                android:background="@android:color/transparent">
+
+                <!-- Movie Title -->
+                <TextView
+                    android:id="@+id/movieTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Movie Title"
+                    android:textColor="#FFFFFF"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:layout_marginBottom="8dp" />
+
+                <!-- Movie Description -->
+                <TextView
+                    android:id="@+id/movieDescription"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Movie Description here"
+                    android:textColor="#FFFFFF"
+                    android:textSize="16sp"
+                    android:ellipsize="end"
+                    android:maxLines="3"
+                    android:layout_marginBottom="12dp" />
+            </LinearLayout>
+
+            <!-- Button Container -->
+            <LinearLayout
+                android:id="@+id/buttonsContainer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginBottom="20dp"
+                android:orientation="horizontal"
+                android:layout_below="@id/movieInfoContainer"
+                android:background="@android:color/transparent">
+
+                <!-- Play Button -->
+                <Button
+                    android:id="@+id/playButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Play"
+                    android:textColor="#000"
+                    android:backgroundTint="#FFF"
+                    android:layout_marginEnd="12dp" />
+
+                <!-- Get Info Button -->
+                <Button
+                    android:id="@+id/infoButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Get Info"
+                    android:textColor="#000"
+                    android:backgroundTint="#FFF" />
+            </LinearLayout>
+        </RelativeLayout>
+
+        <!-- Categories RecyclerView -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/categoriesRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/randomMovieSection"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:clipToPadding="false"
+            android:nestedScrollingEnabled="false" />
+
+    </RelativeLayout>
+</ScrollView>
+
+
