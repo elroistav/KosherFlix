@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Netflix_App4</string>
+    <string name="movie_thumbnail">thumbnail</string>
+    <string name="movie_preview">Movie Preview</string>
+    <string name="play_movie">Play Movie</string>
+    <string name="close_popup">Close</string>
+    <string name="back_button">Back</string>
+</resources>

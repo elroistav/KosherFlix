@@ -1,0 +1,8 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.Netflix_App4" parent="Theme.Material3.DayNight">
+        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+    </style>
+
+    <style name="Theme.Netflix_App4" parent="Base.Theme.Netflix_App4" />
+</resources>
