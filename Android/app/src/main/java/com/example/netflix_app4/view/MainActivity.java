@@ -1,6 +1,9 @@
 package com.example.netflix_app4.view;
 
+import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -89,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
         categoriesRecyclerView.setAdapter(categoryAdapter);
 
         categoryViewModel = new ViewModelProvider(this).get(CategoryViewModel.class);
-        observeViewModel();
+        observeViewModels();
 
         Button fetchButton = findViewById(R.id.fetchButton);
         fetchButton.setOnClickListener(v -> categoryViewModel.fetchCategories("679615afd6aeeebe1038f023"));
@@ -158,8 +161,6 @@ public class MainActivity extends AppCompatActivity {
 
         dialog.show();
     }
-}
-
 
     private void redirectToLogin() {
         Intent intent = new Intent(this, LoginActivity.class);

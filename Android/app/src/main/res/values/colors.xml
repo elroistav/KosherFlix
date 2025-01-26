@@ -24,4 +24,10 @@
     <color name="purple_700">#FF3700B3</color>
     <color name="teal_200">#FF03DAC5</color>
     <color name="teal_700">#FF018786</color>
+
+    <color name="dark_gray">#333333</color>
+    <color name="red">#E50914</color>
+    <color name="black_overlay">#1A000000</color>
+    <color name="semi_transparent">#80000000</color>
+    <color name="primary">#6200EE</color>
 </resources>
