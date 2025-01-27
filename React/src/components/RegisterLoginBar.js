@@ -14,7 +14,7 @@ function RegisterLoginBar({ onSearchResults, clearSearchResults }) {
     <div className="WelcomeBar">
       {/* Logo */}
       <Link to="/" className="logo" onClick={clearSearchResults}>
-        Netflick
+        Notflicks
       </Link>
 
       {/* Login Button on the Right */}

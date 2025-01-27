@@ -38,6 +38,8 @@
     font-family: 'Bebas Neue', sans-serif;  /* Applying the font */
     padding: 0 20px;
     margin-right: 20px;
+    text-decoration: none;  /* Remove underline */
+
   }
   
 /* Login button container */

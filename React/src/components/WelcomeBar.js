@@ -11,7 +11,7 @@ function WelcomeBar() {
     <div className="WelcomeBar">
       {/* Logo */}
       <Link to="/" className="logo" >
-        Netflick
+        Notflicks
       </Link>
 
       {/* Login Button on the Right */}
