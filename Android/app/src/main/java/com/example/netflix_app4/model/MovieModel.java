@@ -8,7 +8,7 @@ import androidx.annotation.NonNull;
 import java.util.List;
 
 public class MovieModel implements Parcelable {
-    private String _id;
+    private final String _id;
     private String title;
     private String description;
     private double rating;
@@ -36,7 +36,7 @@ public class MovieModel implements Parcelable {
         //cast = in.createStringArrayList();
     }
 
-    public static final Creator<MovieModel> CREATOR = new Creator<MovieModel>() {
+    public static final Creator<MovieModel> CREATOR = new Creator<>() {
         @Override
         public MovieModel createFromParcel(Parcel in) {
             return new MovieModel(in);
@@ -72,10 +72,6 @@ public class MovieModel implements Parcelable {
     public String getDirector() {
         return director;
     }
-
-//    public List<String> getCast() {
-//        return cast;
-//    }
 
     public List<CategoryModel> getCategories() {
         return categories;
@@ -114,7 +110,6 @@ public class MovieModel implements Parcelable {
         parcel.writeDouble(rating);
         parcel.writeInt(length);
         parcel.writeString(director);
-        //parcel.writeStringList(cast);
         parcel.writeTypedList(categories);
         parcel.writeString(language);
         parcel.writeString(releaseDate);

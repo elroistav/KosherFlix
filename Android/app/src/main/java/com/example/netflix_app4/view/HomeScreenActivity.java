@@ -32,6 +32,7 @@ import com.example.netflix_app4.viewmodel.CategoryViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 
 import retrofit2.Call;
@@ -72,10 +73,8 @@ public class HomeScreenActivity extends AppCompatActivity {
         categoriesRecyclerView = findViewById(R.id.categoriesRecyclerView);
         categoriesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        categoryAdapter = new CategoryAdapter(this, new ArrayList<>(), movie -> {
-            // Show popup dialog when a movie is clicked
-            showMoviePopup(movie);
-        });
+        // Show popup dialog when a movie is clicked
+        categoryAdapter = new CategoryAdapter(this, new ArrayList<>(), this::showMoviePopup);
         categoriesRecyclerView.setAdapter(categoryAdapter);
 
         categoryViewModel = new ViewModelProvider(this).get(CategoryViewModel.class);
@@ -225,7 +224,7 @@ public class HomeScreenActivity extends AppCompatActivity {
     public void showMoviePopup(MovieModel movie) {
         Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.movie_details);
-        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        Objects.requireNonNull(dialog.getWindow()).setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
         // Bind views

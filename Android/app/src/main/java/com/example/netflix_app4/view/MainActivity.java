@@ -87,10 +87,8 @@ public class MainActivity extends AppCompatActivity {
     private void setupRecyclerView() {
         categoriesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        categoryAdapter = new CategoryAdapter(this, new ArrayList<>(), movie -> {
-            // Show popup dialog when a movie is clicked
-            showMoviePopup(movie);
-        });
+        // Show popup dialog when a movie is clicked
+        categoryAdapter = new CategoryAdapter(this, new ArrayList<>(), this::showMoviePopup);
         categoriesRecyclerView.setAdapter(categoryAdapter);
 
         categoryViewModel = new ViewModelProvider(this).get(CategoryViewModel.class);
@@ -155,9 +153,7 @@ public class MainActivity extends AppCompatActivity {
         movieDescription.setText(movie.getDescription());
 
         // Handle button click
-        watchButton.setOnClickListener(v -> {
-            Toast.makeText(this, "Watch Movie feature coming soon!", Toast.LENGTH_SHORT).show();
-        });
+        watchButton.setOnClickListener(v -> Toast.makeText(this, "Watch Movie feature coming soon!", Toast.LENGTH_SHORT).show());
 
         dialog.show();
     }

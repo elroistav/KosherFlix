@@ -24,4 +24,7 @@
     <string name="play_movie">Play Movie</string>
     <string name="close_popup">Close</string>
     <string name="back_button">Back</string>
+    <string name="get_info">Get Info</string>
+    <string name="play">Play</string>
+    <string name="movie_description_goes_here">Movie Description goes here</string>
 </resources>

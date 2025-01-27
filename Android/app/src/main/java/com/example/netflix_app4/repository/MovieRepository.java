@@ -16,7 +16,7 @@ public class MovieRepository {
     }
 
     public void getMovieById(String movieId, String userId, MovieCallback callback) {
-        apiService.getMovieById(movieId, userId).enqueue(new Callback<MovieModel>() {
+        apiService.getMovieById(movieId, userId).enqueue(new Callback<>() {
             @Override
             public void onResponse(Call<MovieModel> call, Response<MovieModel> response) {
                 if (response.isSuccessful() && response.body() != null) {

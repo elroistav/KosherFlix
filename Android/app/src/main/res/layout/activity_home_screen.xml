@@ -39,7 +39,7 @@
                     android:id="@+id/movieTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Movie Title"
+                    android:text="@string/movie_title"
                     android:textColor="#FFFFFF"
                     android:textSize="24sp"
                     android:textStyle="bold"
@@ -52,7 +52,7 @@
                     android:id="@+id/movieDescription"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Movie Description goes here"
+                    android:text="@string/movie_description_goes_here"
                     android:textColor="#FFFFFF"
                     android:textSize="16sp"
                     android:ellipsize="end"
@@ -63,6 +63,7 @@
             <!-- Button Container -->
             <LinearLayout
                 android:id="@+id/buttonsContainer"
+                style="?android:attr/buttonBarStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
@@ -74,9 +75,10 @@
                 <!-- Play Button -->
                 <Button
                     android:id="@+id/playButton"
+                    style="?android:attr/buttonBarButtonStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Play"
+                    android:text="@string/play"
                     android:textColor="#000"
                     android:backgroundTint="#FFF"
                     android:layout_marginEnd="12dp" />
@@ -84,9 +86,10 @@
                 <!-- Get Info Button -->
                 <Button
                     android:id="@+id/infoButton"
+                    style="?android:attr/buttonBarButtonStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Get Info"
+                    android:text="@string/get_info"
                     android:textColor="#000"
                     android:backgroundTint="#FFF" />
             </LinearLayout>

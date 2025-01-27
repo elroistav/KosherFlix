@@ -16,7 +16,7 @@ public class CategoryRepository {
     }
 
     public void getCategories(String userId, CategoryCallback callback) {
-        apiService.getCategories(userId).enqueue(new Callback<CategoriesResponse>() {
+        apiService.getCategories(userId).enqueue(new Callback<>() {
             @Override
             public void onResponse(Call<CategoriesResponse> call, Response<CategoriesResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {

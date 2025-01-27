@@ -8,7 +8,7 @@ import androidx.annotation.NonNull;
 import java.util.List;
 
 public class CategoryModel implements Parcelable {
-    private String _id;
+    private final String _id;
     private String name;
     private String description;
     private boolean promoted;
@@ -22,7 +22,7 @@ public class CategoryModel implements Parcelable {
         movies = in.createStringArrayList();
     }
 
-    public static final Creator<CategoryModel> CREATOR = new Creator<CategoryModel>() {
+    public static final Creator<CategoryModel> CREATOR = new Creator<>() {
         @Override
         public CategoryModel createFromParcel(Parcel in) {
             return new CategoryModel(in);
