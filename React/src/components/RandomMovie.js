@@ -1,10 +1,20 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import MoviePlayer from './MoviePlayer';
 import '../styles/RandomMovie.css';
 
 function RandomMovie({ movie, onClick }) {
   const navigate = useNavigate();
+  const [isVideoReady, setIsVideoReady] = useState(false);
+
+  useEffect(() => {
+    if (movie && movie.videoUrl) {
+      // Ensure video is fully loaded before attempting playback
+      const video = new Audio(movie.videoUrl);
+      video.load();
+      video.oncanplaythrough = () => setIsVideoReady(true);
+    }
+  }, [movie]);
 
   if (!movie) return null;
 
@@ -14,9 +24,14 @@ function RandomMovie({ movie, onClick }) {
 
   return (
     <div className="random-movie">
-      {/* Movie Player */}
       <div className="movie-player-wrapper">
-        <MoviePlayer videoUrl={movie.videoUrl} controlsAppear={false} />
+        <MoviePlayer 
+          videoUrl={movie.videoUrl} 
+          controlsAppear={false}
+          muted={true} // Force muted to bypass autoplay restrictions
+          autoPlay={true}
+          key={movie.videoUrl} // Force re-render with new video
+        />
       </div>
 
       <div className="random-movie-info">

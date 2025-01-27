@@ -2,19 +2,16 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import '../styles/WelcomeBar.css';
 
-function Navbar({ onSearchResults, clearSearchResults }) {
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const dropdownRef = useRef(null);
+function WelcomeBar() {
+
   
-  const handleProfileClick = () => {
-    setDropdownOpen(!dropdownOpen);
-  };
+
 
   return (
-    <div className="navbar">
+    <div className="WelcomeBar">
       {/* Logo */}
-      <Link to="/" className="logo" onClick={clearSearchResults}>
-        Netflick
+      <Link to="/" className="logo" >
+        Notflicks
       </Link>
 
       {/* Login Button on the Right */}
@@ -25,4 +22,4 @@ function Navbar({ onSearchResults, clearSearchResults }) {
   );
 }
 
-export default Navbar;
+export default WelcomeBar;

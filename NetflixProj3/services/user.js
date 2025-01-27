@@ -59,7 +59,8 @@ const validateUserId = async (headers) => {
         // Check if user exists in database
         const user = await getUserById(userId);
         if (!user) {
-            console.error('Invalid user ID');
+            console.error('Invalid user ID' + userId);
+            
             throw new Error('Invalid user ID');     
         }
 
