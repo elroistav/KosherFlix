@@ -34,6 +34,8 @@ public class MainActivity extends AppCompatActivity {
     private UserViewModel userViewModel;
     private String userId;
     private String token;
+    private String mongoUserId = "679615afd6aeeebe1038f023";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
         observeViewModels();
 
         Button fetchButton = findViewById(R.id.fetchButton);
-        fetchButton.setOnClickListener(v -> categoryViewModel.fetchCategories("679615afd6aeeebe1038f023"));
+        fetchButton.setOnClickListener(v -> categoryViewModel.fetchCategories(mongoUserId));
     }
 
 

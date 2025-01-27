@@ -28,6 +28,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
     private Context context;
     private List<CategoryPromoted> categoryList;
     private OnMovieClickListener movieClickListener;
+    private String userId = "679615afd6aeeebe1038f023";
 
     public CategoryAdapter(Context context, List<CategoryPromoted> categoryList, OnMovieClickListener movieClickListener) {
         this.context = context;
@@ -56,7 +57,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
         List<MovieModel> movieDetails = new ArrayList<>();
         for (String movieId : movieIds) {
             MovieApiService apiService = RetrofitClient.getRetrofitInstance().create(MovieApiService.class);
-            apiService.getMovieById(movieId, "679615afd6aeeebe1038f023").enqueue(new Callback<MovieModel>() {
+            apiService.getMovieById(movieId, userId).enqueue(new Callback<MovieModel>() {
                 @Override
                 public void onResponse(Call<MovieModel> call, Response<MovieModel> response) {
                     if (response.isSuccessful() && response.body() != null) {

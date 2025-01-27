@@ -46,6 +46,8 @@ public class HomeScreenActivity extends AppCompatActivity {
     private TextView movieDescription;
     private Button playButton;
     private Button infoButton;
+    private String userId = "679615afd6aeeebe1038f023";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,9 +75,9 @@ public class HomeScreenActivity extends AppCompatActivity {
         categoryViewModel = new ViewModelProvider(this).get(CategoryViewModel.class);
         observeViewModel();
 
-        categoryViewModel.fetchCategories("679615afd6aeeebe1038f023");
+        categoryViewModel.fetchCategories(userId);
 //        Button fetchButton = findViewById(R.id.fetchButton);
-//        fetchButton.setOnClickListener(v -> categoryViewModel.fetchCategories("679615afd6aeeebe1038f023"));
+//        fetchButton.setOnClickListener(v -> categoryViewModel.fetchCategories(userId));
     }
 
     private void fetchRandomMovie() {
@@ -86,7 +88,7 @@ public class HomeScreenActivity extends AppCompatActivity {
         MovieApiService movieService = retrofit.create(MovieApiService.class);
 
         // Step 1: Fetch categories
-        movieService.getCategories("679615afd6aeeebe1038f023").enqueue(new Callback<CategoriesResponse>() {
+        movieService.getCategories(userId).enqueue(new Callback<CategoriesResponse>() {
             @Override
             public void onResponse(Call<CategoriesResponse> call, Response<CategoriesResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
@@ -103,7 +105,7 @@ public class HomeScreenActivity extends AppCompatActivity {
                         String randomMovieId = allMovieIds.get(new Random().nextInt(allMovieIds.size()));
 
                         // Step 3: Fetch movie details for the randomly selected movie ID
-                        movieService.getMovieById(randomMovieId, "679615afd6aeeebe1038f023").enqueue(new Callback<MovieModel>() {
+                        movieService.getMovieById(randomMovieId, userId).enqueue(new Callback<MovieModel>() {
                             @Override
                             public void onResponse(Call<MovieModel> call, Response<MovieModel> movieResponse) {
                                 if (movieResponse.isSuccessful() && movieResponse.body() != null) {

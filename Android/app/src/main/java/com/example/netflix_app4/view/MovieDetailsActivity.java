@@ -42,6 +42,8 @@ public class MovieDetailsActivity extends AppCompatActivity {
     private RecyclerView recommendationRecyclerView;
     private RecommendationAdapter recommendationAdapter;
     private TextView recommendationTitle;
+    private String userId = "679615afd6aeeebe1038f023";
+
 
 
     @Override
@@ -103,7 +105,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
 
         // Make a GET request
         MovieApiService apiService = RetrofitClient.getRetrofitInstance().create(MovieApiService.class);
-        Call<List<String>> call = apiService.getRecommendations(movieId, "679615afd6aeeebe1038f023");
+        Call<List<String>> call = apiService.getRecommendations(movieId, userId);
 
         call.enqueue(new Callback<List<String>>() {
             @Override
@@ -130,7 +132,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
     private void fetchRecommendedMovies(List<String> movieIds) {
         MovieApiService apiService = RetrofitClient.getRetrofitInstance().create(MovieApiService.class);
         for (String movieId : movieIds) {
-            apiService.getMovieById(movieId, "679615afd6aeeebe1038f023").enqueue(new Callback<MovieModel>() {
+            apiService.getMovieById(movieId, userId).enqueue(new Callback<MovieModel>() {
                 @Override
                 public void onResponse(Call<MovieModel> call, Response<MovieModel> response) {
                     if (response.isSuccessful() && response.body() != null) {
