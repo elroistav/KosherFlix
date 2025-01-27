@@ -6,7 +6,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"> <!-- No match_parent, scrolls with content -->
+        android:layout_height="wrap_content"> <!-- Scrollable content -->
 
         <!-- Random Movie Section -->
         <RelativeLayout
@@ -20,9 +20,7 @@
             <FrameLayout
                 android:id="@+id/moviePlayerWrapper"
                 android:layout_width="match_parent"
-                android:layout_height="300dp"
-                android:background="@drawable/placeholder_image">
-                <!-- Placeholder for Movie Player -->
+                android:layout_height="wrap_content"> <!-- Video view will adjust here -->
             </FrameLayout>
 
             <!-- Movie Info Section -->
@@ -54,7 +52,7 @@
                     android:id="@+id/movieDescription"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Movie Description here"
+                    android:text="Movie Description goes here"
                     android:textColor="#FFFFFF"
                     android:textSize="16sp"
                     android:ellipsize="end"
@@ -106,8 +104,8 @@
             android:layout_marginBottom="16dp"
             android:clipToPadding="false"
             android:nestedScrollingEnabled="false" />
-
     </RelativeLayout>
 </ScrollView>
+
 
 

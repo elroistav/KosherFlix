@@ -17,7 +17,7 @@ public class RetrofitClient {
                     .build();
 
             retrofit = new Retrofit.Builder()
-                    .baseUrl("https://eaab-132-70-66-11.ngrok-free.app/api/") // Use 10.0.2.2 for host machine
+                    .baseUrl("https://350d-132-70-66-11.ngrok-free.app/api/") // Use 10.0.2.2 for host machine
                     .client(okHttpClient)
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();

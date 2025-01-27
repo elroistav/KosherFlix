@@ -97,6 +97,10 @@ public class MovieModel implements Parcelable {
         return videoUrl;
     }
 
+    public void setVideoUrl(String videoUrl) {
+        this.videoUrl = videoUrl;
+    }
+
     @Override
     public int describeContents() {
         return 0;

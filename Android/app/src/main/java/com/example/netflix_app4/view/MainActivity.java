@@ -142,7 +142,6 @@ public class MainActivity extends AppCompatActivity {
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
         // Bind views
-        ImageView moviePoster = dialog.findViewById(R.id.moviePreview);
         TextView movieTitle = dialog.findViewById(R.id.movieTitle);
         TextView movieDescription = dialog.findViewById(R.id.movieDescription);
         Button watchButton = dialog.findViewById(R.id.watchButton);
@@ -151,7 +150,6 @@ public class MainActivity extends AppCompatActivity {
         // Set data
         String thumbnailUrl = movie.getThumbnail();
         Log.d("MainActivity", "Movie thumbnail URL: " + thumbnailUrl);
-        Log.d("MainActivity", "Movie Poster: " + moviePoster);
 
         movieTitle.setText(movie.getTitle());
         movieDescription.setText(movie.getDescription());

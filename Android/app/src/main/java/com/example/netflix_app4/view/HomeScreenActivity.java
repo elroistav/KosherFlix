@@ -4,13 +4,17 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.VideoView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
@@ -46,6 +50,7 @@ public class HomeScreenActivity extends AppCompatActivity {
     private TextView movieDescription;
     private Button playButton;
     private Button infoButton;
+    private FrameLayout moviePlayerWrapper;
     private String userId = "679615afd6aeeebe1038f023";
 
 
@@ -59,6 +64,7 @@ public class HomeScreenActivity extends AppCompatActivity {
         movieDescription = findViewById(R.id.movieDescription);
         playButton = findViewById(R.id.playButton);
         infoButton = findViewById(R.id.infoButton);
+        moviePlayerWrapper = findViewById(R.id.moviePlayerWrapper);
 
         // Fetch random movie data
         fetchRandomMovie();
@@ -81,21 +87,21 @@ public class HomeScreenActivity extends AppCompatActivity {
     }
 
     private void fetchRandomMovie() {
-        // Get the Retrofit instance from RetrofitClient
-        Retrofit retrofit = RetrofitClient.getRetrofitInstance();
+                        // Get the Retrofit instance from RetrofitClient
+                        Retrofit retrofit = RetrofitClient.getRetrofitInstance();
 
-        // Create the service
-        MovieApiService movieService = retrofit.create(MovieApiService.class);
+                        // Create the service
+                        MovieApiService movieService = retrofit.create(MovieApiService.class);
 
-        // Step 1: Fetch categories
-        movieService.getCategories(userId).enqueue(new Callback<CategoriesResponse>() {
-            @Override
-            public void onResponse(Call<CategoriesResponse> call, Response<CategoriesResponse> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    CategoriesResponse categoriesResponse = response.body();
-                    List<CategoryPromoted> promotedCategories = categoriesResponse.getPromotedCategories();
+                        // Step 1: Fetch categories
+                        movieService.getCategories(userId).enqueue(new Callback<CategoriesResponse>() {
+                            @Override
+                            public void onResponse(Call<CategoriesResponse> call, Response<CategoriesResponse> response) {
+                                if (response.isSuccessful() && response.body() != null) {
+                                    CategoriesResponse categoriesResponse = response.body();
+                                    List<CategoryPromoted> promotedCategories = categoriesResponse.getPromotedCategories();
 
-                    // Step 2: Randomly select a movie ID
+                                    // Step 2: Randomly select a movie ID
                     List<String> allMovieIds = new ArrayList<>();
                     for (CategoryPromoted category : promotedCategories) {
                         allMovieIds.addAll(category.getMovies()); // Assuming `getMovies()` returns a list of movie IDs
@@ -109,8 +115,12 @@ public class HomeScreenActivity extends AppCompatActivity {
                             @Override
                             public void onResponse(Call<MovieModel> call, Response<MovieModel> movieResponse) {
                                 if (movieResponse.isSuccessful() && movieResponse.body() != null) {
+                                    // Overwrite the videoUrl with the URL of the sample.mp4 file
+                                    MovieModel movie = movieResponse.body();
+                                    movie.setVideoUrl("https://350d-132-70-66-11.ngrok-free.app/uploads/sample.mp4");
+                                    Log.d("Video Url: ", movie.getVideoUrl());
                                     // Update UI with the random movie details
-                                    updateMovieUI(movieResponse.body());
+                                    updateMovieUI(movie);
                                 } else {
                                     Toast.makeText(HomeScreenActivity.this, "Failed to fetch random movie details", Toast.LENGTH_SHORT).show();
                                 }
@@ -136,26 +146,60 @@ public class HomeScreenActivity extends AppCompatActivity {
         });
     }
 
-
-
     private void updateMovieUI(MovieModel movie) {
         movieTitle.setText(movie.getTitle());
         movieDescription.setText(movie.getDescription());
 
-        playButton.setOnClickListener(v -> {
-            // Navigate to movie playback screen (currently does nothing)
-//            Intent intent = new Intent(HomeScreenActivity.this, MoviePlayerActivity.class);
-//            intent.putExtra("videoUrl", movie.getVideoUrl());
-//            startActivity(intent);
+        // Get the container where the VideoView will go
+        FrameLayout moviePlayerWrapper = findViewById(R.id.moviePlayerWrapper);
+
+        // Remove any existing views from the FrameLayout
+        moviePlayerWrapper.removeAllViews();
+
+        // Create a VideoView and set it as the child of moviePlayerWrapper
+        VideoView videoView = new VideoView(this);
+        moviePlayerWrapper.addView(videoView);
+
+        // Set the video URI and the MediaController
+        Uri videoUri = Uri.parse(movie.getVideoUrl());
+        videoView.setVideoURI(videoUri);
+
+        // Start the video when it's ready
+        videoView.setOnPreparedListener(mp -> {
+            videoView.start();
+            adjustVideoViewSize(videoView, mp);
         });
 
-        infoButton.setOnClickListener(v -> {
-            // Navigate to movie details screen
-            Intent intent = new Intent(HomeScreenActivity.this, MovieDetailsActivity.class);
-            intent.putExtra("movieDetails", movie);
-            startActivity(intent);
+        // Handle video playback errors
+        videoView.setOnErrorListener((mp, what, extra) -> {
+            Toast.makeText(this, "Error playing video", Toast.LENGTH_SHORT).show();
+            return true;
         });
     }
+
+    private void adjustVideoViewSize(VideoView videoView, MediaPlayer mp) {
+        // Get the video dimensions (width and height)
+        int videoWidth = mp.getVideoWidth();
+        int videoHeight = mp.getVideoHeight();
+
+        // Get the parent container (FrameLayout) dimensions
+        FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) videoView.getLayoutParams();
+
+        // Calculate aspect ratio based on video dimensions
+        float aspectRatio = (float) videoWidth / videoHeight;
+
+        // Get the width of the parent container (moviePlayerWrapper)
+        int videoViewWidth = moviePlayerWrapper.getWidth();
+        int videoViewHeight = (int) (videoViewWidth / aspectRatio);
+
+        // Set the width and height for the VideoView based on the aspect ratio
+        layoutParams.width = videoViewWidth;
+        layoutParams.height = videoViewHeight;
+
+        videoView.setLayoutParams(layoutParams);
+    }
+
+
 
     private void observeViewModel() {
         categoryViewModel.getPromotedCategoriesLiveData().observe(this, categories -> {
@@ -185,7 +229,6 @@ public class HomeScreenActivity extends AppCompatActivity {
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
         // Bind views
-        ImageView moviePoster = dialog.findViewById(R.id.moviePreview);
         TextView movieTitle = dialog.findViewById(R.id.movieTitle);
         TextView movieDescription = dialog.findViewById(R.id.movieDescription);
         Button watchButton = dialog.findViewById(R.id.watchButton);

@@ -2,16 +2,24 @@ package com.example.netflix_app4.view;
 
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.GridLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.MediaController;
 import android.widget.TextView;
+import android.widget.Toast;
+import android.widget.VideoView;
+
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -42,6 +50,8 @@ public class MovieDetailsActivity extends AppCompatActivity {
     private RecyclerView recommendationRecyclerView;
     private RecommendationAdapter recommendationAdapter;
     private TextView recommendationTitle;
+    private VideoView videoView;
+
     private String userId = "679615afd6aeeebe1038f023";
 
 
@@ -52,9 +62,9 @@ public class MovieDetailsActivity extends AppCompatActivity {
         setContentView(R.layout.movie_details);
 
         hideSystemUI();
+        videoView = findViewById(R.id.videoView);
 
         // Initialize UI elements
-        moviePreview = findViewById(R.id.moviePreview);
         movieTitle = findViewById(R.id.movieTitle);
         movieDescription = findViewById(R.id.movieDescription);
         movieInfoGrid = findViewById(R.id.movieInfoGrid);
@@ -64,15 +74,47 @@ public class MovieDetailsActivity extends AppCompatActivity {
 
         // Retrieve the movie details from Intent
         MovieModel movie = getIntent().getParcelableExtra("movieDetails");
+        movie.setVideoUrl("https://350d-132-70-66-11.ngrok-free.app/uploads/sample.mp4");
         if (movie != null) {
+            Log.d("MovieDetailsActivity", "Movie details: " + movie);
+            if (movie.getVideoUrl() != null) {
+                Log.d("MovieDetailsActivity", "Playing video: " + movie.getVideoUrl());
+                playVideo(movie.getVideoUrl());
+            } else {
+                Toast.makeText(this, "No video available", Toast.LENGTH_SHORT).show();
+            }
             setupMovieDetails(movie);
             fetchRecommendations(movie.getId());
         }
+        Log.d("MovieDetailsActivity", "Movie details: " + movie);
 
         // Back button action
         backButton.setOnClickListener(v -> finish());
         recommendationTitle = findViewById(R.id.recommendationTitle);
         recommendationTitle.setVisibility(View.GONE); // Initially hidden
+    }
+
+    private void playVideo(String videoUrl) {
+        // Set up the MediaController for playback controls
+//        MediaController mediaController = new MediaController(this);
+//        mediaController.setAnchorView(videoView);
+        videoView.setZOrderOnTop(true);  // Ensure the VideoView is rendered above other views
+
+        // Set the video URI and the MediaController
+        Uri videoUri = Uri.parse(videoUrl);
+        videoView.setVideoURI(videoUri);
+//        videoView.setMediaController(mediaController);
+        videoView.setFocusable(true);
+        videoView.requestFocus();
+
+        // Start the video when ready
+        videoView.setOnPreparedListener(mp -> videoView.start());
+
+        // Handle video playback errors
+        videoView.setOnErrorListener((mp, what, extra) -> {
+            Toast.makeText(this, "Error playing video", Toast.LENGTH_SHORT).show();
+            return true;
+        });
     }
 
     // Function to hide the navigation bar and status bar
@@ -88,10 +130,18 @@ public class MovieDetailsActivity extends AppCompatActivity {
     }
 
     private void setupMovieDetails(MovieModel movie) {
+        // Play the video at the top
+        if (movie.getVideoUrl() != null) {
+            playVideo(movie.getVideoUrl());
+        } else {
+            Toast.makeText(this, "No video available", Toast.LENGTH_SHORT).show();
+        }
+
+        // Set the movie title and description
         movieTitle.setText(movie.getTitle());
         movieDescription.setText(movie.getDescription());
-        Glide.with(this).load(movie.getThumbnail()).into(moviePreview);
 
+        // Populate the grid with additional info
         addInfoToGrid("Length", movie.getLength() + " minutes");
         addInfoToGrid("Director", movie.getDirector());
         addInfoToGrid("Language", movie.getLanguage());
