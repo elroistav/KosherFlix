@@ -19,6 +19,8 @@ import android.widget.MediaController;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
+
+import java.io.IOException;
 import java.util.Properties;
 
 
@@ -253,14 +255,25 @@ public class MovieDetailsActivity extends AppCompatActivity {
 
     private String getBackendUrl() {
         try (InputStream inputStream = getAssets().open("config.properties")) {
+            Log.d("DEBUG", "Opening config.properties file");
+
             Properties properties = new Properties();
             properties.load(inputStream);
-            return properties.getProperty("backend_url");
+            Log.d("DEBUG", "Loaded properties file");
+
+            String backendUrl = properties.getProperty("backend_url");
+            Log.d("DEBUG", "Backend URL retrieved: " + backendUrl);
+
+            return backendUrl;
+        } catch (IOException e) {
+            Log.e("ERROR", "Error accessing or reading config.properties", e);
+            return null;
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e("ERROR", "Unexpected error occurred", e);
             return null;
         }
     }
+
 }
 
 
