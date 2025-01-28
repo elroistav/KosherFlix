@@ -1,0 +1,97 @@
+.movie-card {
+    position: relative;
+    width: 180px; /* Increased width for better visual */
+    height: 250px; /* Increased height for better visual */
+    padding: 15px;
+    text-align: center;
+    background-color: #333;
+    border-radius: 10px;
+    flex-shrink: 0;
+    box-sizing: border-box;
+    background-size: cover;
+    background-position: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth transform and box-shadow effect */
+    box-shadow: 0 0 10px rgba(86, 86, 86, 0.5); /* Increased opacity for glow effect */
+    margin: 10px 0px; /* Added margin to prevent glow effect from being cut off */
+  }
+  
+  .movie-card:hover {
+    transform: scale(1.05); /* Subtle zoom effect on hover */
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.7); /* Enhanced glow effect on hover */
+  }
+  
+  .movie-card p {
+    font-size: 1rem;
+    color: white;
+    font-weight: bold;
+    word-wrap: break-word;
+    margin: 0;
+  }
+  
+  @media (max-width: 600px) {
+    .movie-card {
+      width: 150px; /* Adjust width for smaller screens */
+      height: 210px; /* Adjust height for smaller screens */
+    }
+  }
+  
+  @media (max-width: 400px) {
+    .movie-card {
+      width: 120px; /* Further adjust width for very small screens */
+      height: 180px; /* Further adjust height for very small screens */
+    }
+  }
+
+  .delete-movie-button, .edit-movie-button {
+    position: absolute;
+    bottom: 10px;
+    width: 32px;
+    height: 32px;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    transition: all 0.2s ease;
+    opacity: 0;
+    border-radius: 4px;
+}
+
+.delete-movie-button {
+    right: calc(50% + 4px);
+    background-color: rgba(255, 0, 0, 0.2);
+    color: #ff0000;
+    border: 1px solid #ff0000;
+}
+
+.edit-movie-button {
+    left: calc(50% + 4px);
+    background-color: rgba(64, 156, 255, 0.2);
+    color: #409cff;
+    border: 1px solid #409cff;
+}
+
+.movie-card:hover .delete-movie-button,
+.movie-card:hover .edit-movie-button {
+    opacity: 1;
+}
+
+.delete-movie-button:hover {
+    background-color: #ff0000;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(255, 0, 0, 0.2);
+}
+
+.edit-movie-button:hover {
+    background-color: #409cff;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(64, 156, 255, 0.2);
+}
+
+.delete-movie-button:active,
+.edit-movie-button:active {
+    transform: translateY(0);
+}

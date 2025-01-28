@@ -3,6 +3,8 @@ import MovieCard from './MovieCard';
 import '../styles/CategoryRow.css';
 
 function CategoryRow({ categoryName, movies, onMovieClick }) {
+  const categoryTitle = categoryName && (categoryName.category || categoryName.name);
+
   return (
     <div className="category-row">
       <h3>{categoryName}</h3>

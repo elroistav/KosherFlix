@@ -39,4 +39,8 @@
     <string name="error_invalid_email">Invalid email address</string>
     <string name="error_invalid_password">Password must be at least 8 characters with at least one letter and one number</string>
     <string name="error_profile_picture_required">Profile picture is required</string>
+    <string name="get_info">Get Info</string>
+    <string name="play">Play</string>
+    <string name="movie_description_goes_here">Movie Description goes here</string>
+    <string name="switch_theme">Switch Theme</string>
 </resources>

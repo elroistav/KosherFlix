@@ -79,10 +79,8 @@ public class MainActivity extends AppCompatActivity {
     private void setupRecyclerView() {
         categoriesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        categoryAdapter = new CategoryAdapter(this, new ArrayList<>(), movie -> {
-            // Show popup dialog when a movie is clicked
-            showMoviePopup(movie);
-        });
+        // Show popup dialog when a movie is clicked
+        categoryAdapter = new CategoryAdapter(this, new ArrayList<>(), this::showMoviePopup);
         categoriesRecyclerView.setAdapter(categoryAdapter);
 
         categoryViewModel = new ViewModelProvider(this).get(CategoryViewModel.class);
@@ -133,7 +131,6 @@ public class MainActivity extends AppCompatActivity {
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
         // Bind views
-        ImageView moviePoster = dialog.findViewById(R.id.moviePreview);
         TextView movieTitle = dialog.findViewById(R.id.movieTitle);
         TextView movieDescription = dialog.findViewById(R.id.movieDescription);
         Button watchButton = dialog.findViewById(R.id.watchButton);
@@ -142,15 +139,12 @@ public class MainActivity extends AppCompatActivity {
         // Set data
         String thumbnailUrl = movie.getThumbnail();
         Log.d("MainActivity", "Movie thumbnail URL: " + thumbnailUrl);
-        Log.d("MainActivity", "Movie Poster: " + moviePoster);
 
         movieTitle.setText(movie.getTitle());
         movieDescription.setText(movie.getDescription());
 
         // Handle button click
-        watchButton.setOnClickListener(v -> {
-            Toast.makeText(this, "Watch Movie feature coming soon!", Toast.LENGTH_SHORT).show();
-        });
+        watchButton.setOnClickListener(v -> Toast.makeText(this, "Watch Movie feature coming soon!", Toast.LENGTH_SHORT).show());
 
         dialog.show();
     }

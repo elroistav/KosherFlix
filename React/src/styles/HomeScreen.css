@@ -1,34 +1,41 @@
 /* HomeScreen.css */
 
-body {
-  background-color: #000;
+body{
+  background-color: var(--background-primary);
+  /* text-color: var(--primary-text); */
 }
 
+/* 
+body.light-mode {
+  --background-color: white;
+  --text-color: black;
+}
+
+body.dark-mode {
+  --background-color: #121212;
+  --text-color: white;
+} */
+
 .homeScreenBody {
+  
   margin: 0;
   padding: 0;
   font-family: 'Arial', sans-serif;
-  color: #fff;
+  color: var(--text-color);
   justify-content: flex-start;
   align-items: flex-start;
-  overflow-x: hidden; /* Prevent horizontal scrolling */
+  overflow-x: hidden;
   overflow-y: scroll;
-  background-color: black;
-  margin-top: 40px; /* Add space for the fixed navbar */
+  background-color: var(--background-primary);
+  margin-top: 40px;
 }
 
-@keyframes fadeIn {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-
-/* Category section */
-.movieCategories {
+.categoriesScreenTitle {
+  font-size: 3rem;
+  margin-top: 50px;
+  margin-bottom: 20px;
+  color: var(--text-color); /* שינוי צבע טקסט לפי המצב */
+  text-align: center;
+  display: block;
   width: 100%;
-  padding: 20px;
-  margin-top: 30px; /* Add space between random movie and categories */
 }

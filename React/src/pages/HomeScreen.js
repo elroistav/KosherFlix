@@ -14,7 +14,7 @@ import { useLocation } from 'react-router-dom';
 //import user from '../../../NetflixProj3/models/user';
 
 
-function HomeScreen() {
+function HomeScreen({ isDarkMode, setIsDarkMode }) {
   const [movies, setMovies] = useState([]);
   const [randomMovie, setRandomMovie] = useState(null);
   const [searchResults, setSearchResults] = useState([]);
@@ -24,6 +24,12 @@ function HomeScreen() {
   const token = location.state?.token;
   const [loading, setLoading] = useState(true);
   const [userInfo, setUserInfo] = useState(null);
+  const [searchText, setSearchText] = useState('');
+
+  useEffect(() => {
+    document.body.className = isDarkMode ? 'dark-mode' : 'light-mode';
+  }, [isDarkMode]);
+  
 
   useEffect(() => {
     async function checkToken() {
@@ -42,6 +48,8 @@ function HomeScreen() {
             name: response.data.name,
             avatar: avatarUrl, 
             userId: response.data.userId,
+            token: token,
+            isAdmin: response.data.isAdmin
           });
 
           console.log('the userInfo ' + JSON.stringify(userInfo));
@@ -107,11 +115,12 @@ function HomeScreen() {
     }
 
     fetchMovies();
-  }, []);
+  }, [loading, userInfo]);
 
   // Handle search results
-  const handleSearchResults = (results) => {
+  const handleSearchResults = (results, text) => {
     setSearchResults(results);
+    setSearchText(text);
   };
 
   // Clear search results
@@ -131,6 +140,8 @@ function HomeScreen() {
     return <div>Loading...</div>; // Show a loading spinner or message
   }
 
+  
+
   return (
     <div className="homeScreenBody">
         <Navbar 
@@ -138,6 +149,8 @@ function HomeScreen() {
         clearSearchResults={clearSearchResults}
         userInfo={userInfo} 
         loading={loading}
+        isDarkMode={isDarkMode}
+        setIsDarkMode={setIsDarkMode}
       /> 
       {/* Random Movie Section */}
       {randomMovie && searchResults.length === 0 && (
@@ -152,12 +165,12 @@ function HomeScreen() {
           ))}
         </div>
       ) : (
-        <SearchResults searchResults={searchResults} handleMovieClick={handleMovieClick} />
+        <SearchResults searchResults={searchResults} handleMovieClick={handleMovieClick} searchText={searchText} />
       )}
 
       {/* Movie Popup */}
       {selectedMovie && (
-        <MoviePopup initialMovie={selectedMovie} onClose={() => setSelectedMovie(null)} />
+        <MoviePopup userInfo = {userInfo} initialMovie={selectedMovie} onClose={() => setSelectedMovie(null)} />
       )}
       <Link to="/another">Go to Another Page</Link>
     </div>
