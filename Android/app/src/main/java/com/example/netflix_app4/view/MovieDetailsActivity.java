@@ -32,6 +32,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.netflix_app4.R;
 import com.example.netflix_app4.model.MovieModel;
+import com.example.netflix_app4.network.Config;
 import com.example.netflix_app4.network.MovieApiService;
 import com.example.netflix_app4.network.RetrofitClient;
 
@@ -81,7 +82,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
 
         // Retrieve the movie details from Intent
         MovieModel movie = getIntent().getParcelableExtra("movieDetails");
-        movie.setVideoUrl(getBackendUrl() + "/uploads/sample.mp4");
+        //movie.setVideoUrl(Config.getBaseUrl() + "/uploads/sample.mp4");
         if (movie != null) {
             Log.d("MovieDetailsActivity", "Movie details: " + movie);
             if (movie.getVideoUrl() != null) {
@@ -252,28 +253,6 @@ public class MovieDetailsActivity extends AppCompatActivity {
         // Add the card to the GridLayout
         movieInfoGrid.addView(infoCard);
     }
-
-    private String getBackendUrl() {
-        try (InputStream inputStream = getAssets().open("config.properties")) {
-            Log.d("DEBUG", "Opening config.properties file");
-
-            Properties properties = new Properties();
-            properties.load(inputStream);
-            Log.d("DEBUG", "Loaded properties file");
-
-            String backendUrl = properties.getProperty("backend_url");
-            Log.d("DEBUG", "Backend URL retrieved: " + backendUrl);
-
-            return backendUrl;
-        } catch (IOException e) {
-            Log.e("ERROR", "Error accessing or reading config.properties", e);
-            return null;
-        } catch (Exception e) {
-            Log.e("ERROR", "Unexpected error occurred", e);
-            return null;
-        }
-    }
-
 }
 
 
