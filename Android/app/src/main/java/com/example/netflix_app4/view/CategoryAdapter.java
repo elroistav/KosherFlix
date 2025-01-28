@@ -57,7 +57,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
         List<MovieModel> movieDetails = new ArrayList<>();
         for (String movieId : movieIds) {
             MovieApiService apiService = RetrofitClient.getRetrofitInstance().create(MovieApiService.class);
-            apiService.getMovieById(movieId, userId).enqueue(new Callback<MovieModel>() {
+            apiService.getMovieById(movieId, userId).enqueue(new Callback<>() {
                 @Override
                 public void onResponse(Call<MovieModel> call, Response<MovieModel> response) {
                     if (response.isSuccessful() && response.body() != null) {
