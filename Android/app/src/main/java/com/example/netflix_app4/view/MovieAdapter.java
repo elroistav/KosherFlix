@@ -59,8 +59,8 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
     }
 
     public class MovieViewHolder extends RecyclerView.ViewHolder {
-        private ImageView movieThumbnail;
-        private TextView movieTitle;
+        private final ImageView movieThumbnail;
+        private final TextView movieTitle;
 
         public MovieViewHolder(View itemView) {
             super(itemView);

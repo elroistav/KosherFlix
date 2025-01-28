@@ -29,4 +29,11 @@ public interface MovieApiService {
             @Path("id") String movieId,
             @Header("user-id") String userId
     );
+
+    // Search movies
+    @GET("movies/search/{query}")
+    Call<List<MovieModel>> searchMovies(
+            @Path("query") String query,
+            @Header("user-id") String userId
+    );
 }

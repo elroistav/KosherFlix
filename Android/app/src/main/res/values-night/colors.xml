@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Theme Colors for Night Mode -->
+    <!-- Override specific colors for dark theme -->
+    <color name="dark_gray">#1F1F1F</color>
+    <color name="black_overlay">#66000000</color>
+    <color name="semi_transparent">#B3000000</color>
+
+    <color name="background">@color/background_dark</color>
+    <color name="surface">@color/surface_dark</color>
+    <color name="text_primary">@color/text_primary_dark</color>
+    <color name="text_secondary">@color/text_secondary_dark</color>
+    
+</resources>

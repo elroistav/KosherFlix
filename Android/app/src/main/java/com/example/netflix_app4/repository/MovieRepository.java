@@ -71,6 +71,24 @@ public class MovieRepository {
         });
     }
 
+    public void searchMovies(String query, String userId, SearchCallback callback) {
+        apiService.searchMovies(query, userId).enqueue(new Callback<List<MovieModel>>() {
+            @Override
+            public void onResponse(Call<List<MovieModel>> call, Response<List<MovieModel>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    callback.onSuccess(response.body());
+                } else {
+                    callback.onError("Failed to search movies.");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<MovieModel>> call, Throwable t) {
+                callback.onError(t.getMessage());
+            }
+        });
+    }
+
     // Category callback interface
     public interface CategoryCallback {
         void onSuccess(CategoriesResponse response);
@@ -82,6 +100,9 @@ public class MovieRepository {
         void onSuccess(MovieModel movie);
         void onError(String error);
     }
+
+    public interface SearchCallback {
+        void onSuccess(List<MovieModel> movies);
+        void onError(String error);
+    }
 }
-
-
