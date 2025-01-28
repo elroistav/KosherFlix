@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { FaSearch } from 'react-icons/fa'; // Importing the search icon
 import '../styles/NavBar.css';
+//import user from '../../../NetflixProj3/models/user';
 
-function Navbar( { onSearchResults, clearSearchResults, userInfo, loading} ) {
+function Navbar( { onSearchResults, clearSearchResults, userInfo, loading, isDarkMode, setIsDarkMode} ) {
   
     const [searchOpen, setSearchOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
@@ -15,40 +17,48 @@ function Navbar( { onSearchResults, clearSearchResults, userInfo, loading} ) {
     const [categories, setCategories] = useState([]);
     const [categoriesOpen, setCategoriesOpen] = useState(false);
     const categoriesRef = useRef(null);
+    const navigate = useNavigate();  
+    // const [darkMode, setDarkMode] = useState(false);
+    // const [isDarkMode, setIsDarkMode] = useState(false);
+
+
+
 
     useEffect(() => {
-      const fetchCategories = async () => {
-        try {
-          const response = await axios.get('http://localhost:4000/api/categories', {
-            headers: { 'user-id': userInfo.userId }
-          });
-          setCategories(response.data.categories || []);
-        } catch (error) {
-          console.error('Error fetching categories:', error);
-        }
-      };
-      fetchCategories();
-    }, []);
+      if (userInfo) {
+        const fetchCategories = async () => {
+          try {
+            const response = await axios.get('http://localhost:4000/api/categories', {
+              headers: { 'user-id': userInfo.userId }
+            });
+            setCategories(response.data.categories || []);
+          } catch (error) {
+            console.error('Error fetching categories:', error);
+          }
+        };
+        fetchCategories();
+      }
+    }, [userInfo]); // Now it will re-run when userInfo changes
   
     // Add categories click handler
     const handleCategoryClick = async (categoryId) => {
       try {
         // First get the category details
         const categoryResponse = await axios.get(`http://localhost:4000/api/categories/${categoryId}`, {
-          headers: { 'user-id': '678f5239892efc5766c18798' }
+          headers: { 'user-id': userInfo.userId }
         });
 
         // Get movie details for each movie ID
         const moviePromises = categoryResponse.data.movies.map(movieId => 
           axios.get(`http://localhost:4000/api/movies/${movieId}`, {
-            headers: { 'user-id': '678f5239892efc5766c18798' }
+            headers: { 'user-id': userInfo.userId }
           })
         );
 
         const movieResponses = await Promise.all(moviePromises);
         const movies = movieResponses.map(response => response.data);
 
-        onSearchResults(movies);
+        onSearchResults(movies, categoryResponse.data.name);
         setCategoriesOpen(false);
       } catch (error) {
         console.error('Error fetching category movies:', error);
@@ -68,7 +78,7 @@ function Navbar( { onSearchResults, clearSearchResults, userInfo, loading} ) {
       console.log('Searching for:', searchQuery);
       try {
         const response = await axios.get(`http://localhost:4000/api/movies/search/${searchQuery}`, {
-          headers: { 'user-id': '678f5239892efc5766c18798' }
+          headers: { 'user-id': userInfo.userId }
         });
         if (response.data.length === 0) {
             setNoResults(true);
@@ -76,7 +86,8 @@ function Navbar( { onSearchResults, clearSearchResults, userInfo, loading} ) {
         } else {
             setNoResults(false);
         }
-        onSearchResults(response.data);
+        onSearchResults(response.data, 'Search Results');
+        setSearchOpen(false);
       } catch (error) {
         console.error('Error fetching search results:', error);
       }
@@ -110,89 +121,139 @@ function Navbar( { onSearchResults, clearSearchResults, userInfo, loading} ) {
       setDropdownOpen(!dropdownOpen);
       };   
 
-  return (
-    <div className="navbar">
-      {/* Logo */}
-      <Link to="/" className="logo" onClick={clearSearchResults}>
-        Notflicks
-      </Link>
+      const handleLogoClick = () => {
+        clearSearchResults();
+        navigate('/homescreen', { state: { token: userInfo?.token } });
+      };
 
-      {/* Navbar Links */}
-      <div className="nav-links" onClick={clearSearchResults}>
-        <div className="categories-dropdown" ref={categoriesRef}>
-        <button 
-          className="categories-button"
-          onClick={(e) => {
-            e.stopPropagation(); // Prevent event bubbling
-            setCategoriesOpen(!categoriesOpen);
-          }}
-        >
-            Categories ▼
-          </button>
-          {categoriesOpen && (
-            <div className="categories-menu">
-              {categories.map(category => (
-                <button 
-                  key={category._id}
-                  onClick={(e) => {
-                    e.stopPropagation(); // Prevent event bubbling
-                    handleCategoryClick(category._id);
-                  }}
-                  className="category-item"
-                >
-                  {category.name}
-                </button>
-              ))}
+
+
+
+
+  useEffect(() => {
+    document.body.className = isDarkMode ? 'dark-mode' : 'light-mode';
+  }, [isDarkMode]);
+
+  
+  useEffect(() => {
+    console.log('Categories in Navbar:', categories);
+    console.log('Current pathname:', window.location.pathname);
+    console.log('UserInfo in Navbar:', userInfo);
+  }, [categories, userInfo]);
+
+      return (
+        
+        <>
+          {/* Check if loading is complete before rendering */}
+          {!loading && (
+            <div className="navbar">
+              {/* Logo */}
+              <div className="logo" onClick={handleLogoClick}>
+              Notflicks
+            </div>
+
+            <button onClick={() => setIsDarkMode(!isDarkMode)}>
+              {isDarkMode ? 'Light Mode' : 'Dark Mode'}
+            </button>
+      
+              {/* Navbar Links */}
+              <div className="nav-links" onClick={clearSearchResults}>
+                <div className="categories-dropdown" ref={categoriesRef}>
+                  <button 
+                    className="categories-button"
+                    onClick={(e) => {
+                      e.stopPropagation(); // Prevent event bubbling
+                      setCategoriesOpen(!categoriesOpen);
+                    }}
+                  >
+                    Categories ▼
+                  </button>
+                  {categoriesOpen && (
+                    <div className="categories-menu">
+                      
+                      <button 
+                        onClick={(e) => {
+                          e.stopPropagation(); // Prevent event bubbling
+                          navigate('/categories', { state: { token: userInfo?.token, isDarkMode: isDarkMode } }); 
+                        }}
+                        className="category-item all-categories"
+                      >
+                        All
+                      </button>
+      
+                      {categories.map(category => (
+                        <button 
+                          key={category._id}
+                          onClick={(e) => {
+                            e.stopPropagation(); // Prevent event bubbling
+                            handleCategoryClick(category._id);
+                          }}
+                          className="category-item"
+                        >
+                          {category.name}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                <Link to="/">Home</Link>
+                <Link to="/movies">Movies</Link>
+                <Link to="/tv-shows">TV Shows</Link>
+                <Link to="/my-list">My List</Link>
+              </div>
+      
+              {/* Profile and Search Icons */}
+              <div className="profile-and-search">
+                {/* Search Icon */}
+                <FaSearch className="search-icon" onClick={handleSearchClick} />
+                {/* Search Panel */}
+                {searchOpen && (
+                  <div className="search-panel" ref={searchPanelRef}>
+                    <form onSubmit={handleSearchSubmit}>
+                      <input
+                        type="text"
+                        value={searchQuery}
+                        onChange={handleSearchChange}
+                        placeholder="Search for movies, TV shows..."
+                      />
+                      <button type="submit">Search</button>
+                    </form>
+                    {noResults && <div className="no-results-toast">No results found</div>}
+                  </div>
+                )}
+                {/* Profile Icon */}
+                <div className="profile-icon" onClick={handleProfileClick}>
+                  {loading ? (
+                    <div>Loading...</div>
+                  ) : (
+                    <div className="profile-details">
+                      <span className="username">Hello, {userInfo?.name}</span>
+                      <img src={userInfo?.avatar} alt="Profile" />
+                    </div>
+                  )}
+                </div>
+      
+                {dropdownOpen && (
+                  <div className="dropdown-menu" ref={dropdownRef}>
+                    <Link to="/profile">Profile</Link>
+                    <Link to="/settings">Settings</Link>
+                    <Link to="/">Logout</Link>
+                    {userInfo?.isAdmin && (
+                      <Link 
+                        to="/admin" 
+                        state={{ token: userInfo?.token, isDarkMode: isDarkMode }}
+                      >
+                        Admin
+                      </Link>
+                    )}
+                  </div>
+                )}
+              </div>
             </div>
           )}
-        </div>
-        <Link to="/">Home</Link>
-        <Link to="/movies">Movies</Link>
-        <Link to="/tv-shows">TV Shows</Link>
-        <Link to="/my-list">My List</Link>
-      </div>
-
-      {/* Profile and Search Icons */}
-      <div className="profile-and-search">
-        {/* Search Icon */}
-        <FaSearch className="search-icon" onClick={handleSearchClick} />
-        {/* Search Panel */}
-        {searchOpen && (
-            <div className="search-panel" ref={searchPanelRef}>
-            <form onSubmit={handleSearchSubmit}>
-                <input
-                type="text"
-                value={searchQuery}
-                onChange={handleSearchChange}
-                placeholder="Search for movies, TV shows..."
-                />
-                <button type="submit">Search</button>
-            </form>
-            {noResults && <div className="no-results-toast">No results found</div>}
-            </div>
-        )}
-        {/* Profile Icon */}
-        <div className="profile-icon" onClick={handleProfileClick}>
-          {loading ? (
-            <div>Loading...</div>
-          ) : (
-            <div className="profile-details">
-              <span className="username">Hello, {userInfo?.name}</span>
-              <img src={userInfo?.avatar} alt="Profile" />
-            </div>
-          )}
-        </div>
-
-        {dropdownOpen && (
-          <div className="dropdown-menu" ref={dropdownRef}>
-            <Link to="/profile">Profile</Link>
-            <Link to="/settings">Settings</Link>
-            <Link to="/logout">Logout</Link>
-          </div>
-        )}
-      </div>
-    </div>
-  );
+        </>
+      );
+      
 }
 
 export default Navbar;

@@ -1,0 +1,44 @@
+/* AdminBar.css */
+.admin-bar {
+  display: flex;
+  justify-content: start; /* שמירה על סידור מצד שמאל */
+  align-items: center;
+  gap: 15px; /* ריווח בין הרכיבים */
+  background-color: var(--background-primary);
+  padding: 10px 20px;
+  border-bottom: 2px solid #e50914; /* אדום נטפליקס */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5); /* צל קל */
+  margin-top: 50px; /* מרחק של 50px מהאלמנט שמעל */
+}
+
+.admin-mode-text {
+  color: #e50914; /* אדום נטפליקס */
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.admin-btn {
+  background-color: var(--accent-color); /* אדום נטפליקס */
+  color: var(--text-primary); /* צבע טקסט ראשי */
+  border: none;
+  border-radius: 4px;
+  padding: 10px 15px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.admin-btn:hover {
+  background-color: #f40612; /* גוון בהיר יותר של אדום */
+  transform: scale(1.05); /* אפקט זום קל */
+}
+
+.admin-btn:active {
+  background-color: #a2070f; /* גוון כהה יותר של אדום */
+  transform: scale(1); /* חזרה לגודל המקורי */
+}
+
+.admin-btn:focus {
+  outline: 2px solid #f40612; /* קו מיקוד */
+}

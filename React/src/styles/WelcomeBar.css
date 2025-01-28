@@ -1,11 +1,26 @@
 /* Navbar Styles */
-.Welcomebar {
+.WelcomeBar {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     padding: 10px 20px;
-    background-color: rgba(0, 0, 0, 0.9);
+    background-color: rgb(27, 27, 28) !important;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 100;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+  }
+
+  .RegisterLoginBar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 10px 20px;
+    background-color: rgb(27, 27, 28) !important;
     color: white;
     display: flex;
     justify-content: space-between;
@@ -15,7 +30,7 @@
   }
   
   /* Logo */
-  .Welcomebar .logo {
+  .WelcomeBar .logo {
     font-size: 2rem;
     font-weight: bold;
     color: #e50914;
@@ -23,6 +38,8 @@
     font-family: 'Bebas Neue', sans-serif;  /* Applying the font */
     padding: 0 20px;
     margin-right: 20px;
+    text-decoration: none;  /* Remove underline */
+
   }
   
 /* Login button container */

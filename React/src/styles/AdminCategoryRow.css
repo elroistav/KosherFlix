@@ -1,0 +1,130 @@
+/* Category Row */
+.category-row {
+    width: 100%;
+    margin-bottom: 40px;
+    text-align: left;
+  }
+  
+  /* Category Title */
+.category-row h3 {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    font-size: 2rem;
+    margin-bottom: 10px;
+    padding-left: 0;
+    font-weight: bold;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--accent-color) !important;}
+  
+  .delete-category-button {
+    background-color: #ff000015;
+    color: #ff0000;
+    border: 1px solid #ff0000;
+    border-radius: 4px;
+    width: 32px;
+    height: 32px;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(255, 0, 0, 0.1);
+  }
+
+  .edit-category-button {
+    background-color: #ff000015;
+    color: #ff0000;
+    border: 1px solid #ff0000;
+    border-radius: 4px;
+    width: 32px;
+    height: 32px;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(255, 0, 0, 0.1);
+  }
+  
+  .delete-category-button:hover {
+    background-color: #ff0000;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(255, 0, 0, 0.2);
+  }
+  
+  .delete-category-button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(255, 0, 0, 0.1);
+  }
+  
+  /* Movies container */
+  .category-movies {
+    display: flex;
+    overflow-x: auto;
+    padding-left: 0;
+    width: 100%;
+    gap: 20px; /* Increased gap between movie cards */
+    padding-bottom: 20px;
+    -ms-overflow-style: none;  /* Hide scrollbar in IE and Edge */
+  }
+  
+  .category-movies::-webkit-scrollbar {
+    display: none; /* Hide scrollbar in Webkit browsers (Chrome, Safari) */
+  }
+  
+  .category-movies .movie-card {
+    flex: 0 0 200px; /* Allow the movie cards to shrink and grow */
+    max-width: 200px;
+    height: auto;
+    transition: transform 0.3s ease;
+    aspect-ratio: 3 / 4; /* Maintain aspect ratio */
+  }
+  
+  .category-movies .movie-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Ensure the image covers the entire card */
+    border-radius: 8px;
+  }
+  
+  /* Media queries for smaller screens */
+  @media (max-width: 1200px) {
+    .category-movies .movie-card {
+      flex: 0 0 150px; /* Adjust the size for smaller screens */
+      max-width: 150px;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .category-movies .movie-card {
+      flex: 0 0 120px; /* Adjust the size for smaller screens */
+      max-width: 120px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .category-movies .movie-card {
+      flex: 0 0 100px; /* Adjust the size for smaller screens */
+      max-width: 100px;
+    }
+  }
+  
+  /* Make category rows responsive */
+  @media (max-width: 768px) {
+    .category-movies {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  
+    .movie-card {
+      width: 150px; /* Adjust size for smaller screens */
+      height: auto;
+    }
+  }

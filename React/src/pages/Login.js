@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import Navbar from '../components/RegisterLoginBar'; 
+import RegisterLoginBar from '../components/RegisterLoginBar'; // ייבוא ה-navbar
 import '../styles/RegisterLogin.css';
 import AuthForm from '../components/AutoForm';
 
@@ -51,21 +51,34 @@ const Welcome = () => {
                 alert('Login successful');
                 Promise.resolve().then(() => {
                 const token = response.data.token;
-                navigate('/homescreen', { state: { token } });
+                navigate('/homescreen', { 
+                    state: { 
+                        token: token,
+                        isDarkMode: false
+                    }
                 });
+                            });
             }
         } catch (error) {
-            if (error.response.status === 401) {
-                alert('Login failed - Invalid username or password');
+            if (error.response) {
+                // server error
+                if (error.response.status === 401) {
+                    alert('Login failed - Invalid username or password');
+                }
+                setError('Login failed');
+            } else {
+                // no server connection error
+                console.error('An error occurred:', error.message || 'Unknown error');
+                alert('No connection to server. Please try again later.');
+                setError('No connection to server');
             }
-            setError('Login failed');
             console.error('Login failed:', error);
         }
     };
 
     return (
         <div className="login-page">
-            <Navbar />
+            <RegisterLoginBar />
             
             {/* <div className="login-content">
                 <div className="register">

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import Navbar from '../components/WelcomeBar'; // ייבוא ה-navbar
+import WelcomeBar from '../components/WelcomeBar'; // ייבוא ה-navbar
 import '../styles/Welcome.css';
 
 const Welcome = () => {
@@ -8,7 +8,7 @@ const Welcome = () => {
 
     return (
         <div className="welcome-page">
-            <Navbar />
+            <WelcomeBar />
             
             <div className="welcome-content">
                 <h1>Welcome to NETFLICK</h1>

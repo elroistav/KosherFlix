@@ -46,7 +46,7 @@
     text-transform: uppercase;
     letter-spacing: 1px;
     margin-bottom: 5px;
-    color: #999;
+    color: var(--accent-color)
   }
   
   .info-value {

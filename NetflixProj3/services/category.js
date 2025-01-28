@@ -50,22 +50,30 @@ const getCategories = async (headers) => {
 // Update a category by ID
 const updateCategory = async (headers, id, updates) => {
     try {
-        await validateUserId(headers);        
-        const category = await Category.findById(id);
-        if (!category) throw new Error('Category not found');
+        console.log('Received headers:', headers);
+        await validateUserId(headers); // לוודא שה-ID של המשתמש תקין
 
-        Object.keys(updates).forEach((key) => { // Loop through each key in the updates object
+        console.log('Searching for category with id:', id);
+        const category = await Category.findById(id);
+        if (!category) {
+            console.log('Category not found!');
+            throw new Error('Category not found');
+        }
+
+        // עדכון הקטגוריה
+        Object.keys(updates).forEach((key) => { 
             if (key in category) {
                 category[key] = updates[key];
             }
         });
 
+        console.log('Saving updated category...');
         return await category.save();
     } catch (error) {
         console.error('Error updating category:', error);
         throw error;
     }
-};  
+}; 
 
 // Delete a category by ID
 const deleteCategory = async (headers, id) => {
