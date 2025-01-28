@@ -22,7 +22,7 @@ public class RetrofitClient {
                     .build();
 
             retrofit = new Retrofit.Builder()
-                    .baseUrl("http://172.17.0.172:4000/api/") // Backend URL
+                    .baseUrl("http://172.18.101.242:4000/api/") // Backend URL
                     .client(okHttpClient)
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
@@ -30,7 +30,7 @@ public class RetrofitClient {
         return retrofit;
     }
 
-    private static String getBackendUrl(Context context) {
+    public static String getBackendUrl(Context context) {
         try (InputStream inputStream = context.getAssets().open("config.properties")) {
             Properties properties = new Properties();
             properties.load(inputStream);

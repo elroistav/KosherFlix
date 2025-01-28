@@ -14,7 +14,7 @@ public class MovieViewModel extends ViewModel {
     private final MovieRepository movieRepository;
 
     public MovieViewModel() {
-        movieRepository = new MovieRepository();
+        movieRepository = MovieRepository.getInstance();
     }
 
     // Expose LiveData for a movie
@@ -42,3 +42,4 @@ public class MovieViewModel extends ViewModel {
         });
     }
 }
+
