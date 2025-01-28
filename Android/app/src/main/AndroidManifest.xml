@@ -33,6 +33,10 @@
             <!-- אם יש צורך ב-intent filter -->
         </activity>
 
+        <activity android:name=".view.RegisterActivity">
+            <!-- אם יש צורך ב-intent filter -->
+        </activity>
+
         <!-- Main Activity -->
 <!--        <activity android:name=".view.MainActivity" />-->
 

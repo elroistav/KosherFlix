@@ -103,6 +103,15 @@
                 android:text="@string/loginButton"
                 android:textColor="@color/white" />
 
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/goToRegisterButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:backgroundTint="@color/white"
+                android:text="New User? Register Here"
+                android:textColor="@color/black" />
+
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 

@@ -55,6 +55,10 @@ public class LoginActivity extends AppCompatActivity {
             Log.d(TAG, "Login button clicked");
             attemptLogin();
         });
+
+        findViewById(R.id.goToRegisterButton).setOnClickListener(v -> {
+            startActivity(new Intent(LoginActivity.this, RegisterActivity.class));
+        });
     }
 
     private void setupViewModel() {
@@ -84,6 +88,7 @@ public class LoginActivity extends AppCompatActivity {
         loginViewModel.getError().observe(this, error -> {
             if (error != null) {
                 Log.d(TAG, "observeViewModel: Login failed with error: " + error);
+
                 View rootView = findViewById(android.R.id.content);
                 Snackbar.make(rootView, error, Snackbar.LENGTH_LONG).show();
             }
@@ -151,4 +156,6 @@ public class LoginActivity extends AppCompatActivity {
             loginViewModel.login(username, password);
         }
     }
+
+
 }
