@@ -1,5 +1,6 @@
 package com.example.netflix_app4.view;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
@@ -8,6 +9,8 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -17,6 +20,7 @@ import android.widget.Toast;
 import android.widget.VideoView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -30,6 +34,7 @@ import com.example.netflix_app4.network.MovieApiService;
 import com.example.netflix_app4.network.RetrofitClient;
 import com.example.netflix_app4.viewmodel.CategoryViewModel;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -39,6 +44,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
+import java.util.Properties;
+
 
 public class HomeScreenActivity extends AppCompatActivity {
 
@@ -85,22 +92,43 @@ public class HomeScreenActivity extends AppCompatActivity {
 //        fetchButton.setOnClickListener(v -> categoryViewModel.fetchCategories(userId));
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.themeSwitch) {// Toggle between light and dark mode
+            int currentMode = AppCompatDelegate.getDefaultNightMode();
+            if (currentMode == AppCompatDelegate.MODE_NIGHT_YES) {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);  // Switch to light mode
+            } else {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);  // Switch to dark mode
+            }
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     private void fetchRandomMovie() {
-                        // Get the Retrofit instance from RetrofitClient
-                        Retrofit retrofit = RetrofitClient.getRetrofitInstance();
+                // Get the Retrofit instance from RetrofitClient
+                Retrofit retrofit = RetrofitClient.getRetrofitInstance();
 
-                        // Create the service
-                        MovieApiService movieService = retrofit.create(MovieApiService.class);
+                // Create the service
+                MovieApiService movieService = retrofit.create(MovieApiService.class);
 
-                        // Step 1: Fetch categories
-                        movieService.getCategories(userId).enqueue(new Callback<CategoriesResponse>() {
-                            @Override
-                            public void onResponse(Call<CategoriesResponse> call, Response<CategoriesResponse> response) {
-                                if (response.isSuccessful() && response.body() != null) {
-                                    CategoriesResponse categoriesResponse = response.body();
-                                    List<CategoryPromoted> promotedCategories = categoriesResponse.getPromotedCategories();
+                // Step 1: Fetch categories
+                movieService.getCategories(userId).enqueue(new Callback<CategoriesResponse>() {
+                    @Override
+                    public void onResponse(Call<CategoriesResponse> call, Response<CategoriesResponse> response) {
+                        Log.d("Response: ", response.toString());
+                        if (response.isSuccessful() && response.body() != null) {
+                            CategoriesResponse categoriesResponse = response.body();
+                            List<CategoryPromoted> promotedCategories = categoriesResponse.getPromotedCategories();
 
-                                    // Step 2: Randomly select a movie ID
+                            // Step 2: Randomly select a movie ID
                     List<String> allMovieIds = new ArrayList<>();
                     for (CategoryPromoted category : promotedCategories) {
                         allMovieIds.addAll(category.getMovies()); // Assuming `getMovies()` returns a list of movie IDs
@@ -116,10 +144,20 @@ public class HomeScreenActivity extends AppCompatActivity {
                                 if (movieResponse.isSuccessful() && movieResponse.body() != null) {
                                     // Overwrite the videoUrl with the URL of the sample.mp4 file
                                     MovieModel movie = movieResponse.body();
-                                    movie.setVideoUrl("https://350d-132-70-66-11.ngrok-free.app/uploads/sample.mp4");
+                                    movie.setVideoUrl(getBackendUrl() + "/uploads/sample.mp4");
                                     Log.d("Video Url: ", movie.getVideoUrl());
                                     // Update UI with the random movie details
                                     updateMovieUI(movie);
+                                    infoButton.setOnClickListener(v -> {
+                                        Intent intent = new Intent(HomeScreenActivity.this, MovieDetailsActivity.class);
+                                        intent.putExtra("movieDetails", movie);
+                                        startActivity(intent);
+                                    });
+                                    playButton.setOnClickListener(v -> {
+                                        Intent intent = new Intent(HomeScreenActivity.this, MoviePlaybackActivity.class);
+                                        intent.putExtra("movieVideoUrl", movie.getVideoUrl()); // Pass the video URL
+                                        startActivity(intent);
+                                    });
                                 } else {
                                     Toast.makeText(HomeScreenActivity.this, "Failed to fetch random movie details", Toast.LENGTH_SHORT).show();
                                 }
@@ -140,6 +178,7 @@ public class HomeScreenActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<CategoriesResponse> call, Throwable t) {
+                                Log.d("Error: ", t.getMessage());
                 Toast.makeText(HomeScreenActivity.this, "Error fetching categories: " + t.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
@@ -243,6 +282,17 @@ public class HomeScreenActivity extends AppCompatActivity {
         });
 
         dialog.show();
+    }
+
+    private String getBackendUrl() {
+        try (InputStream inputStream = getAssets().open("config.properties")) {
+            Properties properties = new Properties();
+            properties.load(inputStream);
+            return properties.getProperty("backend_url");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }
 

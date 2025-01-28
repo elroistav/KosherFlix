@@ -1,5 +1,6 @@
 package com.example.netflix_app4.view;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.media.MediaPlayer;
@@ -18,6 +19,8 @@ import android.widget.MediaController;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
+import java.util.Properties;
+
 
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -30,11 +33,13 @@ import com.example.netflix_app4.model.MovieModel;
 import com.example.netflix_app4.network.MovieApiService;
 import com.example.netflix_app4.network.RetrofitClient;
 
+import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Properties;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -74,7 +79,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
 
         // Retrieve the movie details from Intent
         MovieModel movie = getIntent().getParcelableExtra("movieDetails");
-        movie.setVideoUrl("https://350d-132-70-66-11.ngrok-free.app/uploads/sample.mp4");
+        movie.setVideoUrl(getBackendUrl() + "/uploads/sample.mp4");
         if (movie != null) {
             Log.d("MovieDetailsActivity", "Movie details: " + movie);
             if (movie.getVideoUrl() != null) {
@@ -90,6 +95,11 @@ public class MovieDetailsActivity extends AppCompatActivity {
 
         // Back button action
         backButton.setOnClickListener(v -> finish());
+        watchButton.setOnClickListener(v -> {
+            Intent intent = new Intent(MovieDetailsActivity.this, MoviePlaybackActivity.class);
+            intent.putExtra("movieVideoUrl", movie.getVideoUrl()); // Pass the video URL
+            startActivity(intent);
+        });
         recommendationTitle = findViewById(R.id.recommendationTitle);
         recommendationTitle.setVisibility(View.GONE); // Initially hidden
     }
@@ -241,7 +251,16 @@ public class MovieDetailsActivity extends AppCompatActivity {
         movieInfoGrid.addView(infoCard);
     }
 
-
+    private String getBackendUrl() {
+        try (InputStream inputStream = getAssets().open("config.properties")) {
+            Properties properties = new Properties();
+            properties.load(inputStream);
+            return properties.getProperty("backend_url");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 }
 
 

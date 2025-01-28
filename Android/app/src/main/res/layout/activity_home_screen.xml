@@ -13,7 +13,7 @@
             android:id="@+id/randomMovieSection"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#000"
+            android:background="?attr/android:windowBackground"
             android:layout_alignParentTop="true">
 
             <!-- Movie Player -->
@@ -40,7 +40,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/movie_title"
-                    android:textColor="#FFFFFF"
+                    android:textColor="?attr/android:textColor"
                     android:textSize="24sp"
                     android:textStyle="bold"
                     android:ellipsize="end"
@@ -53,7 +53,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/movie_description_goes_here"
-                    android:textColor="#FFFFFF"
+                    android:textColor="?attr/android:textColor"
                     android:textSize="16sp"
                     android:ellipsize="end"
                     android:maxLines="3"
@@ -70,7 +70,7 @@
                 android:layout_marginBottom="20dp"
                 android:orientation="horizontal"
                 android:layout_below="@id/movieInfoContainer"
-                android:background="@android:color/transparent">
+                android:background="@color/red">
 
                 <!-- Play Button -->
                 <Button
@@ -79,8 +79,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/play"
-                    android:textColor="#000"
-                    android:backgroundTint="#FFF"
+                    android:textColor="?attr/android:textColorPrimary"
+                    android:background="@color/red"
                     android:layout_marginEnd="12dp" />
 
                 <!-- Get Info Button -->
@@ -90,8 +90,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/get_info"
-                    android:textColor="#000"
-                    android:backgroundTint="#FFF" />
+                    android:textColor="?attr/android:textColorPrimary"
+                    android:background="?attr/colorOnPrimary" />
             </LinearLayout>
         </RelativeLayout>
 
@@ -109,6 +109,3 @@
             android:nestedScrollingEnabled="false" />
     </RelativeLayout>
 </ScrollView>
-
-
-
