@@ -42,7 +42,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
     private RecyclerView recommendationRecyclerView;
     private RecommendationAdapter recommendationAdapter;
     private TextView recommendationTitle;
-    private String userId = "679615afd6aeeebe1038f023";
+    private String userId = "678c10fe72b00e76a2d02581";
 
 
 

@@ -28,7 +28,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
     private Context context;
     private List<CategoryPromoted> categoryList;
     private OnMovieClickListener movieClickListener;
-    private String userId = "679615afd6aeeebe1038f023";
+    private String userId = "678c10fe72b00e76a2d02581";
 
     public CategoryAdapter(Context context, List<CategoryPromoted> categoryList, OnMovieClickListener movieClickListener) {
         this.context = context;

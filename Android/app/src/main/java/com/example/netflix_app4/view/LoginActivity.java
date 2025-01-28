@@ -24,7 +24,9 @@ public class LoginActivity extends AppCompatActivity {
 
     // Regex patterns and constants
     private static final Pattern USERNAME_REGEX = Pattern.compile("^[A-Za-z0-9_-]{3,15}$");
-    private static final Pattern PASSWORD_REGEX = Pattern.compile("^(?=.*[a-zA-Z])(?=.*\\d)[A-Za-z\\d!@#$%^&*]{8,}$");
+    private static final Pattern PASSWORD_REGEX = Pattern.compile(
+            "^(?=.*[a-zA-Z])(?=.*\\d).{8,}$"
+    );
     private static final int MIN_PASSWORD_LENGTH = 8;
 
     @Override
@@ -69,8 +71,8 @@ public class LoginActivity extends AppCompatActivity {
         usernameLayout.setError(null);
         passwordLayout.setError(null);
 
-        String username = usernameInput.getText() != null ? usernameInput.getText().toString() : "";
-        String password = passwordInput.getText() != null ? passwordInput.getText().toString() : "";
+        String username = usernameInput.getText() != null ? usernameInput.getText().toString().trim() : "";
+        String password = passwordInput.getText() != null ? passwordInput.getText().toString().trim() : "";
 
         boolean cancel = false;
         TextInputLayout focusView = null;

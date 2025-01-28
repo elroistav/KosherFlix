@@ -24,4 +24,6 @@
     <string name="play_movie">Play Movie</string>
     <string name="close_popup">Close</string>
     <string name="back_button">Back</string>
+    <string name="search">Search</string>
+    <string name="toggle_theme">Toggle Theme</string>
 </resources>
