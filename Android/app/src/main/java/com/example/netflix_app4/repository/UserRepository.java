@@ -8,6 +8,7 @@ import com.example.netflix_app4.db.UserDao;
 import com.example.netflix_app4.model.User;
 import com.example.netflix_app4.network.ApiClient;
 import com.example.netflix_app4.network.ApiService;
+import com.example.netflix_app4.network.RetrofitClient;
 import com.example.netflix_app4.util.AppExecutors;
 import com.example.netflix_app4.model.LoginRequest;
 import com.example.netflix_app4.model.LoginResponse;
@@ -15,6 +16,8 @@ import com.example.netflix_app4.model.LoginResponse;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import retrofit2.Retrofit;
+
 import androidx.annotation.NonNull;
 
 public class UserRepository {
@@ -25,7 +28,9 @@ public class UserRepository {
     public UserRepository(Application application) {
         AppDatabase db = AppDatabase.getDatabase(application);
         userDao = db.userDao();
-        apiService = ApiClient.getInstance().create(ApiService.class);
+        Retrofit retrofit = RetrofitClient.getRetrofitInstance();
+
+        apiService = retrofit.create(ApiService.class);
         loggedInUser = userDao.getLoggedInUser();
     }
 

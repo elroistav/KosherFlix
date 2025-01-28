@@ -23,7 +23,7 @@ public class SearchActivity extends AppCompatActivity {
     private SearchView searchView;
     private SearchResultsAdapter searchResultsAdapter;
     private SearchViewModel searchViewModel;
-    private final String userId = "678c10fe72b00e76a2d02581"; // Use your actual user ID
+    private final String userId = "6796929afb50fce3a07283b3"; // Use your actual user ID
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

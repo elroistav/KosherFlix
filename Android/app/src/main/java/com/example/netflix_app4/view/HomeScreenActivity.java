@@ -46,7 +46,7 @@ public class HomeScreenActivity extends AppCompatActivity {
     private TextView movieDescription;
     private Button playButton;
     private Button infoButton;
-    private String userId = "678c10fe72b00e76a2d02581";
+    private String userId = "6796929afb50fce3a07283b3";
 
 
     @Override
