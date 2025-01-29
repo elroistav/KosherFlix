@@ -58,6 +58,10 @@
             android:exported="false"
             android:theme="@style/Theme.Netflix_App4" />
 
+        <activity
+            android:name=".view.AllCategoriesActivity"
+            android:exported="false"/>
+
     </application>
 
 </manifest>

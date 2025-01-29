@@ -2,11 +2,43 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true"> <!-- Ensures content fills the viewport -->
+    android:fillViewport="true">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"> <!-- Scrollable content -->
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/navbarToggleButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_margin="16dp"
+            android:text="☰"/>
+
+        <com.example.netflix_app4.components.CustomNavbar
+            android:id="@+id/custom_navbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/navbarToggleButton"
+            android:visibility="gone"
+            android:elevation="8dp"/>
+
+
+        <!-- Welcome Text Section -->
+        <TextView
+            android:id="@+id/welcomeText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:textSize="40dp"
+            android:textStyle="bold"
+            android:textColor="?attr/android:textColor"
+            android:text="Welcome" />
 
         <!-- Random Movie Section -->
         <RelativeLayout
@@ -14,13 +46,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="?attr/android:windowBackground"
-            android:layout_alignParentTop="true">
+            android:layout_below="@id/welcomeText">
 
             <!-- Movie Player -->
             <FrameLayout
                 android:id="@+id/moviePlayerWrapper"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"> <!-- Video view will adjust here -->
+                android:layout_height="wrap_content">
             </FrameLayout>
 
             <!-- Movie Info Section -->
