@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -19,6 +20,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 import android.util.Log;
+import com.example.netflix_app4.components.CustomNavbar;
+import com.example.netflix_app4.model.User;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
@@ -54,6 +57,7 @@ import java.util.Properties;
 public class HomeScreenActivity extends AppCompatActivity {
     private static final String TAG = "HomeScreenActivity";
 
+    private CustomNavbar customNavbar;
     private RecyclerView categoriesRecyclerView;
     private CategoryAdapter categoryAdapter;
     private HomeScreenViewModel viewModel;
@@ -65,10 +69,19 @@ public class HomeScreenActivity extends AppCompatActivity {
     private Button infoButton;
     private FrameLayout moviePlayerWrapper;
 
+    private Button navbarToggleButton;
+    private boolean isNavbarVisible = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_screen);
+
+        customNavbar = findViewById(R.id.custom_navbar);
+        customNavbar.setVisibility(View.GONE);  // הסתר את הnavbar בהתחלה
+        navbarToggleButton = findViewById(R.id.navbarToggleButton);
+        navbarToggleButton.setOnClickListener(v -> toggleNavbar());
+
 
         String token = getIntent().getStringExtra("USER_TOKEN");
         if (token == null) {
@@ -113,6 +126,18 @@ public class HomeScreenActivity extends AppCompatActivity {
                 updateUIWithUserInfo(userInfo);
                 categoryViewModel.fetchCategories(userInfo.getUserId());
                 categoryViewModel.fetchRandomMovie(this, userInfo.getUserId());
+
+                if (customNavbar != null) {
+                    customNavbar.setUserDetails(new UserInfo(
+                            userInfo.getName(),
+                            userInfo.getAvatar(),
+                            userInfo.getUserId(),
+                            userInfo.getToken(),
+                            userInfo.isAdmin()
+                    ));
+
+                    //customNavbar.setupEventListeners();
+                }
             }
         });
 
@@ -182,5 +207,24 @@ public class HomeScreenActivity extends AppCompatActivity {
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         finish();
+    }
+
+    private void toggleNavbar() {
+        isNavbarVisible = !isNavbarVisible;
+
+        if (isNavbarVisible) {
+            customNavbar.setVisibility(View.VISIBLE);
+            customNavbar.animate()
+                    .alpha(1f)
+                    .setDuration(200)
+                    .start();
+        } else {
+            customNavbar.animate()
+                    .alpha(0f)
+                    .setDuration(200)
+                    .withEndAction(() ->
+                            customNavbar.setVisibility(View.GONE))
+                    .start();
+        }
     }
 }
