@@ -16,15 +16,11 @@
 
         tools:targetApi="31">
 
-        <activity android:name=".view.MainActivity"
-            android:exported="true">
+
         <activity android:name=".view.HomeScreenActivity"
             android:exported="true"
             android:theme="@style/Theme.Netflix_App4">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+
         </activity>
 
         <activity
@@ -36,12 +32,13 @@
         <activity
             android:name=".view.LoginActivity"
             android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
 
         </activity>
 
-        <activity android:name=".view.HomeScreenActivity">
-            <!-- אם יש צורך ב-intent filter -->
-        </activity>
 
         <activity android:name=".view.RegisterActivity">
             <!-- אם יש צורך ב-intent filter -->

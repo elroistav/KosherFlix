@@ -17,12 +17,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.netflix_app4.R;
 import com.example.netflix_app4.model.MovieModel;
-import com.example.netflix_app4.viewmodel.SearchViewModel;
+//import com.example.netflix_app4.viewmodel.SearchViewModel;
 
 public class SearchActivity extends AppCompatActivity {
     private SearchView searchView;
     private SearchResultsAdapter searchResultsAdapter;
-    private SearchViewModel searchViewModel;
+//    private SearchViewModel searchViewModel;
     private final String userId = "6796929afb50fce3a07283b3"; // Use your actual user ID
 
     @Override
@@ -41,45 +41,45 @@ public class SearchActivity extends AppCompatActivity {
         });
         searchResultsRecyclerView.setAdapter(searchResultsAdapter);
         searchResultsRecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
-
-        // Setup ViewModel
-        searchViewModel = new ViewModelProvider(this).get(SearchViewModel.class);
-        observeViewModel();
+//
+//        // Setup ViewModel
+//        searchViewModel = new ViewModelProvider(this).get(SearchViewModel.class);
+//        observeViewModel();
 
         // Setup SearchView
-        setupSearchView();
+//        setupSearchView();
     }
 
-    private void setupSearchView() {
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                if (query != null && !query.isEmpty()) {
-                    searchViewModel.searchMovies(query, userId);
-                }
-                return true;
-            }
+//    private void setupSearchView() {
+//        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+//            @Override
+//            public boolean onQueryTextSubmit(String query) {
+//                if (query != null && !query.isEmpty()) {
+//                    searchViewModel.searchMovies(query, userId);
+//                }
+//                return true;
+//            }
+//
+//            @Override
+//            public boolean onQueryTextChange(String newText) {
+//                return false;
+//            }
+//        });
+//    }
 
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                return false;
-            }
-        });
-    }
-
-    private void observeViewModel() {
-        searchViewModel.getSearchResults().observe(this, movies -> {
-            if (movies != null) {
-                searchResultsAdapter.updateData(movies);
-            }
-        });
-
-        searchViewModel.getError().observe(this, error -> {
-            if (error != null) {
-                Toast.makeText(this, "Error: " + error, Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
+//    private void observeViewModel() {
+//        searchViewModel.getSearchResults().observe(this, movies -> {
+//            if (movies != null) {
+//                searchResultsAdapter.updateData(movies);
+//            }
+//        });
+//
+//        searchViewModel.getError().observe(this, error -> {
+//            if (error != null) {
+//                Toast.makeText(this, "Error: " + error, Toast.LENGTH_SHORT).show();
+//            }
+//        });
+//    }
 
     private void showMoviePopup(MovieModel movie) {
         Dialog dialog = new Dialog(this);
@@ -88,7 +88,6 @@ public class SearchActivity extends AppCompatActivity {
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
         // Bind views
-        ImageView moviePoster = dialog.findViewById(R.id.moviePreview);
         TextView movieTitle = dialog.findViewById(R.id.movieTitle);
         TextView movieDescription = dialog.findViewById(R.id.movieDescription);
         Button watchButton = dialog.findViewById(R.id.watchButton);
@@ -97,10 +96,7 @@ public class SearchActivity extends AppCompatActivity {
         movieTitle.setText(movie.getTitle());
         movieDescription.setText(movie.getDescription());
 
-        // Load thumbnail
-        Glide.with(this)
-                .load(movie.getThumbnail())
-                .into(moviePoster);
+
 
         watchButton.setOnClickListener(v -> {
             Toast.makeText(this, "Watch Movie feature coming soon!", Toast.LENGTH_SHORT).show();

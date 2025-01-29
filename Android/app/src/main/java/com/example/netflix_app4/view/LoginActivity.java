@@ -9,6 +9,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import android.util.Log;
+import com.example.netflix_app4.network.Config;
 
 import com.example.netflix_app4.R;
 import com.example.netflix_app4.viewmodel.LoginViewModel;
@@ -39,6 +40,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate: LoginActivity started");
         setContentView(R.layout.activity_login);
+        Config.loadConfig(this);
 
         initializeViews();
         setupViewModel();

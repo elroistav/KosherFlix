@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.example.netflix_app4.model.CategoryPromoted;
 import com.example.netflix_app4.model.MovieModel;
+import com.example.netflix_app4.network.Config;
 import com.example.netflix_app4.network.MovieApiService;
 import com.example.netflix_app4.network.RetrofitClient;
 import com.example.netflix_app4.model.CategoriesResponse;
@@ -71,7 +72,7 @@ public class CategoryRepository {
                                 MovieModel movie = movieResponse.body();
                                 Log.d("CategoryRepository", "Fetched random movie: " + movie.getTitle());
                                 // Set the video URL for the demo video
-                                movie.setVideoUrl(RetrofitClient.getBackendUrl(context) + "/uploads/sample.mp4");
+                                //movie.setVideoUrl(Config.getBaseUrl() + "/uploads/lion.mp4");
                                 Log.d("CategoryRepository", "videoUrl: " + movie.getVideoUrl());
                                 callback.onSuccess(movie);
                             } else {
