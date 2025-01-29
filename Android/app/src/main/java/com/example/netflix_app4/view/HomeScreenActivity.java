@@ -60,7 +60,7 @@ public class HomeScreenActivity extends AppCompatActivity {
     private Button infoButton;
     private FrameLayout moviePlayerWrapper;
 
-    private String userId = "679615afd6aeeebe1038f023";
+    private String userId = "678c10fe72b00e76a2d02581";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
