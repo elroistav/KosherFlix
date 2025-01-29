@@ -169,15 +169,15 @@ public class CustomNavbar extends LinearLayout {
     }
 
     private void navigateToAllCategories() {
-        Intent intent = new Intent(this, AllCategoriesActivity.class);
+        Intent intent = new Intent(getContext(), AllCategoriesActivity.class);
         intent.putExtra("userInfo", userInfo);
-        startActivity(intent);
+        getContext().startActivity(intent);
     }
 
     private void navigateToCategoryMovies(CategoryModel category) {
-        Intent intent = new Intent(this, CategoryMoviesActivity.class);
-        intent.putExtra("category", category);
-        startActivity(intent);
+        //Intent intent = new Intent(this, CategoryMoviesActivity.class);
+//        intent.putExtra("category", category);
+//        startActivity(intent);
     }
 
     private void setupCategoriesListeners() {

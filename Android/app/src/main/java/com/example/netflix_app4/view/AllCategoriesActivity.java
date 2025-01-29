@@ -1,9 +1,20 @@
 package com.example.netflix_app4.view;
 
+import android.app.Dialog;
+import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.VideoView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
@@ -12,9 +23,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.netflix_app4.R;
 import com.example.netflix_app4.components.CustomNavbar;
+import com.example.netflix_app4.model.MovieModel;
+import com.example.netflix_app4.model.UserInfo;
 import com.example.netflix_app4.viewmodel.CategoryViewModel;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class AllCategoriesActivity extends AppCompatActivity {
     private static final String TAG = "AllCategoriesActivity";
@@ -26,12 +40,20 @@ public class AllCategoriesActivity extends AppCompatActivity {
     private Button navbarToggleButton;
     private boolean isNavbarVisible = false;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_all_categories);
 
-        // אתחול הנאבבר והכפתור שלו - בדיוק כמו במסך הבית
+        // קבלת ה-UserInfo מה-Intent
+        UserInfo userInfo = (UserInfo) getIntent().getSerializableExtra("userInfo");
+        if (userInfo == null) {
+            redirectToLogin();
+            return;
+        }
+
+        // אתחול הנאבבר
         customNavbar = findViewById(R.id.custom_navbar);
         customNavbar.setVisibility(View.GONE);
         navbarToggleButton = findViewById(R.id.navbarToggleButton);
@@ -42,13 +64,7 @@ public class AllCategoriesActivity extends AppCompatActivity {
 
         // אתחול ה-CustomNavbar עם ה-ViewModel
         customNavbar.initializeCategoryViewModel(categoryViewModel);
-
-        // קבלת הטוקן מה-Intent
-        String token = getIntent().getStringExtra("USER_TOKEN");
-        if (token == null) {
-            redirectToLogin();
-            return;
-        }
+        customNavbar.setUserDetails(userInfo);  // העברת פרטי המשתמש לנאבבר
 
         // הגדרת ה-RecyclerView
         categoriesRecyclerView = findViewById(R.id.categoriesRecyclerView);
@@ -61,8 +77,8 @@ public class AllCategoriesActivity extends AppCompatActivity {
         // אתחול הצפייה במידע
         observeViewModels();
 
-        // וולידציה של הטוקן וטעינת המידע
-//        loadData(token);
+        // קריאה לפונקציה שמביאה את כל הקטגוריות
+        categoryViewModel.fetchAllCategories(userInfo.getUserId());  // שימוש ב-userId מתוך אובייקט ה-UserInfo
     }
 
     private void observeViewModels() {
@@ -84,7 +100,6 @@ public class AllCategoriesActivity extends AppCompatActivity {
 //        categoryViewModel.validateTokenAndFetchCategories(token);
 //    }
 
-    // שאר המתודות זהות למסך הבית
     private void toggleNavbar() {
         isNavbarVisible = !isNavbarVisible;
         if (isNavbarVisible) {
@@ -110,7 +125,25 @@ public class AllCategoriesActivity extends AppCompatActivity {
         finish();
     }
 
+
+
     public void showMoviePopup(MovieModel movie) {
-        // אותו מימוש כמו במסך הבית
+        Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.movie_details);
+        Objects.requireNonNull(dialog.getWindow()).setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        TextView movieTitle = dialog.findViewById(R.id.movieTitle);
+        TextView movieDescription = dialog.findViewById(R.id.movieDescription);
+        Button watchButton = dialog.findViewById(R.id.watchButton);
+
+        movieTitle.setText(movie.getTitle());
+        movieDescription.setText(movie.getDescription());
+
+        watchButton.setOnClickListener(v -> {
+            Toast.makeText(this, "Watch Movie feature coming soon!", Toast.LENGTH_SHORT).show();
+        });
+
+        dialog.show();
     }
 }

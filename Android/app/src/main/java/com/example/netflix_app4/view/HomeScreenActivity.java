@@ -198,15 +198,88 @@ public class HomeScreenActivity extends AppCompatActivity {
 
     // Your existing methods remain unchanged
     private void updateMovieUI(MovieModel movie) {
-        // Your existing implementation
+        movieTitle.setText(movie.getTitle());
+        movieDescription.setText(movie.getDescription());
+
+        // Prepare VideoView
+        Log.d("HomeScreenActivity", "Playing video: " + movie.getVideoUrl());
+        moviePlayerWrapper.removeAllViews();
+        VideoView videoView = new VideoView(this);
+        moviePlayerWrapper.addView(videoView);
+
+        Uri videoUri = Uri.parse(movie.getVideoUrl());
+        videoView.setVideoURI(videoUri);
+        if (videoUri != null) {
+            Log.d("HomeScreenActivity", "Video URI is valid: " + videoUri.toString());
+        } else {
+            Log.e("HomeScreenActivity", "Invalid video URL.");
+        }
+
+        videoView.setOnInfoListener((mp, what, extra) -> {
+            Log.d("HomeScreenActivity", "Info listener triggered. What: " + what + ", Extra: " + extra);
+            switch (what) {
+                case MediaPlayer.MEDIA_INFO_BUFFERING_START:
+                    Log.d("HomeScreenActivity", "Buffering started");
+                    break;
+                case MediaPlayer.MEDIA_INFO_BUFFERING_END:
+                    Log.d("HomeScreenActivity", "Buffering ended");
+                    break;
+                case MediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START:
+                    Log.d("HomeScreenActivity", "Video rendering started");
+                    break;
+                default:
+                    Log.d("HomeScreenActivity", "Other info: " + what);
+                    break;
+            }
+            return false;
+        });
+
+        videoView.setOnPreparedListener(mp -> {
+            Log.d("HomeScreenActivity", "Video starting. Enjoy!");
+            videoView.start();
+            adjustVideoViewSize(videoView, mp);
+        });
+
+        videoView.setOnErrorListener((mp, what, extra) -> {
+            Log.e("HomeScreenActivity", "Error playing video. What: " + what + ", Extra: " + extra);
+            Toast.makeText(this, "Error playing video", Toast.LENGTH_SHORT).show();
+            return true;
+        });
     }
 
     private void adjustVideoViewSize(VideoView videoView, MediaPlayer mp) {
-        // Your existing implementation
+        int videoWidth = mp.getVideoWidth();
+        int videoHeight = mp.getVideoHeight();
+        FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) videoView.getLayoutParams();
+
+        float aspectRatio = (float) videoWidth / videoHeight;
+        int videoViewWidth = moviePlayerWrapper.getWidth();
+        int videoViewHeight = (int) (videoViewWidth / aspectRatio);
+
+        layoutParams.width = videoViewWidth;
+        layoutParams.height = videoViewHeight;
+
+        videoView.setLayoutParams(layoutParams);
     }
 
     public void showMoviePopup(MovieModel movie) {
-        // Your existing implementation
+        Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.movie_details);
+        Objects.requireNonNull(dialog.getWindow()).setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        TextView movieTitle = dialog.findViewById(R.id.movieTitle);
+        TextView movieDescription = dialog.findViewById(R.id.movieDescription);
+        Button watchButton = dialog.findViewById(R.id.watchButton);
+
+        movieTitle.setText(movie.getTitle());
+        movieDescription.setText(movie.getDescription());
+
+        watchButton.setOnClickListener(v -> {
+            Toast.makeText(this, "Watch Movie feature coming soon!", Toast.LENGTH_SHORT).show();
+        });
+
+        dialog.show();
     }
 
     private void redirectToLogin() {

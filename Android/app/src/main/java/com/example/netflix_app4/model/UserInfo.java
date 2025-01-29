@@ -1,6 +1,8 @@
 package com.example.netflix_app4.model;
 
-public class UserInfo {
+import java.io.Serializable;
+
+public class UserInfo implements Serializable {
     private String name;
     private String avatar;
     private String userId;

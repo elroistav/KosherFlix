@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.netflix_app4.model.CategoryModel;
 import com.example.netflix_app4.network.MovieApiService;
 import com.example.netflix_app4.R;
 import com.example.netflix_app4.network.RetrofitClient;
@@ -26,13 +27,16 @@ import retrofit2.Response;
 
 public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder> {
     private Context context;
-    private List<CategoryPromoted> categoryList;
+    private List<Object> categories; // יכול להכיל CategoryPromoted או CategoryModel
     private OnMovieClickListener movieClickListener;
     private String userId = "6796929afb50fce3a07283b3";
 
-    public CategoryAdapter(Context context, List<CategoryPromoted> categoryList, OnMovieClickListener movieClickListener) {
+    public CategoryAdapter(Context context, List<?> categories, OnMovieClickListener movieClickListener) {
         this.context = context;
-        this.categoryList = categoryList != null ? categoryList : new ArrayList<>();
+        this.categories = new ArrayList<>();
+        if (categories != null) {
+            this.categories.addAll(categories);
+        }
         this.movieClickListener = movieClickListener;
     }
 
@@ -45,12 +49,27 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
 
     @Override
     public void onBindViewHolder(@NonNull CategoryViewHolder holder, int position) {
-        CategoryPromoted category = categoryList.get(position);
-        holder.categoryTitle.setText(category.getCategory());
+        Object category = categories.get(position);
 
-        List<String> movieIds = category.getMovies();
+        String categoryTitle;
+        List<String> movieIds;
+
+        if (category instanceof CategoryPromoted) {
+            CategoryPromoted promotedCategory = (CategoryPromoted) category;
+            categoryTitle = promotedCategory.getCategory();
+            movieIds = promotedCategory.getMovies();
+        } else if (category instanceof CategoryModel) {
+            CategoryModel categoryModel = (CategoryModel) category;
+            categoryTitle = categoryModel.getName();
+            movieIds = categoryModel.getMovies();
+        } else {
+            return;
+        }
+
+        holder.categoryTitle.setText(categoryTitle);
+
         if (movieIds == null || movieIds.isEmpty()) {
-            Log.d("CategoryAdapter", "No movies to fetch for category " + category.getCategory());
+            Log.d("CategoryAdapter", "No movies to fetch for category " + categoryTitle);
             return;
         }
 
@@ -67,9 +86,8 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
                         Log.e("CategoryAdapter", "Failed to fetch movie details.");
                     }
 
-                    // Update RecyclerView when all details are fetched
                     if (movieDetails.size() == movieIds.size()) {
-                        Log.d("CategoryAdapter", "All movies fetched for category " + category.getCategory());
+                        Log.d("CategoryAdapter", "All movies fetched for category " + categoryTitle);
                         MovieAdapter movieAdapter = new MovieAdapter(context, movieDetails, movieClickListener);
                         holder.moviesRecyclerView.setAdapter(movieAdapter);
                         holder.moviesRecyclerView.setLayoutManager(
@@ -88,13 +106,13 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
 
     @Override
     public int getItemCount() {
-        return categoryList.size();
+        return categories.size();
     }
 
-    public void updateData(List<CategoryPromoted> newCategories) {
-        categoryList.clear();
+    public void updateData(List<?> newCategories) {
+        categories.clear();
         if (newCategories != null) {
-            categoryList.addAll(newCategories);
+            categories.addAll(newCategories);
         }
         notifyDataSetChanged();
     }
@@ -114,7 +132,3 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
         void onMovieClick(MovieModel movie);
     }
 }
-
-
-
-
