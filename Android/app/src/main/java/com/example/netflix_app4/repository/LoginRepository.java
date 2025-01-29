@@ -3,8 +3,8 @@ package com.example.netflix_app4.repository;
 import androidx.annotation.NonNull;
 import com.example.netflix_app4.model.LoginRequest;
 import com.example.netflix_app4.model.LoginResponse;
-import com.example.netflix_app4.network.ApiClient;
 import com.example.netflix_app4.network.ApiService;
+import com.example.netflix_app4.network.RetrofitClient;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -14,7 +14,7 @@ public class LoginRepository {
     private final ApiService apiService;
 
     public LoginRepository() {
-        apiService = ApiClient.getInstance().create(ApiService.class);
+        apiService = RetrofitClient.getRetrofitInstance().create(ApiService.class);
     }
 
     public void login(LoginRequest loginRequest, OnLoginCallback callback) {
