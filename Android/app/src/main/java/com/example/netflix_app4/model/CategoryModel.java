@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.MutableLiveData;
 
 import java.util.List;
 
@@ -13,6 +14,9 @@ public class CategoryModel implements Parcelable {
     private String description;
     private boolean promoted;
     private List<String> movies;
+
+    private final MutableLiveData<List<CategoryModel>> allCategoriesLiveData = new MutableLiveData<>();
+
 
     protected CategoryModel(Parcel in) {
         _id = in.readString();

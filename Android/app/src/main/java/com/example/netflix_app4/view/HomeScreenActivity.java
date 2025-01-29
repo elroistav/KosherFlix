@@ -78,9 +78,16 @@ public class HomeScreenActivity extends AppCompatActivity {
         setContentView(R.layout.activity_home_screen);
 
         customNavbar = findViewById(R.id.custom_navbar);
-        customNavbar.setVisibility(View.GONE);  // הסתר את הnavbar בהתחלה
+        customNavbar.setVisibility(View.GONE);  //
         navbarToggleButton = findViewById(R.id.navbarToggleButton);
         navbarToggleButton.setOnClickListener(v -> toggleNavbar());
+
+        // יצירת ViewModel
+        categoryViewModel = new ViewModelProvider(this).get(CategoryViewModel.class);
+
+        // אתחול ה-CustomNavbar
+        customNavbar = findViewById(R.id.custom_navbar);
+        customNavbar.initializeCategoryViewModel(categoryViewModel);
 
 
         String token = getIntent().getStringExtra("USER_TOKEN");

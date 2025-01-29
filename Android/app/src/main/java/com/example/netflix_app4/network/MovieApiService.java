@@ -1,6 +1,8 @@
 package com.example.netflix_app4.network;
 
+import com.example.netflix_app4.model.CategoriesListResponse;
 import com.example.netflix_app4.model.CategoriesResponse;
+import com.example.netflix_app4.model.CategoryModel;
 import com.example.netflix_app4.model.MovieModel;
 
 import java.util.List;
@@ -36,4 +38,6 @@ public interface MovieApiService {
             @Path("query") String query,
             @Header("user-id") String userId
     );
-}
+
+    @GET("categories")
+    Call<CategoriesListResponse> getAllCategories(@Header("user-id") String userId);}
