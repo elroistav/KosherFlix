@@ -1,6 +1,9 @@
 package com.example.netflix_app4.components;
 
+import static androidx.core.content.ContextCompat.startActivity;
+
 import android.content.Context;
+import android.content.Intent;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,6 +20,7 @@ import com.bumptech.glide.Glide;
 import com.example.netflix_app4.R;
 import com.example.netflix_app4.model.CategoryModel;
 import com.example.netflix_app4.model.UserInfo;
+import com.example.netflix_app4.view.AllCategoriesActivity;
 import com.example.netflix_app4.viewmodel.CategoryViewModel;
 
 import java.util.List;
@@ -31,7 +35,7 @@ public class CustomNavbar extends LinearLayout {
     private LinearLayout categoriesContainer;
     private Switch darkModeSwitch;
     private Button adminButton;
-    private UserInfo currentUser;
+    private UserInfo userInfo;
 
     private Button categoriesButton;
     private List<CategoryModel> currentCategories;
@@ -78,7 +82,7 @@ public class CustomNavbar extends LinearLayout {
 
     public void setUserDetails(UserInfo userInfo) {
         Log.d(TAG, "setUserDetails started");
-        this.currentUser = userInfo;
+        this.userInfo = userInfo;
         userNameTextView.setText(userInfo.getName());
 
         if (userInfo.getAvatar() != null) {
@@ -104,8 +108,6 @@ public class CustomNavbar extends LinearLayout {
 
         Log.d(TAG, "setUserDetails completed");
 
-
-        Log.d(TAG, "setUserDetails completed");
     }
     private void setupCategoriesButton() {
         categoriesButton.setOnClickListener(v -> showCategoriesMenu());
@@ -125,7 +127,6 @@ public class CustomNavbar extends LinearLayout {
             if (selectedCategory.equals("All")) {
                 navigateToAllCategories();
             } else {
-                // מוצאים את הקטגוריה המתאימה לפי השם
                 CategoryModel selectedModel = currentCategories.stream()
                         .filter(cat -> cat.getName().equals(selectedCategory))
                         .findFirst()
@@ -142,7 +143,7 @@ public class CustomNavbar extends LinearLayout {
     }
 
     public void addCategories(List<CategoryModel> categories) {
-        this.currentCategories = categories; // שומרים את הקטגוריות
+        this.currentCategories = categories;
     }
 
     private Button createCategoryButton(String name, CategoryModel categoryModel) {
@@ -168,11 +169,15 @@ public class CustomNavbar extends LinearLayout {
     }
 
     private void navigateToAllCategories() {
-        Log.d(TAG, "navigateToAllCategories called");
+        Intent intent = new Intent(this, AllCategoriesActivity.class);
+        intent.putExtra("userInfo", userInfo);
+        startActivity(intent);
     }
 
-    private void navigateToCategoryMovies(CategoryModel categoryModel) {
-        Log.d(TAG, "navigateToCategoryMovies called for: " + categoryModel.getName());
+    private void navigateToCategoryMovies(CategoryModel category) {
+        Intent intent = new Intent(this, CategoryMoviesActivity.class);
+        intent.putExtra("category", category);
+        startActivity(intent);
     }
 
     private void setupCategoriesListeners() {
