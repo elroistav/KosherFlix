@@ -7,84 +7,71 @@ import android.os.Bundle;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import com.bumptech.glide.Glide;
 import com.example.netflix_app4.R;
 import com.example.netflix_app4.model.MovieModel;
-//import com.example.netflix_app4.viewmodel.SearchViewModel;
+import com.example.netflix_app4.viewmodel.SearchViewModel;
+
+import java.util.Objects;
 
 public class SearchActivity extends AppCompatActivity {
-    private SearchView searchView;
+    private RecyclerView searchResultsRecyclerView;
     private SearchResultsAdapter searchResultsAdapter;
-//    private SearchViewModel searchViewModel;
-    private final String userId = "6796929afb50fce3a07283b3"; // Use your actual user ID
+    private SearchViewModel searchViewModel;
+    private final String userId = "678c10fe72b00e76a2d02581"; // Use your actual user ID
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_search);
+        setContentView(R.layout.activity_search_results);  // Use the results layout
+
+        // Get the query that was searched
+        String query = getIntent().getStringExtra("search_query");
+        TextView searchQueryText = findViewById(R.id.searchQueryText);
+        searchQueryText.setText("Results for: " + query);
 
         // Initialize views
-        searchView = findViewById(R.id.searchView);
-        RecyclerView searchResultsRecyclerView = findViewById(R.id.searchResultsRecyclerView);
+        searchResultsRecyclerView = findViewById(R.id.searchResultsRecyclerView);
 
         // Setup RecyclerView
-        searchResultsAdapter = new SearchResultsAdapter(this, movie -> {
-            // Show movie popup when clicked
-            showMoviePopup(movie);
-        });
+        searchResultsAdapter = new SearchResultsAdapter(this, this::showMoviePopup);
         searchResultsRecyclerView.setAdapter(searchResultsAdapter);
         searchResultsRecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
-//
-//        // Setup ViewModel
-//        searchViewModel = new ViewModelProvider(this).get(SearchViewModel.class);
-//        observeViewModel();
 
-        // Setup SearchView
-//        setupSearchView();
+        // Setup ViewModel
+        searchViewModel = new ViewModelProvider(this).get(SearchViewModel.class);
+        observeViewModel();
+
+        // Get search query from intent and perform search
+        String searchQuery = getIntent().getStringExtra("search_query");
+        if (searchQuery != null && !searchQuery.isEmpty()) {
+            searchViewModel.searchMovies(searchQuery, userId);
+        }
     }
 
-//    private void setupSearchView() {
-//        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-//            @Override
-//            public boolean onQueryTextSubmit(String query) {
-//                if (query != null && !query.isEmpty()) {
-//                    searchViewModel.searchMovies(query, userId);
-//                }
-//                return true;
-//            }
-//
-//            @Override
-//            public boolean onQueryTextChange(String newText) {
-//                return false;
-//            }
-//        });
-//    }
+    private void observeViewModel() {
+        searchViewModel.getSearchResults().observe(this, movies -> {
+            if (movies != null) {
+                searchResultsAdapter.updateData(movies);
+            }
+        });
 
-//    private void observeViewModel() {
-//        searchViewModel.getSearchResults().observe(this, movies -> {
-//            if (movies != null) {
-//                searchResultsAdapter.updateData(movies);
-//            }
-//        });
-//
-//        searchViewModel.getError().observe(this, error -> {
-//            if (error != null) {
-//                Toast.makeText(this, "Error: " + error, Toast.LENGTH_SHORT).show();
-//            }
-//        });
-//    }
+        searchViewModel.getError().observe(this, error -> {
+            if (error != null) {
+                Toast.makeText(this, "Error: " + error, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 
     private void showMoviePopup(MovieModel movie) {
         Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.movie_details);
-        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        Objects.requireNonNull(dialog.getWindow()).setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
         // Bind views
@@ -96,8 +83,7 @@ public class SearchActivity extends AppCompatActivity {
         movieTitle.setText(movie.getTitle());
         movieDescription.setText(movie.getDescription());
 
-
-
+        // @TODO: Add movie thumbnail and other details
         watchButton.setOnClickListener(v -> {
             Toast.makeText(this, "Watch Movie feature coming soon!", Toast.LENGTH_SHORT).show();
         });
