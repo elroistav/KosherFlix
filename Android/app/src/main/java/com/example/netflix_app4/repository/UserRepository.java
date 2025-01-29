@@ -7,9 +7,12 @@ import androidx.lifecycle.LiveData;
 import com.example.netflix_app4.db.AppDatabase;
 import com.example.netflix_app4.db.UserDao;
 import com.example.netflix_app4.model.RegisterResponse;
+import com.example.netflix_app4.model.TokenResponse;
 import com.example.netflix_app4.model.User;
+import com.example.netflix_app4.model.UserInfo;
 import com.example.netflix_app4.network.ApiClient;
 import com.example.netflix_app4.network.ApiService;
+import com.example.netflix_app4.network.Config;
 import com.example.netflix_app4.network.RetrofitClient;
 import com.example.netflix_app4.util.AppExecutors;
 import com.example.netflix_app4.model.LoginRequest;
@@ -83,6 +86,37 @@ public class UserRepository {
                 callback.onError("Network error: " + t.getMessage());
             }
         });
+    }
+
+    public void validateToken(String token, OnTokenValidationCallback callback) {
+        apiService.validateToken("Bearer " + token).enqueue(new Callback<TokenResponse>() {
+            @Override
+            public void onResponse(Call<TokenResponse> call, Response<TokenResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    TokenResponse tokenResponse = response.body();
+                    UserInfo userInfo = new UserInfo(
+                            tokenResponse.getName(),
+                            Config.getBaseUrl() + "/" + tokenResponse.getAvatar(),
+                            tokenResponse.getUserId(),
+                            token,
+                            tokenResponse.isAdmin()
+                    );
+                    callback.onSuccess(userInfo);
+                } else {
+                    callback.onError("Token validation failed");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<TokenResponse> call, Throwable t) {
+                callback.onError("Network error: " + t.getMessage());
+            }
+        });
+    }
+
+    public interface OnTokenValidationCallback {
+        void onSuccess(UserInfo userInfo);
+        void onError(String error);
     }
 
 

@@ -43,4 +43,7 @@
     <string name="play">Play</string>
     <string name="movie_description_goes_here">Movie Description goes here</string>
     <string name="switch_theme">Switch Theme</string>
+
+    <string name="welcome_message">Hello, %1$s</string>
+
 </resources>

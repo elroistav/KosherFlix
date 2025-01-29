@@ -2,11 +2,25 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true"> <!-- Ensures content fills the viewport -->
+    android:fillViewport="true">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"> <!-- Scrollable content -->
+        android:layout_height="wrap_content">
+
+        <!-- Welcome Text Section -->
+        <TextView
+            android:id="@+id/welcomeText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="?attr/android:textColor"
+            android:text="Welcome" />
 
         <!-- Random Movie Section -->
         <RelativeLayout
@@ -14,13 +28,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="?attr/android:windowBackground"
-            android:layout_alignParentTop="true">
+            android:layout_below="@id/welcomeText">
 
             <!-- Movie Player -->
             <FrameLayout
                 android:id="@+id/moviePlayerWrapper"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"> <!-- Video view will adjust here -->
+                android:layout_height="wrap_content">
             </FrameLayout>
 
             <!-- Movie Info Section -->

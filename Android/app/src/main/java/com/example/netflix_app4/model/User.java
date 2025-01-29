@@ -16,7 +16,7 @@ public class User {
     @SerializedName("userName")
     private String userName;
 
-    private String password;  // Consider if you want to store this locally
+    private String password;
 
     @SerializedName("token")
     private String token;
