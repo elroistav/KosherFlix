@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
     private String userId;
     private String token;
     private ThemeManager themeManager;
-    private String mongoUserId = "6796929afb50fce3a07283b3";
+    private String mongoUserId = "678c10fe72b00e76a2d02581";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
