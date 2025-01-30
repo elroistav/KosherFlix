@@ -72,6 +72,8 @@ public class HomeScreenActivity extends AppCompatActivity {
     private Button navbarToggleButton;
     private boolean isNavbarVisible = false;
 
+    private UserInfo userInfo;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -106,9 +108,7 @@ public class HomeScreenActivity extends AppCompatActivity {
         categoriesRecyclerView = findViewById(R.id.categoriesRecyclerView);
         categoriesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        // Set up adapter for categories
-        categoryAdapter = new CategoryAdapter(this, new ArrayList<>(), this::showMoviePopup);
-        categoriesRecyclerView.setAdapter(categoryAdapter);
+
 
         // Initialize ViewModels
         setupViewModels();
@@ -133,6 +133,10 @@ public class HomeScreenActivity extends AppCompatActivity {
                 updateUIWithUserInfo(userInfo);
                 categoryViewModel.fetchCategories(userInfo.getUserId());
                 categoryViewModel.fetchRandomMovie(this, userInfo.getUserId());
+
+                // Set up adapter for categories
+                categoryAdapter = new CategoryAdapter(this, new ArrayList<>(), this::showMoviePopup, userInfo);
+                categoriesRecyclerView.setAdapter(categoryAdapter);
 
                 if (customNavbar != null) {
                     customNavbar.setUserDetails(new UserInfo(

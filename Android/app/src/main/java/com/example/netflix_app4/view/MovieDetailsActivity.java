@@ -32,6 +32,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.netflix_app4.R;
 import com.example.netflix_app4.model.MovieModel;
+import com.example.netflix_app4.model.UserInfo;
 import com.example.netflix_app4.network.Config;
 import com.example.netflix_app4.network.MovieApiService;
 import com.example.netflix_app4.network.RetrofitClient;
@@ -60,7 +61,8 @@ public class MovieDetailsActivity extends AppCompatActivity {
     private TextView recommendationTitle;
     private VideoView videoView;
 
-    private String userId = "67991fc041ad471db335232f";
+    //private String userId = "67991fc041ad471db335232f";
+    private String userId;
 
 
 
@@ -68,6 +70,15 @@ public class MovieDetailsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.movie_details);
+
+        UserInfo userInfo = (UserInfo) getIntent().getSerializableExtra("USER_INFO");
+        if (userInfo != null) {
+            userId = userInfo.getUserId();
+        } else {
+            Toast.makeText(this, "User information is missing", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
 
         hideSystemUI();
         videoView = findViewById(R.id.videoView);

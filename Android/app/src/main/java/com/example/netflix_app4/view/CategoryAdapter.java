@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.netflix_app4.model.CategoryModel;
+import com.example.netflix_app4.model.UserInfo;
 import com.example.netflix_app4.network.MovieApiService;
 import com.example.netflix_app4.R;
 import com.example.netflix_app4.network.RetrofitClient;
@@ -29,15 +30,22 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
     private Context context;
     private List<Object> categories; // יכול להכיל CategoryPromoted או CategoryModel
     private OnMovieClickListener movieClickListener;
-    private String userId = "67991fc041ad471db335232f";
+    //private String userId = "67991fc041ad471db335232f";
 
-    public CategoryAdapter(Context context, List<?> categories, OnMovieClickListener movieClickListener) {
+
+    private String userId;
+    private final UserInfo userInfo;
+
+    public CategoryAdapter(Context context, List<?> categories, OnMovieClickListener movieClickListener, UserInfo userInfo) {
         this.context = context;
         this.categories = new ArrayList<>();
         if (categories != null) {
             this.categories.addAll(categories);
         }
         this.movieClickListener = movieClickListener;
+        this.userInfo = userInfo;
+        this.userId = userInfo.getUserId();
+
     }
 
     @NonNull
@@ -88,7 +96,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
 
                     if (movieDetails.size() == movieIds.size()) {
                         Log.d("CategoryAdapter", "All movies fetched for category " + categoryTitle);
-                        MovieAdapter movieAdapter = new MovieAdapter(context, movieDetails, movieClickListener);
+                        MovieAdapter movieAdapter = new MovieAdapter(context, movieDetails, userInfo, movieClickListener);
                         holder.moviesRecyclerView.setAdapter(movieAdapter);
                         holder.moviesRecyclerView.setLayoutManager(
                                 new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)

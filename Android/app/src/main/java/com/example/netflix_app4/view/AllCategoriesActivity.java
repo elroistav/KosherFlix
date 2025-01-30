@@ -64,14 +64,14 @@ public class AllCategoriesActivity extends AppCompatActivity {
 
         // אתחול ה-CustomNavbar עם ה-ViewModel
         customNavbar.initializeCategoryViewModel(categoryViewModel);
-        customNavbar.setUserDetails(userInfo);  // העברת פרטי המשתמש לנאבבר
+        customNavbar.setUserDetails(userInfo);
 
         // הגדרת ה-RecyclerView
         categoriesRecyclerView = findViewById(R.id.categoriesRecyclerView);
         categoriesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         // הגדרת האדפטר
-        categoryAdapter = new CategoryAdapter(this, new ArrayList<>(), this::showMoviePopup);
+        categoryAdapter = new CategoryAdapter(this, new ArrayList<>(), this::showMoviePopup, userInfo);
         categoriesRecyclerView.setAdapter(categoryAdapter);
 
         // אתחול הצפייה במידע

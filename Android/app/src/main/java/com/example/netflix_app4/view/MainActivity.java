@@ -80,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
         categoriesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         // Show popup dialog when a movie is clicked
-        categoryAdapter = new CategoryAdapter(this, new ArrayList<>(), this::showMoviePopup);
+        //categoryAdapter = new CategoryAdapter(this, new ArrayList<>(), this::showMoviePopup);
         categoriesRecyclerView.setAdapter(categoryAdapter);
 
         categoryViewModel = new ViewModelProvider(this).get(CategoryViewModel.class);

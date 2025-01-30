@@ -48,14 +48,17 @@ public class CategoryMoviesActivity extends AppCompatActivity {
     private CategoryViewModel categoryViewModel;
     private Button navbarToggleButton;
     private boolean isNavbarVisible = false;
-    private TextView categoryTitleTextView;  // נוסיף כותרת לקטגוריה
+    private TextView categoryTitleTextView;
+
+    private UserInfo userInfo;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_category_movies);
 
-        UserInfo userInfo = (UserInfo) getIntent().getSerializableExtra("userInfo");
+        userInfo = (UserInfo) getIntent().getSerializableExtra("userInfo");
         CategoryModel category = getIntent().getParcelableExtra("category");
 
         if (userInfo == null || category == null) {
@@ -92,7 +95,7 @@ public class CategoryMoviesActivity extends AppCompatActivity {
     private void setupRecyclerView() {
         GridLayoutManager layoutManager = new GridLayoutManager(this, 2);
         moviesRecyclerView.setLayoutManager(layoutManager);
-        movieAdapter = new MovieAdapter(this, new ArrayList<>(), this::showMoviePopup);
+        movieAdapter = new MovieAdapter(this, new ArrayList<>(), userInfo, this::showMoviePopup);
         moviesRecyclerView.setAdapter(movieAdapter);
     }
 

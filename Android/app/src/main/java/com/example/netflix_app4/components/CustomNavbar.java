@@ -4,6 +4,8 @@ import static androidx.core.content.ContextCompat.startActivity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.ContextThemeWrapper;
@@ -71,6 +73,7 @@ public class CustomNavbar extends LinearLayout {
         searchComponent = findViewById(R.id.search_component);
         categoriesButton = findViewById(R.id.categories_button);
         darkModeSwitch = findViewById(R.id.dark_mode_switch);
+        setupCategoriesButton();
 
         // בדיקת המצב ההתחלתי של ה-Switch
         Log.d(TAG, "Initial switch state: " + darkModeSwitch.isChecked());
@@ -95,6 +98,7 @@ public class CustomNavbar extends LinearLayout {
         setupHomeButton();
         Log.d(TAG, "Finished initializeComponents");
     }
+
 
     public void initializeCategoryViewModel(CategoryViewModel viewModel) {
         Log.d(TAG, "Initializing CategoryViewModel");
