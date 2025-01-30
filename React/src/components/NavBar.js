@@ -257,8 +257,6 @@ function Navbar( { onSearchResults, clearSearchResults, userInfo, loading, isDar
       
                 {dropdownOpen && (
                   <div className="dropdown-menu" ref={dropdownRef}>
-                    <Link to="/profile">Profile</Link>
-                    <Link to="/settings">Settings</Link>
                     <Link to="/">Logout</Link>
                     {userInfo?.isAdmin && (
                       <Link 
