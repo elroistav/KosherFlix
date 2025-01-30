@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.widget.LinearLayout;
 import android.widget.ImageView;
@@ -14,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Button;
 import android.widget.Switch;
 
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.lifecycle.LifecycleOwner;
 
 import com.bumptech.glide.Glide;
@@ -33,7 +35,7 @@ public class CustomNavbar extends LinearLayout {
     // אותם שדות כמו קודם
     private ImageView userAvatarImageView;
     private TextView userNameTextView;
-    private Button searchButton;
+    private SearchBarComponent searchComponent;
     private LinearLayout categoriesContainer;
     private Switch darkModeSwitch;
     private Button adminButton;
@@ -61,30 +63,37 @@ public class CustomNavbar extends LinearLayout {
 
     private void initializeComponents() {
         Log.d(TAG, "Starting initializeComponents");
+        Log.d(TAG, "Current night mode: " +
+                (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES ? "NIGHT" : "DAY"));
+
         userAvatarImageView = findViewById(R.id.user_avatar);
         userNameTextView = findViewById(R.id.user_name);
-        searchButton = findViewById(R.id.search_button);
+        searchComponent = findViewById(R.id.search_component);
         categoriesButton = findViewById(R.id.categories_button);
-        setupCategoriesButton();  //
         darkModeSwitch = findViewById(R.id.dark_mode_switch);
-        adminButton = findViewById(R.id.admin_button);
-        homeButton = findViewById(R.id.home_button);
-        setupHomeButton();
-        Log.d(TAG, "Finished initializeComponents");
+
+        // בדיקת המצב ההתחלתי של ה-Switch
+        Log.d(TAG, "Initial switch state: " + darkModeSwitch.isChecked());
+
         darkModeSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            Log.d(TAG, "Switch changed to: " + isChecked);
             if (isChecked) {
-                // Switch to Dark theme
+                Log.d(TAG, "Attempting to switch to night mode");
                 androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode(
                         androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES
                 );
             } else {
-                // Switch to Light theme
+                Log.d(TAG, "Attempting to switch to day mode");
                 androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode(
                         androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO
-                        );
+                );
             }
         });
 
+        adminButton = findViewById(R.id.admin_button);
+        homeButton = findViewById(R.id.home_button);
+        setupHomeButton();
+        Log.d(TAG, "Finished initializeComponents");
     }
 
     public void initializeCategoryViewModel(CategoryViewModel viewModel) {
@@ -134,7 +143,8 @@ public class CustomNavbar extends LinearLayout {
     }
     private void showCategoriesMenu() {
         PopupMenu popup = new PopupMenu(getContext(), categoriesButton);
-        popup.getMenu().add("All");
+
+        popup.getMenu().add("All Categories");
 
         if (currentCategories != null) {
             for (CategoryModel category : currentCategories) {
@@ -144,7 +154,7 @@ public class CustomNavbar extends LinearLayout {
 
         popup.setOnMenuItemClickListener(item -> {
             String selectedCategory = item.getTitle().toString();
-            if (selectedCategory.equals("All")) {
+            if (selectedCategory.equals("All Categories")) {
                 navigateToAllCategories();
             } else {
                 CategoryModel selectedModel = currentCategories.stream()
@@ -210,8 +220,10 @@ public class CustomNavbar extends LinearLayout {
     }
 
     private void navigateToHome() {
+
+
         Intent intent = new Intent(getContext(), HomeScreenActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.putExtra("USER_TOKEN", userInfo.getToken());
         getContext().startActivity(intent);
     }
 }

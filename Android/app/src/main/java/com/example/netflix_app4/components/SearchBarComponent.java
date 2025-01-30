@@ -6,7 +6,7 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.SearchView;
+import androidx.appcompat.widget.SearchView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -15,7 +15,7 @@ import com.example.netflix_app4.view.SearchActivity;
 
 public class SearchBarComponent extends FrameLayout {
     private ImageView searchIcon;
-    private SearchView searchView;
+    private androidx.appcompat.widget.SearchView searchView;
     private boolean isExpanded = false;
 
     public SearchBarComponent(@NonNull Context context) {
