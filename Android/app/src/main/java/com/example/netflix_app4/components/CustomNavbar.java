@@ -135,6 +135,8 @@ public class CustomNavbar extends LinearLayout {
             Log.e(TAG, "CategoryViewModel not initialized yet");
         }
 
+        searchComponent.setUserInfo(userInfo);
+
         Log.d(TAG, "setUserDetails completed");
 
     }

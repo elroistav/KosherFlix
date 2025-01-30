@@ -11,12 +11,20 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.example.netflix_app4.R;
+import com.example.netflix_app4.model.UserInfo;
 import com.example.netflix_app4.view.SearchActivity;
 
 public class SearchBarComponent extends FrameLayout {
     private ImageView searchIcon;
     private androidx.appcompat.widget.SearchView searchView;
     private boolean isExpanded = false;
+
+    private UserInfo userInfo;
+
+    public void setUserInfo(UserInfo userInfo) {
+        this.userInfo = userInfo;
+    }
+
 
     public SearchBarComponent(@NonNull Context context) {
         super(context);
@@ -46,11 +54,11 @@ public class SearchBarComponent extends FrameLayout {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                // Launch search activity with the query
                 Intent intent = new Intent(context, SearchActivity.class);
                 intent.putExtra("search_query", query);
+                intent.putExtra("USER_INFO", userInfo);
                 context.startActivity(intent);
-                collapseSearch(); // Collapse after search is submitted
+                collapseSearch();
                 return true;
             }
 

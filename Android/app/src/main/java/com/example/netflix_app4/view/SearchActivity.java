@@ -16,19 +16,30 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.netflix_app4.R;
 import com.example.netflix_app4.model.MovieModel;
 import com.example.netflix_app4.viewmodel.SearchViewModel;
-
+import com.example.netflix_app4.model.UserInfo;
 import java.util.Objects;
 
 public class SearchActivity extends AppCompatActivity {
     private RecyclerView searchResultsRecyclerView;
     private SearchResultsAdapter searchResultsAdapter;
     private SearchViewModel searchViewModel;
-    private final String userId = "678c10fe72b00e76a2d02581"; // Use your actual user ID
+    private String userId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_search_results);  // Use the results layout
+        setContentView(R.layout.activity_search_results);
+
+
+        UserInfo userInfo = (UserInfo) getIntent().getSerializableExtra("USER_INFO");
+        if (userInfo != null) {
+            userId = userInfo.getUserId();
+        } else {
+
+            Toast.makeText(this, "User information is missing", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
 
         // Get the query that was searched
         String query = getIntent().getStringExtra("search_query");
