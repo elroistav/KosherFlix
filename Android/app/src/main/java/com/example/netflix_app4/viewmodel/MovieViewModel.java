@@ -73,5 +73,10 @@ public class MovieViewModel extends ViewModel {
             }
         });
     }
+
+    // Expose LiveData for operation success status
+    public LiveData<Boolean> getOperationSuccess() {
+        return operationSuccessLiveData;
+    }
 }
 

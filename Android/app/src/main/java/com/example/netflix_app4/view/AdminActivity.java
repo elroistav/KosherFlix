@@ -46,6 +46,9 @@ public class AdminActivity extends AppCompatActivity implements
 
     private MovieViewModel movieViewModel;
 
+    private MovieEditDialog dialog;
+
+
 
 
 
@@ -157,8 +160,10 @@ public class AdminActivity extends AppCompatActivity implements
 
         movieViewModel.getOperationSuccess().observe(this, success -> {
             if (success != null && success) {
-                // Refresh the categories to show updated movie list
-                categoryViewModel.fetchAllCategories(userInfo.getUserId());
+                // Close the dialog after successful update
+                if (dialog != null && dialog.isShowing()) {
+                    dialog.dismiss();
+                }
             }
         });
     }
@@ -212,6 +217,10 @@ public class AdminActivity extends AppCompatActivity implements
 
     @Override
     public void onMovieDelete(String movieId) {
+        if (dialog != null && dialog.isShowing()) {
+            return;  // Don't show the dialog again if it's already showing
+        }
+
         new AlertDialog.Builder(this)
                 .setTitle("Delete Movie")
                 .setMessage("Are you sure you want to delete this movie?")
@@ -224,7 +233,7 @@ public class AdminActivity extends AppCompatActivity implements
 
     @Override
     public void onMovieEdit(MovieModel movie) {
-        MovieEditDialog dialog = new MovieEditDialog(this, movie,
+        dialog = new MovieEditDialog(this, movie,
                 updatedMovie -> {
                     // Update through ViewModel
                     movieViewModel.updateMovie(

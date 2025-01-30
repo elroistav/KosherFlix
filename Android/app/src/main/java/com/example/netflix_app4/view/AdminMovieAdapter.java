@@ -1,8 +1,11 @@
 package com.example.netflix_app4.view;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,6 +24,7 @@ import com.example.netflix_app4.model.MovieModel;
 import com.example.netflix_app4.model.UserInfo;
 import com.example.netflix_app4.network.MovieApiService;
 import com.example.netflix_app4.network.RetrofitClient;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.List;
 
@@ -120,18 +124,65 @@ public class AdminMovieAdapter extends RecyclerView.Adapter<AdminMovieAdapter.Ad
             deleteButton.setOnClickListener(v -> showDeleteConfirmation(movie));
         }
 
+        private boolean isDialogShowing = false;  // Flag to prevent multiple dialogs from opening
+
         private void showDeleteConfirmation(MovieModel movie) {
-            new AlertDialog.Builder(context)
+            if (isDialogShowing) {
+                Log.d("AdminMovieAdapter", "Dialog is already showing, returning.");
+                return;
+            }
+
+            isDialogShowing = true;
+            Log.d("AdminMovieAdapter", "Showing delete confirmation for movie: " + movie.getTitle());
+
+            // Hide FAB buttons before showing the dialog
+            FloatingActionButton addMovieFab = ((Activity) context).findViewById(R.id.addMovieFab);
+            FloatingActionButton addCategoryFab = ((Activity) context).findViewById(R.id.addCategoryFab);
+            addMovieFab.setVisibility(View.GONE);
+            addCategoryFab.setVisibility(View.GONE);
+            Log.d("AdminMovieAdapter", "FAB buttons hidden.");
+
+            AlertDialog deleteDialog = new AlertDialog.Builder(context)
                     .setTitle("Delete Movie")
                     .setMessage("Are you sure you want to delete this movie?")
                     .setPositiveButton("Yes", (dialog, which) -> {
-                        if (deleteListener != null) {
-                            deleteListener.onMovieDelete(movie.getId());
-                        }
+                        Log.d("AdminMovieAdapter", "Yes clicked for movie: " + movie.getTitle());
+
+                        // Simulate action delay to ensure the FAB visibility change happens after the dialog action
+                        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                            if (deleteListener != null) {
+                                deleteListener.onMovieDelete(movie.getId());
+                            }
+
+                            // Show FAB buttons again after the dialog is dismissed
+                            addMovieFab.setVisibility(View.VISIBLE);
+                            addCategoryFab.setVisibility(View.VISIBLE);
+                            Log.d("AdminMovieAdapter", "FAB buttons visible again.");
+
+                            // Dismiss the dialog explicitly
+                            dialog.dismiss();
+
+                            // Reset the flag after dialog is closed
+                            isDialogShowing = false;
+                        }, 200); // Delay of 200ms before performing the action
                     })
-                    .setNegativeButton("No", null)
-                    .show();
+                    .setNegativeButton("No", (dialog, which) -> {
+                        Log.d("AdminMovieAdapter", "No clicked for movie: " + movie.getTitle());
+                        isDialogShowing = false;  // Reset flag if canceled
+
+                        // Show FAB buttons again when dialog is canceled
+                        addMovieFab.setVisibility(View.VISIBLE);
+                        addCategoryFab.setVisibility(View.VISIBLE);
+                        Log.d("AdminMovieAdapter", "FAB buttons visible again after cancel.");
+
+                        // Dismiss the dialog explicitly
+                        dialog.dismiss();
+                    })
+                    .create(); // Create the dialog explicitly
+            deleteDialog.show();
         }
+
+
     }
 
     public void updateMovies(List<MovieModel> newMovies) {
