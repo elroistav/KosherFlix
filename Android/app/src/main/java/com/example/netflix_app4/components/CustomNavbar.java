@@ -66,6 +66,20 @@ public class CustomNavbar extends LinearLayout {
         darkModeSwitch = findViewById(R.id.dark_mode_switch);
         adminButton = findViewById(R.id.admin_button);
         Log.d(TAG, "Finished initializeComponents");
+        darkModeSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                // Switch to Dark theme
+                androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode(
+                        androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES
+                );
+            } else {
+                // Switch to Light theme
+                androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode(
+                        androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO
+                        );
+            }
+        });
+
     }
 
     public void initializeCategoryViewModel(CategoryViewModel viewModel) {
