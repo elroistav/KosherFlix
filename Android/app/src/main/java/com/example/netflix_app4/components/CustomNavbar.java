@@ -22,6 +22,7 @@ import com.example.netflix_app4.model.CategoryModel;
 import com.example.netflix_app4.model.UserInfo;
 import com.example.netflix_app4.view.AllCategoriesActivity;
 import com.example.netflix_app4.view.CategoryMoviesActivity;
+import com.example.netflix_app4.view.HomeScreenActivity;
 import com.example.netflix_app4.viewmodel.CategoryViewModel;
 
 import java.util.List;
@@ -36,6 +37,8 @@ public class CustomNavbar extends LinearLayout {
     private LinearLayout categoriesContainer;
     private Switch darkModeSwitch;
     private Button adminButton;
+    private Button homeButton;
+
     private UserInfo userInfo;
 
     private Button categoriesButton;
@@ -65,6 +68,8 @@ public class CustomNavbar extends LinearLayout {
         setupCategoriesButton();  //
         darkModeSwitch = findViewById(R.id.dark_mode_switch);
         adminButton = findViewById(R.id.admin_button);
+        homeButton = findViewById(R.id.home_button);
+        setupHomeButton();
         Log.d(TAG, "Finished initializeComponents");
         darkModeSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
@@ -198,5 +203,15 @@ public class CustomNavbar extends LinearLayout {
 
     private void setupCategoriesListeners() {
         Log.d(TAG, "setupCategoriesListeners called");
+    }
+
+    private void setupHomeButton() {
+        homeButton.setOnClickListener(v -> navigateToHome());
+    }
+
+    private void navigateToHome() {
+        Intent intent = new Intent(getContext(), HomeScreenActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        getContext().startActivity(intent);
     }
 }

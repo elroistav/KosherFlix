@@ -2,142 +2,161 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true">
+    android:fillViewport="true"
+    android:background="@color/background">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <Button
-            android:id="@+id/navbarToggleButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_margin="16dp"
-            android:text="☰"/>
-
-        <com.example.netflix_app4.components.CustomNavbar
-            android:id="@+id/custom_navbar"
+        <!-- Navbar Section - Fixed at top -->
+        <RelativeLayout
+            android:id="@+id/navbarSection"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/navbarToggleButton"
+            android:background="@drawable/navbar_gradient_background">
+
+            <Button
+                android:id="@+id/navbarToggleButton"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_margin="8dp"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:textColor="@color/text_primary"
+                android:textSize="24sp"
+                android:text="☰"/>
+
+            <com.example.netflix_app4.components.CustomNavbar
+                android:id="@+id/custom_navbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/navbarToggleButton"
             android:visibility="gone"
             android:elevation="8dp"/>
-
-
-        <!-- Welcome Text Section -->
-        <TextView
-            android:id="@+id/welcomeText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="16dp"
-            android:textSize="40dp"
-            android:textStyle="bold"
-            android:textColor="?attr/android:textColor"
-            android:text="Welcome" />
-
-        <!-- Random Movie Section -->
-        <RelativeLayout
-            android:id="@+id/randomMovieSection"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="?attr/android:windowBackground"
-            android:layout_below="@id/welcomeText">
-
-            <!-- Movie Player -->
-            <FrameLayout
-                android:id="@+id/moviePlayerWrapper"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-            </FrameLayout>
-
-            <!-- Movie Info Section -->
-            <LinearLayout
-                android:id="@+id/movieInfoContainer"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:layout_marginBottom="16dp"
-                android:orientation="vertical"
-                android:layout_below="@id/moviePlayerWrapper"
-                android:background="@android:color/transparent">
-
-                <!-- Movie Title -->
-                <TextView
-                    android:id="@+id/movieTitle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/movie_title"
-                    android:textColor="?attr/android:textColor"
-                    android:textSize="24sp"
-                    android:textStyle="bold"
-                    android:ellipsize="end"
-                    android:maxLines="1"
-                    android:layout_marginBottom="8dp" />
-
-                <!-- Movie Description -->
-                <TextView
-                    android:id="@+id/movieDescription"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/movie_description_goes_here"
-                    android:textColor="?attr/android:textColor"
-                    android:textSize="16sp"
-                    android:ellipsize="end"
-                    android:maxLines="3"
-                    android:layout_marginBottom="12dp" />
-            </LinearLayout>
-
-            <!-- Button Container -->
-            <LinearLayout
-                android:id="@+id/buttonsContainer"
-                style="?android:attr/buttonBarStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:layout_marginBottom="20dp"
-                android:orientation="horizontal"
-                android:layout_below="@id/movieInfoContainer"
-                android:background="@color/red">
-
-                <!-- Play Button -->
-                <Button
-                    android:id="@+id/playButton"
-                    style="?android:attr/buttonBarButtonStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/play"
-                    android:textColor="?attr/android:textColorPrimary"
-                    android:background="@color/red"
-                    android:layout_marginEnd="12dp" />
-
-                <!-- Get Info Button -->
-                <Button
-                    android:id="@+id/infoButton"
-                    style="?android:attr/buttonBarButtonStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/get_info"
-                    android:textColor="?attr/android:textColorPrimary"
-                    android:background="?attr/colorOnPrimary" />
-            </LinearLayout>
         </RelativeLayout>
 
-        <!-- Categories RecyclerView -->
+        <!-- Featured Content Section -->
+        <RelativeLayout
+            android:id="@+id/featuredSection"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/navbarSection">
+
+            <!-- Welcome Text - Overlaid on Featured Content -->
+            <TextView
+                android:id="@+id/welcomeText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="16dp"
+                android:text="Welcome"
+                android:textColor="@color/text_primary"
+                android:textSize="32sp"
+                android:textStyle="bold"
+                android:shadowColor="@color/black"
+                android:shadowDx="2"
+                android:shadowDy="2"
+                android:shadowRadius="3"/>
+
+            <!-- Random Movie Section -->
+            <RelativeLayout
+                android:id="@+id/randomMovieSection"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/welcomeText">
+
+                <!-- Movie Player -->
+                <FrameLayout
+                    android:id="@+id/moviePlayerWrapper"
+                    android:layout_width="match_parent"
+                    android:layout_height="250dp"
+                    android:background="@color/surface"/>
+
+                <!-- Movie Info Overlay -->
+                <LinearLayout
+                    android:id="@+id/movieInfoContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBottom="@id/moviePlayerWrapper"
+                    android:background="@drawable/gradient_overlay"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <!-- Movie Title -->
+                    <TextView
+                        android:id="@+id/movieTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/movie_title"
+                        android:textColor="@color/text_primary"
+                        android:textSize="24sp"
+                        android:textStyle="bold"
+                        android:shadowColor="@color/black"
+                        android:shadowDx="2"
+                        android:shadowDy="2"
+                        android:shadowRadius="3"
+                        android:maxLines="1"
+                        android:ellipsize="end"/>
+
+                    <!-- Movie Description -->
+                    <TextView
+                        android:id="@+id/movieDescription"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="@string/movie_description_goes_here"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="14sp"
+                        android:maxLines="2"
+                        android:ellipsize="end"/>
+
+                    <!-- Buttons Container -->
+                    <LinearLayout
+                        android:id="@+id/buttonsContainer"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:orientation="horizontal">
+
+                        <!-- Play Button -->
+                        <Button
+                            android:id="@+id/playButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="40dp"
+                            android:layout_marginEnd="12dp"
+                            android:background="@drawable/netflix_button"
+                            android:backgroundTint="@color/netflix_red"
+                            android:paddingStart="24dp"
+                            android:paddingEnd="24dp"
+                            android:text="@string/play"
+                            android:textColor="@color/white"/>
+
+                        <!-- Info Button -->
+                        <Button
+                            android:id="@+id/infoButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="40dp"
+                            android:background="@drawable/netflix_button"
+                            android:backgroundTint="@color/surface"
+                            android:paddingStart="24dp"
+                            android:paddingEnd="24dp"
+                            android:text="@string/get_info"
+                            android:textColor="@color/white"/>
+                    </LinearLayout>
+                </LinearLayout>
+            </RelativeLayout>
+        </RelativeLayout>
+
+        <!-- Categories Section -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/categoriesRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/randomMovieSection"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="16dp"
+            android:layout_below="@id/featuredSection"
+            android:layout_marginTop="24dp"
             android:clipToPadding="false"
-            android:nestedScrollingEnabled="false" />
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:nestedScrollingEnabled="false"/>
     </RelativeLayout>
 </ScrollView>
