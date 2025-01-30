@@ -78,5 +78,20 @@ public class MovieViewModel extends ViewModel {
     public LiveData<Boolean> getOperationSuccess() {
         return operationSuccessLiveData;
     }
+
+    public void addMovie(MovieModel movie, String userId) {
+        movieRepository.addMovie(movie, userId, new MovieRepository.MovieOperationCallback() {
+            @Override
+            public void onSuccess() {
+                operationSuccessLiveData.postValue(true);
+            }
+
+            @Override
+            public void onError(String error) {
+                errorLiveData.postValue(error);
+                operationSuccessLiveData.postValue(false);
+            }
+        });
+    }
 }
 

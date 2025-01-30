@@ -69,6 +69,9 @@ public interface MovieApiService {
             @Header("user-id") String userId
     );
 
+    @POST("movies")
+    Call<MovieModel> addMovie(@Body MovieModel movie, @Header("user-id") String userId);
+
 
 }
 

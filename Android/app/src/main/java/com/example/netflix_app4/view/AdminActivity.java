@@ -166,6 +166,17 @@ public class AdminActivity extends AppCompatActivity implements
                 }
             }
         });
+
+        movieViewModel.getOperationSuccess().observe(this, success -> {
+            if (success != null && success) {
+                if (currentAddMovieDialog != null && currentAddMovieDialog.isShowing()) {
+                    currentAddMovieDialog.handleSaveResult(true, null);
+                    Toast.makeText(this, "Movie added successfully", Toast.LENGTH_SHORT).show();
+                    // Refresh categories to show new movie
+                    categoryViewModel.fetchAllCategories(userInfo.getUserId());
+                }
+            }
+        });
     }
 
 
@@ -179,10 +190,7 @@ public class AdminActivity extends AppCompatActivity implements
         currentAddDialog.show();
     }
 
-    private void showAddMovieDialog() {
-        // TODO: Implement Add Movie Dialog
-        Toast.makeText(this, "Add Movie feature coming soon", Toast.LENGTH_SHORT).show();
-    }
+
 
     @Override
     public void onCategoryDelete(String categoryId) {
@@ -257,5 +265,14 @@ public class AdminActivity extends AppCompatActivity implements
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         finish();
+    }
+
+    private MovieAddDialog currentAddMovieDialog;
+
+    private void showAddMovieDialog() {
+        currentAddMovieDialog = new MovieAddDialog(this,
+                newMovie -> movieViewModel.addMovie(newMovie, userInfo.getUserId())
+        );
+        currentAddMovieDialog.show();
     }
 }

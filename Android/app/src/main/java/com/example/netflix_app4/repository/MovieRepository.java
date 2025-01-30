@@ -139,4 +139,22 @@ public class MovieRepository {
             }
         });
     }
+
+    public void addMovie(MovieModel movie, String userId, MovieOperationCallback callback) {
+        movieApiService.addMovie(movie, userId).enqueue(new Callback<MovieModel>() {
+            @Override
+            public void onResponse(Call<MovieModel> call, Response<MovieModel> response) {
+                if (response.isSuccessful()) {
+                    callback.onSuccess();
+                } else {
+                    callback.onError("Failed to add movie");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<MovieModel> call, Throwable t) {
+                callback.onError(t.getMessage());
+            }
+        });
+    }
 }
