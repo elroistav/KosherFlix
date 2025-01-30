@@ -186,23 +186,26 @@ public class CategoryRepository {
     // Update category
     public void updateCategory(String categoryId, CategoryModel category, String userId, CategoryUpdateCallback callback) {
         Log.d(TAG, "Updating category: " + categoryId);
+
         apiService.updateCategory(categoryId, category, userId)
                 .enqueue(new Callback<CategoryModel>() {
                     @Override
                     public void onResponse(Call<CategoryModel> call, Response<CategoryModel> response) {
-                        if (response.isSuccessful() && response.body() != null) {
+                        // Treat both successful responses and 204 No Content as success
+                        if (response.isSuccessful() || response.code() == 204) {
                             Log.d(TAG, "Category updated successfully");
-                            callback.onSuccess(response.body());
+                            // Simply call success with no modification
+                            callback.onSuccess(category);
                         } else {
-                            Log.e(TAG, "Failed to update category: " + response.code());
+                            Log.e(TAG, "Failed to update category. Response code: " + response.code());
                             callback.onError("Failed to update category");
                         }
                     }
 
                     @Override
                     public void onFailure(Call<CategoryModel> call, Throwable t) {
-                        Log.e(TAG, "Error updating category", t);
-                        callback.onError("Error updating category: " + t.getMessage());
+                        Log.e(TAG, "Network error updating category", t);
+                        callback.onError("Network error: " + t.getMessage());
                     }
                 });
     }
@@ -214,19 +217,37 @@ public class CategoryRepository {
                 .enqueue(new Callback<CategoryModel>() {
                     @Override
                     public void onResponse(Call<CategoryModel> call, Response<CategoryModel> response) {
+                        // Log detailed information about the response
+                        Log.d(TAG, "Add Category Response Code: " + response.code());
+                        Log.d(TAG, "Is Successful: " + response.isSuccessful());
+
+                        try {
+                            if (response.body() != null) {
+                                Log.d(TAG, "Response Body: " + response.body().toString());
+                            } else {
+                                Log.d(TAG, "Response Body is null");
+                            }
+
+                            String errorBody = response.errorBody() != null ?
+                                    response.errorBody().string() : "No error body";
+                            Log.d(TAG, "Error Body: " + errorBody);
+                        } catch (IOException e) {
+                            Log.e(TAG, "Error logging response details", e);
+                        }
+
                         if (response.isSuccessful() && response.body() != null) {
                             Log.d(TAG, "Category added successfully");
                             callback.onSuccess(response.body());
                         } else {
-                            Log.e(TAG, "Failed to add category: " + response.code());
+                            Log.e(TAG, "Failed to add category");
                             callback.onError("Failed to add category");
                         }
                     }
 
                     @Override
                     public void onFailure(Call<CategoryModel> call, Throwable t) {
-                        Log.e(TAG, "Error adding category", t);
-                        callback.onError("Error adding category: " + t.getMessage());
+                        Log.e(TAG, "Network error adding category", t);
+                        callback.onError("Network error: " + t.getMessage());
                     }
                 });
     }

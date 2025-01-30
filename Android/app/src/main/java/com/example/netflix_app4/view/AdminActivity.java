@@ -130,7 +130,17 @@ public class AdminActivity extends AppCompatActivity implements
                 Toast.makeText(this, "Error: " + error, Toast.LENGTH_SHORT).show();
             }
         });
+
+        categoryViewModel.getOperationSuccess().observe(this, success -> {
+            if (success != null && success) {
+                Toast.makeText(this, "Category updated successfully", Toast.LENGTH_SHORT).show();
+                if (currentEditDialog != null && currentEditDialog.isShowing()) {
+                    currentEditDialog.handleSaveResult(true, null);
+                }
+            }
+        });
     }
+
 
     private void showAddCategoryDialog() {
         // TODO: Implement Add Category Dialog
@@ -156,14 +166,21 @@ public class AdminActivity extends AppCompatActivity implements
 
     @Override
     public void onCategoryEdit(CategoryModel category) {
-        // TODO: Show edit dialog with category details
         showEditCategoryDialog(category);
     }
 
+    private CategoryEditDialog currentEditDialog;
+
     private void showEditCategoryDialog(CategoryModel category) {
-        // Create dialog with EditText for name and description
-        // When confirmed, call:
-        // categoryViewModel.updateCategory(category.getId(), updatedCategory, userInfo.getUserId());
+        currentEditDialog = new CategoryEditDialog(this, category,
+                updatedCategory -> categoryViewModel.updateCategory(
+                        updatedCategory.getId(),
+                        updatedCategory,
+                        userInfo.getUserId()
+                )
+        );
+
+        currentEditDialog.show();
     }
 
     @Override
