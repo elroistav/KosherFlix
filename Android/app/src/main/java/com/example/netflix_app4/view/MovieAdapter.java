@@ -79,4 +79,10 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
             movieTitle.setText(movie.getTitle());
         }
     }
+
+    public void updateMovies(List<MovieModel> newMovies) {
+        this.movies.clear();
+        this.movies.addAll(newMovies);
+        notifyDataSetChanged();
+    }
 }

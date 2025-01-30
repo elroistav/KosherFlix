@@ -29,7 +29,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
     private Context context;
     private List<Object> categories; // יכול להכיל CategoryPromoted או CategoryModel
     private OnMovieClickListener movieClickListener;
-    private String userId = "678c10fe72b00e76a2d02581";
+    private String userId = "67991fc041ad471db335232f";
 
     public CategoryAdapter(Context context, List<?> categories, OnMovieClickListener movieClickListener) {
         this.context = context;

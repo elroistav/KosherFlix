@@ -26,11 +26,21 @@
             android:visibility="gone"
             android:elevation="8dp"/>
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/categoriesRecyclerView"
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/categoryTitle"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/navbarToggleButton"
+            android:layout_centerHorizontal="true"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:layout_marginTop="16dp"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/moviesRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/categoryTitle"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
             android:layout_marginTop="16dp"

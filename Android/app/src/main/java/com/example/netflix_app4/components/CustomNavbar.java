@@ -21,6 +21,7 @@ import com.example.netflix_app4.R;
 import com.example.netflix_app4.model.CategoryModel;
 import com.example.netflix_app4.model.UserInfo;
 import com.example.netflix_app4.view.AllCategoriesActivity;
+import com.example.netflix_app4.view.CategoryMoviesActivity;
 import com.example.netflix_app4.viewmodel.CategoryViewModel;
 
 import java.util.List;
@@ -175,9 +176,10 @@ public class CustomNavbar extends LinearLayout {
     }
 
     private void navigateToCategoryMovies(CategoryModel category) {
-        //Intent intent = new Intent(this, CategoryMoviesActivity.class);
-//        intent.putExtra("category", category);
-//        startActivity(intent);
+        Intent intent = new Intent(getContext(), CategoryMoviesActivity.class);
+        intent.putExtra("category", category);
+        intent.putExtra("userInfo", userInfo);
+        getContext().startActivity(intent);
     }
 
     private void setupCategoriesListeners() {

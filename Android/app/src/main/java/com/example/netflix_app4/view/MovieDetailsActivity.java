@@ -60,7 +60,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
     private TextView recommendationTitle;
     private VideoView videoView;
 
-    private String userId = "678c10fe72b00e76a2d02581";
+    private String userId = "67991fc041ad471db335232f";
 
 
 
