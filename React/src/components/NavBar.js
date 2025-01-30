@@ -4,10 +4,36 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { FaSearch } from 'react-icons/fa'; // Importing the search icon
 import '../styles/NavBar.css';
-//import user from '../../../NetflixProj3/models/user';
 
+/**
+ * Navbar component that provides navigation, search, and user profile functionalities.
+ *
+ * @component
+ * @param {Object} props - The component props.
+ * @param {Function} props.onSearchResults - Callback function to handle search results.
+ * @param {Function} props.clearSearchResults - Callback function to clear search results.
+ * @param {Object} props.userInfo - User information object.
+ * @param {boolean} props.loading - Loading state indicator.
+ * @param {boolean} props.isDarkMode - Dark mode state indicator.
+ * @param {Function} props.setIsDarkMode - Function to toggle dark mode state.
+ *
+ * @returns {JSX.Element} The rendered Navbar component.
+ *
+ * @example
+ * <Navbar
+ *   onSearchResults={handleSearchResults}
+ *   clearSearchResults={clearSearchResults}
+ *   userInfo={userInfo}
+ *   loading={loading}
+ *   isDarkMode={isDarkMode}
+ *   setIsDarkMode={setIsDarkMode}
+ * />
+ *
+ * @function
+ * @name Navbar
+ */
 function Navbar( { onSearchResults, clearSearchResults, userInfo, loading, isDarkMode, setIsDarkMode} ) {
-  
+    const BASE_URL = process.env.REACT_APP_BASE_URL;
     const [searchOpen, setSearchOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const [noResults, setNoResults] = useState(false);
@@ -28,7 +54,7 @@ function Navbar( { onSearchResults, clearSearchResults, userInfo, loading, isDar
       if (userInfo) {
         const fetchCategories = async () => {
           try {
-            const response = await axios.get('http://localhost:4000/api/categories', {
+            const response = await axios.get(BASE_URL + '/api/categories', {
               headers: { 'user-id': userInfo.userId }
             });
             setCategories(response.data.categories || []);
@@ -44,13 +70,13 @@ function Navbar( { onSearchResults, clearSearchResults, userInfo, loading, isDar
     const handleCategoryClick = async (categoryId) => {
       try {
         // First get the category details
-        const categoryResponse = await axios.get(`http://localhost:4000/api/categories/${categoryId}`, {
+        const categoryResponse = await axios.get(`${BASE_URL}/api/categories/${categoryId}`, {
           headers: { 'user-id': userInfo.userId }
         });
 
         // Get movie details for each movie ID
         const moviePromises = categoryResponse.data.movies.map(movieId => 
-          axios.get(`http://localhost:4000/api/movies/${movieId}`, {
+          axios.get(`${BASE_URL}/api/movies/${movieId}`, {
             headers: { 'user-id': userInfo.userId }
           })
         );
@@ -77,7 +103,7 @@ function Navbar( { onSearchResults, clearSearchResults, userInfo, loading, isDar
       e.preventDefault();
       console.log('Searching for:', searchQuery);
       try {
-        const response = await axios.get(`http://localhost:4000/api/movies/search/${searchQuery}`, {
+        const response = await axios.get(`${BASE_URL}/api/movies/search/${searchQuery}`, {
           headers: { 'user-id': userInfo.userId }
         });
         if (response.data.length === 0) {
@@ -196,10 +222,6 @@ function Navbar( { onSearchResults, clearSearchResults, userInfo, loading, isDar
                     </div>
                   )}
                 </div>
-                <Link to="/">Home</Link>
-                <Link to="/movies">Movies</Link>
-                <Link to="/tv-shows">TV Shows</Link>
-                <Link to="/my-list">My List</Link>
               </div>
       
               {/* Profile and Search Icons */}

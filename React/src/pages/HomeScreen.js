@@ -15,6 +15,7 @@ import { useLocation } from 'react-router-dom';
 
 
 function HomeScreen({ isDarkMode, setIsDarkMode }) {
+  const BASE_URL = process.env.REACT_APP_BASE_URL;
   const [movies, setMovies] = useState([]);
   const [randomMovie, setRandomMovie] = useState(null);
   const [searchResults, setSearchResults] = useState([]);
@@ -35,13 +36,13 @@ function HomeScreen({ isDarkMode, setIsDarkMode }) {
     async function checkToken() {
       try {
         if (!token) throw new Error('Token not found');
-        const response = await axios.get('http://localhost:4000/api/tokens', {
+        const response = await axios.get(BASE_URL + '/api/tokens', {
           headers: { Authorization: `Bearer ${token}` },
         });
 
         if (response.status === 200) {
           console.log('User is logged in');
-          const avatarUrl = `http://localhost:4000/${response.data.avatar}`;
+          const avatarUrl = `${BASE_URL}/${response.data.avatar}`;
           console.log('the returned data is ' + JSON.stringify(response.data));
 
           setUserInfo({
@@ -79,7 +80,7 @@ function HomeScreen({ isDarkMode, setIsDarkMode }) {
     async function fetchMovies() {
       try {
           console.log('The user id is: ' + userInfo.userId);
-          const response = await axios.get('http://localhost:4000/api/movies', {
+          const response = await axios.get(BASE_URL + '/api/movies', {
               headers: { 'user-id': userInfo.userId }
           });
   
@@ -117,9 +118,10 @@ function HomeScreen({ isDarkMode, setIsDarkMode }) {
       const fetchedMovies = [];
       for (const movieId of movieIds) {
           try {
-              const movieResponse = await axios.get(`http://localhost:4000/api/movies/${movieId}`, {
+              const movieResponse = await axios.get(`${BASE_URL}/api/movies/${movieId}`, {
                   headers: { 'user-id': userInfo.userId }
               });
+              console.log('movieResponse:', movieResponse.data.thumbnail);
               fetchedMovies.push(movieResponse.data);
           } catch (error) {
               console.error(`Error fetching movie details for movieId ${movieId}:`, error);
