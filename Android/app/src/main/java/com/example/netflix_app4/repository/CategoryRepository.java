@@ -21,6 +21,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class CategoryRepository {
+    private static final String TAG = "CategoryRepository";
     private final MovieApiService apiService;
 
     public CategoryRepository() {
@@ -143,6 +144,89 @@ public class CategoryRepository {
                     public void onFailure(Call<CategoriesListResponse> call, Throwable t) {
                         Log.e("CategoryRepository", "Network call failed", t);
                         callback.onError("Network error: " + t.getMessage());
+                    }
+                });
+    }
+
+
+    public interface CategoryOperationCallback {
+        void onSuccess();
+        void onError(String error);
+    }
+
+    public interface CategoryUpdateCallback {
+        void onSuccess(CategoryModel updatedCategory);
+        void onError(String error);
+    }
+
+    // Delete category
+    public void deleteCategory(String categoryId, String userId, CategoryOperationCallback callback) {
+        Log.d(TAG, "Deleting category: " + categoryId);
+        apiService.deleteCategory(categoryId, userId)
+                .enqueue(new Callback<Void>() {
+                    @Override
+                    public void onResponse(Call<Void> call, Response<Void> response) {
+                        if (response.isSuccessful()) {
+                            Log.d(TAG, "Category deleted successfully");
+                            callback.onSuccess();
+                        } else {
+                            Log.e(TAG, "Failed to delete category: " + response.code());
+                            callback.onError("Failed to delete category");
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<Void> call, Throwable t) {
+                        Log.e(TAG, "Error deleting category", t);
+                        callback.onError("Error deleting category: " + t.getMessage());
+                    }
+                });
+    }
+
+    // Update category
+    public void updateCategory(String categoryId, CategoryModel category, String userId, CategoryUpdateCallback callback) {
+        Log.d(TAG, "Updating category: " + categoryId);
+        apiService.updateCategory(categoryId, category, userId)
+                .enqueue(new Callback<CategoryModel>() {
+                    @Override
+                    public void onResponse(Call<CategoryModel> call, Response<CategoryModel> response) {
+                        if (response.isSuccessful() && response.body() != null) {
+                            Log.d(TAG, "Category updated successfully");
+                            callback.onSuccess(response.body());
+                        } else {
+                            Log.e(TAG, "Failed to update category: " + response.code());
+                            callback.onError("Failed to update category");
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<CategoryModel> call, Throwable t) {
+                        Log.e(TAG, "Error updating category", t);
+                        callback.onError("Error updating category: " + t.getMessage());
+                    }
+                });
+    }
+
+    // Add new category
+    public void addCategory(CategoryModel category, String userId, CategoryUpdateCallback callback) {
+        Log.d(TAG, "Adding new category");
+        apiService.addCategory(category, userId)
+                .enqueue(new Callback<CategoryModel>() {
+                    @Override
+                    public void onResponse(Call<CategoryModel> call, Response<CategoryModel> response) {
+                        if (response.isSuccessful() && response.body() != null) {
+                            Log.d(TAG, "Category added successfully");
+                            callback.onSuccess(response.body());
+                        } else {
+                            Log.e(TAG, "Failed to add category: " + response.code());
+                            callback.onError("Failed to add category");
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<CategoryModel> call, Throwable t) {
+                        Log.e(TAG, "Error adding category", t);
+                        callback.onError("Error adding category: " + t.getMessage());
                     }
                 });
     }

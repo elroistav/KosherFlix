@@ -66,6 +66,11 @@
             android:name=".view.CategoryMoviesActivity"
             android:exported="false"/>
 
+        <activity
+            android:name=".view.AdminActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Netflix_App4" />
+
     </application>
 
 </manifest>

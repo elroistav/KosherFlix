@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:background="@color/background">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <!-- Navbar Section -->
+        <RelativeLayout
+            android:id="@+id/navbarSection"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/navbar_gradient_background">
+
+            <Button
+                android:id="@+id/navbarToggleButton"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_margin="8dp"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:textColor="@color/text_primary"
+                android:textSize="24sp"
+                android:elevation="4dp"
+                android:text="☰"/>
+
+            <com.example.netflix_app4.components.CustomNavbar
+                android:id="@+id/custom_navbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/navbarToggleButton"
+                android:visibility="gone"
+                android:elevation="8dp"
+                android:background="@color/background"/>
+        </RelativeLayout>
+
+        <!-- Admin Dashboard Title -->
+        <TextView
+            android:id="@+id/adminDashboardTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/navbarSection"
+            android:text="Admin Dashboard"
+            android:textColor="@color/text_primary"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="12dp"/>
+
+        <!-- Categories RecyclerView -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/categoriesRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/adminDashboardTitle"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
+            android:clipToPadding="false"
+            android:nestedScrollingEnabled="true"/>
+
+        <!-- FABs -->
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/addMovieFab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_margin="16dp"
+            android:contentDescription="Add movie"
+            app:srcCompat="@drawable/ic_add_movie"
+            app:backgroundTint="@color/primary"/>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/addCategoryFab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_above="@id/addMovieFab"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="8dp"
+            android:contentDescription="Add category"
+            app:srcCompat="@drawable/ic_add_category"
+            app:backgroundTint="@color/primary"/>
+
+    </RelativeLayout>
+</ScrollView>

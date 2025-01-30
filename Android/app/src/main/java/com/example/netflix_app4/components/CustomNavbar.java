@@ -24,6 +24,7 @@ import com.bumptech.glide.Glide;
 import com.example.netflix_app4.R;
 import com.example.netflix_app4.model.CategoryModel;
 import com.example.netflix_app4.model.UserInfo;
+import com.example.netflix_app4.view.AdminActivity;
 import com.example.netflix_app4.view.AllCategoriesActivity;
 import com.example.netflix_app4.view.CategoryMoviesActivity;
 import com.example.netflix_app4.view.HomeScreenActivity;
@@ -96,6 +97,7 @@ public class CustomNavbar extends LinearLayout {
         adminButton = findViewById(R.id.admin_button);
         homeButton = findViewById(R.id.home_button);
         setupHomeButton();
+        adminButton.setOnClickListener(v -> navigateToAdminPanel());
         Log.d(TAG, "Finished initializeComponents");
     }
 
@@ -130,6 +132,8 @@ public class CustomNavbar extends LinearLayout {
         }
 
         adminButton.setVisibility(userInfo.isAdmin() ? VISIBLE : GONE);
+        Log.d(TAG, "Is admin: " + userInfo.isAdmin());
+
 
         // categories after we have userInfo
         if (categoryViewModel != null) {
@@ -201,7 +205,15 @@ public class CustomNavbar extends LinearLayout {
     }
 
     private void navigateToAdminPanel() {
-        Log.d(TAG, "navigateToAdminPanel called");
+            Log.d(TAG, "navigateToAdminPanel called");
+
+            if (userInfo != null && userInfo.isAdmin()) {
+                Intent intent = new Intent(getContext(), AdminActivity.class);
+                intent.putExtra("userInfo", userInfo);
+                getContext().startActivity(intent);
+            } else {
+                Log.e(TAG, "User is not an admin, cannot navigate to admin panel.");
+            }
     }
 
     private void navigateToAllCategories() {

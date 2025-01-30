@@ -8,8 +8,12 @@ import com.example.netflix_app4.model.MovieModel;
 import java.util.List;
 
 import retrofit2.Call;
+import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
+import retrofit2.http.PATCH;
+import retrofit2.http.POST;
 import retrofit2.http.Path;
 
 public interface MovieApiService {
@@ -40,4 +44,17 @@ public interface MovieApiService {
     );
 
     @GET("categories")
-    Call<CategoriesListResponse> getAllCategories(@Header("user-id") String userId);}
+    Call<CategoriesListResponse> getAllCategories(@Header("user-id") String userId);
+
+    @DELETE("categories/{id}")
+    Call<Void> deleteCategory(@Path("id") String categoryId, @Header("user-id") String userId);
+
+    @PATCH("categories/{id}")
+    Call<CategoryModel> updateCategory(@Path("id") String categoryId, @Body CategoryModel category, @Header("user-id") String userId);
+
+    @POST("categories")
+    Call<CategoryModel> addCategory(@Body CategoryModel category, @Header("user-id") String userId);
+
+
+}
+
