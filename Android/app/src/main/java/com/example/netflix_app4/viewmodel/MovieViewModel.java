@@ -11,6 +11,8 @@ public class MovieViewModel extends ViewModel {
     private final MutableLiveData<MovieModel> movieLiveData = new MutableLiveData<>();
     private final MutableLiveData<String> errorLiveData = new MutableLiveData<>();
 
+    private final MutableLiveData<Boolean> operationSuccessLiveData = new MutableLiveData<>();
+
     private final MovieRepository movieRepository;
 
     public MovieViewModel() {
@@ -38,6 +40,36 @@ public class MovieViewModel extends ViewModel {
             @Override
             public void onError(String error) {
                 errorLiveData.postValue(error);
+            }
+        });
+    }
+
+    public void updateMovie(String movieId, MovieModel movie, String userId) {
+        movieRepository.updateMovie(movieId, movie, userId, new MovieRepository.MovieOperationCallback() {
+            @Override
+            public void onSuccess() {
+                operationSuccessLiveData.postValue(true);
+            }
+
+            @Override
+            public void onError(String error) {
+                errorLiveData.postValue(error);
+                operationSuccessLiveData.postValue(false);
+            }
+        });
+    }
+
+    public void deleteMovie(String movieId, String userId) {
+        movieRepository.deleteMovie(movieId, userId, new MovieRepository.MovieOperationCallback() {
+            @Override
+            public void onSuccess() {
+                operationSuccessLiveData.postValue(true);
+            }
+
+            @Override
+            public void onError(String error) {
+                errorLiveData.postValue(error);
+                operationSuccessLiveData.postValue(false);
             }
         });
     }

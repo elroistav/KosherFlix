@@ -18,7 +18,9 @@ import com.example.netflix_app4.components.CustomNavbar;
 import com.example.netflix_app4.model.CategoryModel;
 import com.example.netflix_app4.model.MovieModel;
 import com.example.netflix_app4.model.UserInfo;
+
 import com.example.netflix_app4.viewmodel.CategoryViewModel;
+import com.example.netflix_app4.viewmodel.MovieViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
@@ -39,6 +41,14 @@ public class AdminActivity extends AppCompatActivity implements
     private FloatingActionButton addCategoryFab;
     private FloatingActionButton addMovieFab;
     private boolean isNavbarVisible = false;
+
+    private CategoryAddDialog currentAddDialog;
+
+    private MovieViewModel movieViewModel;
+
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,6 +125,7 @@ public class AdminActivity extends AppCompatActivity implements
     }
 
     private void setupViewModel() {
+        movieViewModel = new ViewModelProvider(this).get(MovieViewModel.class);
         categoryViewModel = new ViewModelProvider(this).get(CategoryViewModel.class);
     }
 
@@ -133,18 +144,34 @@ public class AdminActivity extends AppCompatActivity implements
 
         categoryViewModel.getOperationSuccess().observe(this, success -> {
             if (success != null && success) {
-                Toast.makeText(this, "Category updated successfully", Toast.LENGTH_SHORT).show();
                 if (currentEditDialog != null && currentEditDialog.isShowing()) {
+                    Toast.makeText(this, "Category updated successfully", Toast.LENGTH_SHORT).show();
                     currentEditDialog.handleSaveResult(true, null);
                 }
+                if (currentAddDialog != null && currentAddDialog.isShowing()) {
+                    Toast.makeText(this, "Category added successfully", Toast.LENGTH_SHORT).show();
+                    currentAddDialog.handleSaveResult(true, null);
+                }
+            }
+        });
+
+        movieViewModel.getOperationSuccess().observe(this, success -> {
+            if (success != null && success) {
+                // Refresh the categories to show updated movie list
+                categoryViewModel.fetchAllCategories(userInfo.getUserId());
             }
         });
     }
 
 
     private void showAddCategoryDialog() {
-        // TODO: Implement Add Category Dialog
-        Toast.makeText(this, "Add Category feature coming soon", Toast.LENGTH_SHORT).show();
+        currentAddDialog = new CategoryAddDialog(this,
+                newCategory -> categoryViewModel.addCategory(
+                        newCategory,
+                        userInfo.getUserId()
+                )
+        );
+        currentAddDialog.show();
     }
 
     private void showAddMovieDialog() {
@@ -185,16 +212,28 @@ public class AdminActivity extends AppCompatActivity implements
 
     @Override
     public void onMovieDelete(String movieId) {
-        // TODO: Implement movie deletion through ViewModel
-        Log.d(TAG, "Deleting movie: " + movieId);
-        Toast.makeText(this, "Delete movie feature coming soon", Toast.LENGTH_SHORT).show();
+        new AlertDialog.Builder(this)
+                .setTitle("Delete Movie")
+                .setMessage("Are you sure you want to delete this movie?")
+                .setPositiveButton("Yes", (dialog, which) -> {
+                    movieViewModel.deleteMovie(movieId, userInfo.getUserId());
+                })
+                .setNegativeButton("No", null)
+                .show();
     }
 
     @Override
     public void onMovieEdit(MovieModel movie) {
-        // TODO: Implement movie editing
-        Log.d(TAG, "Editing movie: " + movie.getTitle());
-        Toast.makeText(this, "Edit movie feature coming soon", Toast.LENGTH_SHORT).show();
+        MovieEditDialog dialog = new MovieEditDialog(this, movie,
+                updatedMovie -> {
+                    // Update through ViewModel
+                    movieViewModel.updateMovie(
+                            updatedMovie.getId(),
+                            updatedMovie,
+                            userInfo.getUserId()
+                    );
+                });
+        dialog.show();
     }
 
     private void showMovieDetails(MovieModel movie) {

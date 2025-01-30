@@ -98,4 +98,45 @@ public class MovieRepository {
         void onSuccess(List<MovieModel> movies);
         void onError(String error);
     }
+
+    public interface MovieOperationCallback {
+        void onSuccess();
+        void onError(String error);
+    }
+
+    public void updateMovie(String movieId, MovieModel movie, String userId, MovieOperationCallback callback) {
+        movieApiService.updateMovie(movieId, movie, userId).enqueue(new Callback<MovieModel>() {
+            @Override
+            public void onResponse(Call<MovieModel> call, Response<MovieModel> response) {
+                if (response.isSuccessful()) {
+                    callback.onSuccess();
+                } else {
+                    callback.onError("Failed to update movie");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<MovieModel> call, Throwable t) {
+                callback.onError(t.getMessage());
+            }
+        });
+    }
+
+    public void deleteMovie(String movieId, String userId, MovieOperationCallback callback) {
+        movieApiService.deleteMovie(movieId, userId).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    callback.onSuccess();
+                } else {
+                    callback.onError("Failed to delete movie");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                callback.onError(t.getMessage());
+            }
+        });
+    }
 }

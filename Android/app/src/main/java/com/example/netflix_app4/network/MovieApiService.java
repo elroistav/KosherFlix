@@ -14,6 +14,7 @@ import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.PATCH;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Path;
 
 public interface MovieApiService {
@@ -54,6 +55,19 @@ public interface MovieApiService {
 
     @POST("categories")
     Call<CategoryModel> addCategory(@Body CategoryModel category, @Header("user-id") String userId);
+
+    @PUT("movies/{id}")
+    Call<MovieModel> updateMovie(
+            @Path("id") String movieId,
+            @Body MovieModel movie,
+            @Header("user-id") String userId
+    );
+
+    @DELETE("movies/{id}")
+    Call<Void> deleteMovie(
+            @Path("id") String movieId,
+            @Header("user-id") String userId
+    );
 
 
 }
