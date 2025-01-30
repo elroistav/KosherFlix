@@ -78,41 +78,56 @@ function HomeScreen({ isDarkMode, setIsDarkMode }) {
 
     async function fetchMovies() {
       try {
-        //get user-id from the tokes first
-        console.log('The user id is: ' + userInfo.userId);
-        const response = await axios.get('http://localhost:4000/api/movies', {
-          headers: { 'user-id': userInfo.userId }
-        });
-
-        // Fetch the details of each movie in each category
-        const fetchedMoviesByCategory = [];
-        for (const category of response.data.promotedCategories) {
-          const fetchedMovies = [];
-          for (const movieId of category.movies) {
-            try {
+          console.log('The user id is: ' + userInfo.userId);
+          const response = await axios.get('http://localhost:4000/api/movies', {
+              headers: { 'user-id': userInfo.userId }
+          });
+  
+          const fetchedMoviesByCategory = [];
+  
+          // Fetch promoted category movies
+          for (const category of response.data.promotedCategories) {
+              const fetchedMovies = await fetchMoviesByIds(category.movies);
+              fetchedMoviesByCategory.push({ category: category.category, movies: fetchedMovies });
+          }
+  
+          // Fetch last watched movies
+          if (response.data.lastWatched) {
+              const lastWatchedMovies = await fetchMoviesByIds(response.data.lastWatched.movies);
+              fetchedMoviesByCategory.push({ category: "Last Watched", movies: lastWatchedMovies });
+          }
+  
+          setMovies(fetchedMoviesByCategory);
+  
+          // Set a random movie
+          if (fetchedMoviesByCategory.length > 0) {
+              const randomCategory = fetchedMoviesByCategory[Math.floor(Math.random() * fetchedMoviesByCategory.length)];
+              if (randomCategory.movies.length > 0) {
+                  const random = randomCategory.movies[Math.floor(Math.random() * randomCategory.movies.length)];
+                  setRandomMovie(random);
+              }
+          }
+      } catch (error) {
+          console.error("Error fetching categories or movie details:", error);
+      }
+  }
+  
+  // Helper function to fetch movie details by IDs
+  async function fetchMoviesByIds(movieIds) {
+      const fetchedMovies = [];
+      for (const movieId of movieIds) {
+          try {
               const movieResponse = await axios.get(`http://localhost:4000/api/movies/${movieId}`, {
                   headers: { 'user-id': userInfo.userId }
               });
               fetchedMovies.push(movieResponse.data);
-            } catch (error) {
+          } catch (error) {
               console.error(`Error fetching movie details for movieId ${movieId}:`, error);
-            }
           }
-          fetchedMoviesByCategory.push({ category: category.category, movies: fetchedMovies });
-        }
-
-        setMovies(fetchedMoviesByCategory); // Set all the fetched movies by categories
-
-        // Get a random movie from the response (for the random movie section)
-        if (fetchedMoviesByCategory.length > 0) {
-          const randomCategory = fetchedMoviesByCategory[Math.floor(Math.random() * fetchedMoviesByCategory.length)];
-          const random = randomCategory.movies[Math.floor(Math.random() * randomCategory.movies.length)];
-          setRandomMovie(random);
-        }
-      } catch (error) {
-        console.error("Error fetching categories or movie details:", error);
       }
-    }
+      return fetchedMovies;
+  }
+  
 
     fetchMovies();
   }, [loading, userInfo]);
@@ -172,7 +187,6 @@ function HomeScreen({ isDarkMode, setIsDarkMode }) {
       {selectedMovie && (
         <MoviePopup userInfo = {userInfo} initialMovie={selectedMovie} onClose={() => setSelectedMovie(null)} />
       )}
-      <Link to="/another">Go to Another Page</Link>
     </div>
   );
 }
