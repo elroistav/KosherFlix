@@ -1,39 +1,60 @@
 package com.example.netflix_app4.view;
 
-
-
+import android.Manifest;
+import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Parcel;
+import android.provider.OpenableColumns;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
 
 import com.example.netflix_app4.R;
 import com.example.netflix_app4.model.MovieModel;
 
 import java.util.ArrayList;
 
-
 public class MovieAddDialog extends Dialog {
+    private static final int PICK_IMAGE_REQUEST = 1;
+    private static final int PICK_VIDEO_REQUEST = 2;
+
     private OnMovieSaveListener saveListener;
     private boolean isSaving = false;
+    private Uri selectedImageUri;
+    private Uri selectedVideoUri;
+    private ImageView thumbnailPreview;
+    private TextView videoFileName;
+
+    private final Activity activity;
 
     public interface OnMovieSaveListener {
-        void onMovieSave(MovieModel newMovie);
+        void onMovieSave(MovieModel newMovie, Uri thumbnailUri, Uri videoUri);
     }
 
     public MovieAddDialog(@NonNull Context context, OnMovieSaveListener saveListener) {
         super(context);
         this.saveListener = saveListener;
+        if (!(context instanceof Activity)) {
+            throw new IllegalArgumentException("Context must be an Activity");
+        }
+        this.activity = (Activity) context;
     }
 
     @Override
@@ -42,175 +63,206 @@ public class MovieAddDialog extends Dialog {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.dialog_add_movie);
 
-        // Find views
-        EditText titleEditText = findViewById(R.id.editTextMovieTitle);
-        EditText descriptionEditText = findViewById(R.id.editTextMovieDescription);
-        EditText thumbnailEditText = findViewById(R.id.editTextMovieThumbnail);
-        EditText videoUrlEditText = findViewById(R.id.editTextMovieVideoUrl);
-        EditText ratingEditText = findViewById(R.id.editTextMovieRating);
-        EditText lengthEditText = findViewById(R.id.editTextMovieLength);
-        EditText directorEditText = findViewById(R.id.editTextMovieDirector);
-        EditText releaseDateEditText = findViewById(R.id.editTextMovieReleaseDate);
-        EditText languageEditText = findViewById(R.id.editTextMovieLanguage);
-        Button saveButton = findViewById(R.id.buttonSave);
-        Button cancelButton = findViewById(R.id.buttonCancel);
-        TextView errorTextView = findViewById(R.id.textViewError);
-
-        // Clear any previous state
-        isSaving = false;
-
-        // Cancel button
-        cancelButton.setOnClickListener(v -> {
-            isSaving = false;
-            dismiss();
-        });
-
-        // Save button
-        saveButton.setOnClickListener(v -> {
-            if (isSaving) {
-                return; // Prevent double-saving
-            }
-
-            // Reset error
-            errorTextView.setText("");
-            errorTextView.setVisibility(View.GONE);
-
-            // Validate inputs
-            String title = titleEditText.getText().toString().trim();
-            String description = descriptionEditText.getText().toString().trim();
-            String thumbnail = thumbnailEditText.getText().toString().trim();
-            String videoUrl = videoUrlEditText.getText().toString().trim();
-            String director = directorEditText.getText().toString().trim();
-            String releaseDate = releaseDateEditText.getText().toString().trim();
-            String language = languageEditText.getText().toString().trim();
-
-            // Validate required fields
-            if (TextUtils.isEmpty(title)) {
-                errorTextView.setText("Movie title is required");
-                errorTextView.setVisibility(View.VISIBLE);
-                return;
-            }
-
-            // Parse numeric values
-            double rating;
-            int length;
-            try {
-                rating = Double.parseDouble(ratingEditText.getText().toString());
-                if (rating < 0 || rating > 10) {
-                    errorTextView.setText("Rating must be between 0 and 10");
-                    errorTextView.setVisibility(View.VISIBLE);
-                    return;
-                }
-            } catch (NumberFormatException e) {
-                errorTextView.setText("Invalid rating value");
-                errorTextView.setVisibility(View.VISIBLE);
-                return;
-            }
-
-            try {
-                length = Integer.parseInt(lengthEditText.getText().toString());
-                if (length <= 0) {
-                    errorTextView.setText("Length must be greater than 0");
-                    errorTextView.setVisibility(View.VISIBLE);
-                    return;
-                }
-            } catch (NumberFormatException e) {
-                errorTextView.setText("Invalid length value");
-                errorTextView.setVisibility(View.VISIBLE);
-                return;
-            }
-
-            // Disable save button and show saving state
-            saveButton.setEnabled(false);
-            saveButton.setText("Saving...");
-            isSaving = true;
-
-            try {
-                MovieModel newMovie = createNewMovie(
-                        title, description, thumbnail, videoUrl,
-                        rating, length, director, releaseDate, language
-                );
-                if (saveListener != null) {
-                    saveListener.onMovieSave(newMovie);
-                }
-            } catch (Exception e) {
-                errorTextView.setText("Error creating new movie");
-                errorTextView.setVisibility(View.VISIBLE);
-                saveButton.setEnabled(true);
-                saveButton.setText("Add Movie");
-                isSaving = false;
-            }
-        });
+        initializeViews();
+        setupListeners();
     }
 
-    private MovieModel createNewMovie(String title, String description,
-                                      String thumbnail, String videoUrl,
-                                      double rating, int length,
-                                      String director, String releaseDate,
-                                      String language) {
-        Parcel parcel = null;
-        try {
-            parcel = Parcel.obtain();
+    private void initializeViews() {
+        thumbnailPreview = findViewById(R.id.thumbnailPreview);
+        videoFileName = findViewById(R.id.videoFileName);
+    }
 
-            // Write the data to parcel
-            parcel.writeString(null); // id is null for new movie
+    private void setupListeners() {
+        findViewById(R.id.buttonChooseThumbnail).setOnClickListener(v -> {
+            if (hasRequiredPermissions()) {
+                openImagePicker();
+            } else {
+                requestPermissions();
+            }
+        });
+
+        findViewById(R.id.buttonChooseVideo).setOnClickListener(v -> {
+            if (hasRequiredPermissions()) {
+                openVideoPicker();
+            } else {
+                requestPermissions();
+            }
+        });
+
+        findViewById(R.id.buttonSave).setOnClickListener(v -> validateAndSave());
+        findViewById(R.id.buttonCancel).setOnClickListener(v -> dismiss());
+    }
+
+    private boolean hasRequiredPermissions() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            return ActivityCompat.checkSelfPermission(getContext(),
+                    Manifest.permission.READ_MEDIA_IMAGES) == PackageManager.PERMISSION_GRANTED
+                    && ActivityCompat.checkSelfPermission(getContext(),
+                    Manifest.permission.READ_MEDIA_VIDEO) == PackageManager.PERMISSION_GRANTED;
+        } else {
+            return ActivityCompat.checkSelfPermission(getContext(),
+                    Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+        }
+    }
+
+    private void requestPermissions() {
+        Activity activity = (Activity) getContext();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            ActivityCompat.requestPermissions(activity,
+                    new String[]{
+                            Manifest.permission.READ_MEDIA_IMAGES,
+                            Manifest.permission.READ_MEDIA_VIDEO
+                    },
+                    100);
+        } else {
+            ActivityCompat.requestPermissions(activity,
+                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                    100);
+        }
+    }
+
+    private void openImagePicker() {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("image/*");
+        activity.startActivityForResult(
+                Intent.createChooser(intent, "Select Thumbnail"),
+                PICK_IMAGE_REQUEST
+        );
+    }
+
+    private void openVideoPicker() {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("video/*");
+        activity.startActivityForResult(
+                Intent.createChooser(intent, "Select Video"),
+                PICK_VIDEO_REQUEST
+        );
+    }
+
+    private void validateAndSave() {
+        if (isSaving) return;
+
+        EditText titleInput = findViewById(R.id.editTextMovieTitle);
+        String title = titleInput.getText().toString().trim();
+        if (TextUtils.isEmpty(title)) {
+            showError("Title is required");
+            return;
+        }
+
+        if (selectedImageUri == null) {
+            showError("Please select a thumbnail image");
+            return;
+        }
+
+        if (selectedVideoUri == null) {
+            showError("Please select a video");
+            return;
+        }
+
+        try {
+            double rating = Double.parseDouble(((EditText) findViewById(R.id.editTextMovieRating)).getText().toString());
+            int length = Integer.parseInt(((EditText) findViewById(R.id.editTextMovieLength)).getText().toString());
+
+            MovieModel newMovie = createMovieModel(
+                    title,
+                    ((EditText) findViewById(R.id.editTextMovieDescription)).getText().toString(),
+                    rating,
+                    length,
+                    ((EditText) findViewById(R.id.editTextMovieDirector)).getText().toString(),
+                    ((EditText) findViewById(R.id.editTextMovieReleaseDate)).getText().toString(),
+                    ((EditText) findViewById(R.id.editTextMovieLanguage)).getText().toString()
+            );
+
+            isSaving = true;
+            findViewById(R.id.buttonSave).setEnabled(false);
+
+            if (saveListener != null) {
+                saveListener.onMovieSave(newMovie, selectedImageUri, selectedVideoUri);
+            }
+        } catch (NumberFormatException e) {
+            showError("Invalid number format in rating or length");
+        }
+    }
+
+    private MovieModel createMovieModel(String title, String description,
+                                        double rating, int length, String director,
+                                        String releaseDate, String language) {
+        Parcel parcel = Parcel.obtain();
+        try {
+            parcel.writeString(null);
             parcel.writeString(title);
             parcel.writeString(description);
             parcel.writeDouble(rating);
             parcel.writeInt(length);
             parcel.writeString(director);
-            parcel.writeTypedList(new ArrayList<>()); // empty categories list
+            parcel.writeTypedList(new ArrayList<>());
             parcel.writeString(language);
             parcel.writeString(releaseDate);
-            parcel.writeString(thumbnail);
-            parcel.writeString(videoUrl);
+            parcel.writeString("");
+            parcel.writeString("");
 
-            // Reset position for reading
             parcel.setDataPosition(0);
-
-            // Create new instance using CREATOR
             return MovieModel.CREATOR.createFromParcel(parcel);
         } finally {
-            if (parcel != null) {
-                parcel.recycle();
+            parcel.recycle();
+        }
+    }
+
+    private void showError(String message) {
+        TextView errorText = findViewById(R.id.textViewError);
+        errorText.setText(message);
+        errorText.setVisibility(View.VISIBLE);
+    }
+
+    public void handleFileSelection(int requestCode, int resultCode, Intent data) {
+        if (resultCode == Activity.RESULT_OK && data != null && data.getData() != null) {
+            if (requestCode == PICK_IMAGE_REQUEST) {
+                selectedImageUri = data.getData();
+                thumbnailPreview.setImageURI(selectedImageUri);
+                thumbnailPreview.setVisibility(View.VISIBLE);
+            } else if (requestCode == PICK_VIDEO_REQUEST) {
+                selectedVideoUri = data.getData();
+                String fileName = getFileName(selectedVideoUri);
+                videoFileName.setText(fileName);
+                videoFileName.setVisibility(View.VISIBLE);
             }
         }
     }
 
-    @Override
-    public void dismiss() {
-        isSaving = false;
-        super.dismiss();
+    @SuppressLint("Range")
+    private String getFileName(Uri uri) {
+        String result = null;
+        if (uri.getScheme().equals("content")) {
+            try (Cursor cursor = getContext().getContentResolver()
+                    .query(uri, null, null, null, null)) {
+                if (cursor != null && cursor.moveToFirst()) {
+                    result = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
+                }
+            }
+        }
+        if (result == null) {
+            result = uri.getPath();
+            int cut = result.lastIndexOf('/');
+            if (cut != -1) {
+                result = result.substring(cut + 1);
+            }
+        }
+        return result;
     }
 
     public void handleSaveResult(boolean success, String errorMessage) {
         new Handler(Looper.getMainLooper()).post(() -> {
-            if (!isShowing() || getWindow() == null) {
-                return;
-            }
+            if (!isShowing()) return;
 
             isSaving = false;
-
             Button saveButton = findViewById(R.id.buttonSave);
-            TextView errorTextView = findViewById(R.id.textViewError);
-
-            if (saveButton != null) {
-                saveButton.setEnabled(true);
-                saveButton.setText("Add Movie");
-            }
-
-            if (errorTextView != null) {
-                if (!success && errorMessage != null) {
-                    errorTextView.setText(errorMessage);
-                    errorTextView.setVisibility(View.VISIBLE);
-                } else {
-                    errorTextView.setText("");
-                    errorTextView.setVisibility(View.GONE);
-                }
-            }
+            saveButton.setEnabled(true);
+            saveButton.setText("Save");
 
             if (success) {
                 dismiss();
+            } else {
+                showError(errorMessage != null ? errorMessage : "Failed to save movie");
             }
         });
     }

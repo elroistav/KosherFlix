@@ -1,9 +1,23 @@
 package com.example.netflix_app4.repository;
+import android.content.ContentResolver;
+import android.content.Context;
+import android.database.Cursor;
+import android.net.Uri;
+import android.provider.OpenableColumns;
+
 import com.example.netflix_app4.model.CategoriesResponse;
 import com.example.netflix_app4.network.MovieApiService;
 import com.example.netflix_app4.network.RetrofitClient;
 import com.example.netflix_app4.model.MovieModel;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
+
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -140,21 +154,132 @@ public class MovieRepository {
         });
     }
 
-    public void addMovie(MovieModel movie, String userId, MovieOperationCallback callback) {
-        movieApiService.addMovie(movie, userId).enqueue(new Callback<MovieModel>() {
-            @Override
-            public void onResponse(Call<MovieModel> call, Response<MovieModel> response) {
-                if (response.isSuccessful()) {
-                    callback.onSuccess();
-                } else {
-                    callback.onError("Failed to add movie");
+    public void addMovie(MovieModel movie, Uri thumbnailUri, Uri videoUri, String userId, Context context, MovieCallback callback) {
+        try {
+            // Convert movie data to RequestBody objects
+            RequestBody title = RequestBody.create(MediaType.parse("text/plain"), movie.getTitle());
+            RequestBody description = RequestBody.create(MediaType.parse("text/plain"), movie.getDescription());
+            RequestBody rating = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(movie.getRating()));
+            RequestBody length = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(movie.getLength()));
+            RequestBody director = RequestBody.create(MediaType.parse("text/plain"), movie.getDirector());
+            RequestBody releaseDate = RequestBody.create(MediaType.parse("text/plain"), movie.getReleaseDate());
+            RequestBody language = RequestBody.create(MediaType.parse("text/plain"), movie.getLanguage());
+
+            // Convert URIs to MultipartBody.Parts
+            MultipartBody.Part thumbnailPart = uriToMultipartBodyPart(context, thumbnailUri, "thumbnail");
+            MultipartBody.Part videoPart = uriToMultipartBodyPart(context, videoUri, "videoUrl");
+
+            movieApiService.addMovie(
+                    title, description, rating, length, director, releaseDate, language,
+                    thumbnailPart, videoPart, userId
+            ).enqueue(new Callback<MovieModel>() {
+                @Override
+                public void onResponse(Call<MovieModel> call, Response<MovieModel> response) {
+                    if (response.isSuccessful() && response.body() != null) {
+                        callback.onSuccess(response.body());
+                    } else {
+                        callback.onError("Failed to add movie");
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<MovieModel> call, Throwable t) {
+                    callback.onError(t.getMessage());
+                }
+            });
+        } catch (IOException e) {
+            callback.onError("Error processing files: " + e.getMessage());
+        }
+    }
+
+    private MultipartBody.Part uriToMultipartBodyPart(Context context, Uri uri, String partName) throws IOException {
+        ContentResolver resolver = context.getContentResolver();
+        String mimeType = resolver.getType(uri);
+        String fileName = getFileName(context, uri);
+
+        InputStream inputStream = resolver.openInputStream(uri);
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+
+        int nRead;
+        byte[] data = new byte[16384]; // 16KB buffer
+
+        while ((nRead = inputStream.read(data, 0, data.length)) != -1) {
+            buffer.write(data, 0, nRead);
+        }
+
+        buffer.flush();
+        byte[] bytes = buffer.toByteArray();
+
+        RequestBody requestFile = RequestBody.create(MediaType.parse(mimeType), bytes);
+        return MultipartBody.Part.createFormData(partName, fileName, requestFile);
+    }
+
+    private String getFileName(Context context, Uri uri) {
+        String result = null;
+        if (uri.getScheme().equals("content")) {
+            try (Cursor cursor = context.getContentResolver()
+                    .query(uri, null, null, null, null)) {
+                if (cursor != null && cursor.moveToFirst()) {
+                    int index = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+                    if (index != -1) {
+                        result = cursor.getString(index);
+                    }
                 }
             }
-
-            @Override
-            public void onFailure(Call<MovieModel> call, Throwable t) {
-                callback.onError(t.getMessage());
+        }
+        if (result == null) {
+            result = uri.getPath();
+            int cut = result.lastIndexOf('/');
+            if (cut != -1) {
+                result = result.substring(cut + 1);
             }
-        });
+        }
+        return result;
+    }
+
+    // Similarly for updateMovie...
+    public void updateMovie(String movieId, MovieModel movie, Uri thumbnailUri, Uri videoUri,
+                            String userId, Context context, MovieCallback callback) {
+        try {
+            RequestBody title = RequestBody.create(MediaType.parse("text/plain"), movie.getTitle());
+            RequestBody description = RequestBody.create(MediaType.parse("text/plain"), movie.getDescription());
+            RequestBody rating = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(movie.getRating()));
+            RequestBody length = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(movie.getLength()));
+            RequestBody director = RequestBody.create(MediaType.parse("text/plain"), movie.getDirector());
+            RequestBody releaseDate = RequestBody.create(MediaType.parse("text/plain"), movie.getReleaseDate());
+            RequestBody language = RequestBody.create(MediaType.parse("text/plain"), movie.getLanguage());
+
+            MultipartBody.Part thumbnailPart = null;
+            MultipartBody.Part videoPart = null;
+
+            // Only convert URIs if they are provided (for optional file updates)
+            if (thumbnailUri != null) {
+                thumbnailPart = uriToMultipartBodyPart(context, thumbnailUri, "thumbnail");
+            }
+            if (videoUri != null) {
+                videoPart = uriToMultipartBodyPart(context, videoUri, "video");
+            }
+
+            movieApiService.updateMovie(
+                    movieId, title, description, rating, length, director, releaseDate, language,
+                    thumbnailPart, videoPart, userId
+            ).enqueue(new Callback<MovieModel>() {
+                @Override
+                public void onResponse(Call<MovieModel> call, Response<MovieModel> response) {
+                    if (response.isSuccessful() && response.body() != null) {
+                        callback.onSuccess(response.body());
+                    } else {
+                        callback.onError("Failed to update movie");
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<MovieModel> call, Throwable t) {
+                    callback.onError(t.getMessage());
+                }
+            });
+        } catch (IOException e) {
+            callback.onError("Error processing files: " + e.getMessage());
+        }
     }
 }

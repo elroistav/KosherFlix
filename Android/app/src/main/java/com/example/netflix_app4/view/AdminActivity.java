@@ -1,18 +1,23 @@
 package com.example.netflix_app4.view;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+//import com.example.netflix_app4.Manifest;
 import com.example.netflix_app4.R;
 import com.example.netflix_app4.components.CustomNavbar;
 import com.example.netflix_app4.model.CategoryModel;
@@ -24,6 +29,10 @@ import com.example.netflix_app4.viewmodel.MovieViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
+
+import android.Manifest;
+
+
 
 public class AdminActivity extends AppCompatActivity implements
         AdminCategoryAdapter.OnCategoryDeleteListener,
@@ -47,6 +56,8 @@ public class AdminActivity extends AppCompatActivity implements
     private MovieViewModel movieViewModel;
 
     private MovieEditDialog dialog;
+
+    private static final int PERMISSION_REQUEST = 100;
 
 
 
@@ -241,16 +252,16 @@ public class AdminActivity extends AppCompatActivity implements
 
     @Override
     public void onMovieEdit(MovieModel movie) {
-        dialog = new MovieEditDialog(this, movie,
-                updatedMovie -> {
-                    // Update through ViewModel
-                    movieViewModel.updateMovie(
-                            updatedMovie.getId(),
-                            updatedMovie,
-                            userInfo.getUserId()
-                    );
-                });
-        dialog.show();
+//        dialog = new MovieEditDialog(this, movie,
+//                updatedMovie -> {
+//                    // Update through ViewModel
+//                    movieViewModel.updateMovie(
+//                            updatedMovie.getId(),
+//                            updatedMovie,
+//                            userInfo.getUserId()
+//                    );
+//                });
+//        dialog.show();
     }
 
     private void showMovieDetails(MovieModel movie) {
@@ -269,10 +280,59 @@ public class AdminActivity extends AppCompatActivity implements
 
     private MovieAddDialog currentAddMovieDialog;
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        // Pass file selection results to the dialog
+        if (currentAddMovieDialog != null) {
+            currentAddMovieDialog.handleFileSelection(requestCode, resultCode, data);
+        }
+    }
+
     private void showAddMovieDialog() {
+        // Check for permissions first
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            requestPermissions(new String[]{
+                    Manifest.permission.READ_MEDIA_IMAGES,
+                    Manifest.permission.READ_MEDIA_VIDEO
+            }, PERMISSION_REQUEST);
+        } else {
+            requestPermissions(new String[]{
+                    Manifest.permission.READ_EXTERNAL_STORAGE
+            }, PERMISSION_REQUEST);
+        }
+
         currentAddMovieDialog = new MovieAddDialog(this,
-                newMovie -> movieViewModel.addMovie(newMovie, userInfo.getUserId())
+                (newMovie, thumbnailUri, videoUri) ->
+                        movieViewModel.addMovie(
+                                newMovie,
+                                thumbnailUri,
+                                videoUri,
+                                userInfo.getUserId(),
+                                this
+                        )
         );
         currentAddMovieDialog.show();
     }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == PERMISSION_REQUEST) {
+            boolean allGranted = true;
+            for (int result : grantResults) {
+                if (result != PackageManager.PERMISSION_GRANTED) {
+                    allGranted = false;
+                    break;
+                }
+            }
+
+            if (!allGranted) {
+                Toast.makeText(this, "Permissions are needed to select files", Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
+
 }
