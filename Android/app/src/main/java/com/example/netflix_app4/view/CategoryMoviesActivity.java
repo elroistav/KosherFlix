@@ -18,87 +18,115 @@ import android.widget.VideoView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.netflix_app4.R;
 import com.example.netflix_app4.components.CustomNavbar;
+import com.example.netflix_app4.model.CategoryModel;
 import com.example.netflix_app4.model.MovieModel;
 import com.example.netflix_app4.model.UserInfo;
+import com.example.netflix_app4.network.MovieApiService;
+import com.example.netflix_app4.network.RetrofitClient;
 import com.example.netflix_app4.viewmodel.CategoryViewModel;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
-public class AllCategoriesActivity extends AppCompatActivity {
-    private static final String TAG = "AllCategoriesActivity";
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+public class CategoryMoviesActivity extends AppCompatActivity {
+    private static final String TAG = "CategoryMoviesActivity";
 
     private CustomNavbar customNavbar;
-    private RecyclerView categoriesRecyclerView;
-    private CategoryAdapter categoryAdapter;
+    private RecyclerView moviesRecyclerView;
+    private MovieAdapter movieAdapter;
     private CategoryViewModel categoryViewModel;
     private Button navbarToggleButton;
     private boolean isNavbarVisible = false;
+    private TextView categoryTitleTextView;
+
+    private UserInfo userInfo;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_all_categories);
+        setContentView(R.layout.activity_category_movies);
 
-        // קבלת ה-UserInfo מה-Intent
-        UserInfo userInfo = (UserInfo) getIntent().getSerializableExtra("userInfo");
-        if (userInfo == null) {
+        userInfo = (UserInfo) getIntent().getSerializableExtra("userInfo");
+        CategoryModel category = getIntent().getParcelableExtra("category");
+
+        if (userInfo == null || category == null) {
             redirectToLogin();
             return;
         }
 
-        // אתחול הנאבבר
+        initializeViews();
+        setupNavbar(userInfo);
+        setupRecyclerView();
+
+        // נציג את שם הקטגוריה
+        categoryTitleTextView.setText(category.getName());
+
+        // נביא את הסרטים של הקטגוריה
+        fetchMoviesForCategory(category, userInfo.getUserId());
+    }
+
+    private void initializeViews() {
         customNavbar = findViewById(R.id.custom_navbar);
         customNavbar.setVisibility(View.GONE);
         navbarToggleButton = findViewById(R.id.navbarToggleButton);
         navbarToggleButton.setOnClickListener(v -> toggleNavbar());
+        categoryTitleTextView = findViewById(R.id.categoryTitle);
+        moviesRecyclerView = findViewById(R.id.moviesRecyclerView);
+    }
 
-        // יצירת ViewModel
+    private void setupNavbar(UserInfo userInfo) {
         categoryViewModel = new ViewModelProvider(this).get(CategoryViewModel.class);
-
-        // אתחול ה-CustomNavbar עם ה-ViewModel
         customNavbar.initializeCategoryViewModel(categoryViewModel);
         customNavbar.setUserDetails(userInfo);
-
-        // הגדרת ה-RecyclerView
-        categoriesRecyclerView = findViewById(R.id.categoriesRecyclerView);
-        categoriesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-        // הגדרת האדפטר
-        categoryAdapter = new CategoryAdapter(this, new ArrayList<>(), this::showMoviePopup, userInfo);
-        categoriesRecyclerView.setAdapter(categoryAdapter);
-
-        // אתחול הצפייה במידע
-        observeViewModels();
-
-        // קריאה לפונקציה שמביאה את כל הקטגוריות
-        categoryViewModel.fetchAllCategories(userInfo.getUserId());  // שימוש ב-userId מתוך אובייקט ה-UserInfo
     }
 
-    private void observeViewModels() {
-        // צפייה בכל הקטגוריות (לא רק המקודמות)
-        categoryViewModel.getAllCategoriesLiveData().observe(this, categories -> {
-            if (categories != null) {
-                categoryAdapter.updateData(categories);
-            }
-        });
-
-        categoryViewModel.getErrorLiveData().observe(this, error -> {
-            if (error != null) {
-                Toast.makeText(this, "Error: " + error, Toast.LENGTH_SHORT).show();
-            }
-        });
+    private void setupRecyclerView() {
+        GridLayoutManager layoutManager = new GridLayoutManager(this, 2);
+        moviesRecyclerView.setLayoutManager(layoutManager);
+        movieAdapter = new MovieAdapter(this, new ArrayList<>(), userInfo, this::showMoviePopup);
+        moviesRecyclerView.setAdapter(movieAdapter);
     }
 
-//    private void loadData(String token) {
-//        categoryViewModel.validateTokenAndFetchCategories(token);
-//    }
+    private void fetchMoviesForCategory(CategoryModel category, String userId) {
+        List<String> movieIds = category.getMovies();
+        if (movieIds == null || movieIds.isEmpty()) {
+            return;
+        }
+
+        List<MovieModel> movieDetails = new ArrayList<>();
+        MovieApiService apiService = RetrofitClient.getRetrofitInstance().create(MovieApiService.class);
+
+        for (String movieId : movieIds) {
+            apiService.getMovieById(movieId, userId).enqueue(new Callback<>() {
+                @Override
+                public void onResponse(Call<MovieModel> call, Response<MovieModel> response) {
+                    if (response.isSuccessful() && response.body() != null) {
+                        movieDetails.add(response.body());
+                        movieAdapter.updateMovies(movieDetails);
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<MovieModel> call, Throwable t) {
+                    Toast.makeText(CategoryMoviesActivity.this,
+                            "Error loading movies: " + t.getMessage(),
+                            Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+    }
 
     private void toggleNavbar() {
         isNavbarVisible = !isNavbarVisible;
@@ -124,8 +152,6 @@ public class AllCategoriesActivity extends AppCompatActivity {
         startActivity(intent);
         finish();
     }
-
-
 
     public void showMoviePopup(MovieModel movie) {
         Dialog dialog = new Dialog(this);

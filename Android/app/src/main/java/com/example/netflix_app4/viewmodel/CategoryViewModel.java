@@ -29,10 +29,12 @@ public class CategoryViewModel extends ViewModel {
     private final MutableLiveData<MovieModel> randomMovieLiveData = new MutableLiveData<>();
     private final MutableLiveData<String> errorLiveData = new MutableLiveData<>();
 
+    private final MutableLiveData<List<CategoryModel>> allCategoriesLiveData = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> operationSuccessLiveData = new MutableLiveData<>();
+
     private final MovieApiService movieApiService;
     private final CategoryRepository categoryRepository;
 
-    private final MutableLiveData<List<CategoryModel>> allCategoriesLiveData = new MutableLiveData<>();
 
 
 
@@ -111,6 +113,62 @@ public class CategoryViewModel extends ViewModel {
                 errorLiveData.postValue(error);
             }
         });
+    }
+
+    // Delete category
+    public void deleteCategory(String categoryId, String userId) {
+        categoryRepository.deleteCategory(categoryId, userId, new CategoryRepository.CategoryOperationCallback() {
+            @Override
+            public void onSuccess() {
+                operationSuccessLiveData.postValue(true);
+                // Refresh categories list
+                fetchAllCategories(userId);
+            }
+
+            @Override
+            public void onError(String error) {
+                errorLiveData.postValue(error);
+            }
+        });
+    }
+
+    // Update category
+    public void updateCategory(String categoryId, CategoryModel category, String userId) {
+        categoryRepository.updateCategory(categoryId, category, userId, new CategoryRepository.CategoryUpdateCallback() {
+            @Override
+            public void onSuccess(CategoryModel updatedCategory) {
+                operationSuccessLiveData.postValue(true);
+                // Refresh categories list
+                fetchAllCategories(userId);
+            }
+
+            @Override
+            public void onError(String error) {
+                errorLiveData.postValue(error);
+            }
+        });
+    }
+
+    // Add category
+    public void addCategory(CategoryModel category, String userId) {
+        categoryRepository.addCategory(category, userId, new CategoryRepository.CategoryUpdateCallback() {
+            @Override
+            public void onSuccess(CategoryModel newCategory) {
+                operationSuccessLiveData.postValue(true);
+                // Refresh categories list
+                fetchAllCategories(userId);
+            }
+
+            @Override
+            public void onError(String error) {
+                errorLiveData.postValue(error);
+            }
+        });
+    }
+
+    // Additional LiveData getters
+    public LiveData<Boolean> getOperationSuccess() {
+        return operationSuccessLiveData;
     }
 }
 

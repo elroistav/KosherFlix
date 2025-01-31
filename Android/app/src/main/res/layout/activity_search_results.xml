@@ -1,25 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="?android:attr/colorBackground">
+    android:fillViewport="true"
+    android:background="@color/background">
 
-    <TextView
-        android:id="@+id/searchQueryText"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:textColor="?android:attr/textColorPrimary"/>
+        android:layout_height="wrap_content">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/searchResultsRecyclerView"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:padding="8dp"
-        android:clipToPadding="false"/>
+        <!-- Navbar Section -->
+        <RelativeLayout
+            android:id="@+id/navbarSection"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/navbar_gradient_background">
 
-</LinearLayout>
+            <Button
+                android:id="@+id/navbarToggleButton"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_margin="8dp"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:textColor="@color/text_primary"
+                android:textSize="24sp"
+                android:elevation="4dp"
+                android:text="☰"/>
+
+            <com.example.netflix_app4.components.CustomNavbar
+                android:id="@+id/custom_navbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/navbarToggleButton"
+                android:visibility="gone"
+                android:elevation="8dp"
+                android:background="@color/background"/>
+        </RelativeLayout>
+
+        <!-- Search Query Text -->
+        <TextView
+            android:id="@+id/searchQueryText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/navbarSection"
+            android:textColor="@color/text_primary"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="12dp"/>
+
+        <!-- Search Results RecyclerView -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/searchResultsRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/searchQueryText"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
+            android:clipToPadding="false"
+            android:nestedScrollingEnabled="true"/>
+
+    </RelativeLayout>
+</ScrollView>

@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.netflix_app4.R;
 import com.example.netflix_app4.model.MovieModel;
+import com.example.netflix_app4.model.UserInfo;
 
 import java.util.List;
 
@@ -22,10 +23,14 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
     private final List<MovieModel> movies;
     private final CategoryAdapter.OnMovieClickListener movieClickListener;
 
-    public MovieAdapter(Context context, List<MovieModel> movies, CategoryAdapter.OnMovieClickListener movieClickListener) {
+    private final UserInfo userInfo;
+
+    public MovieAdapter(Context context, List<MovieModel> movies, UserInfo userInfo, CategoryAdapter.OnMovieClickListener movieClickListener) {
         this.context = context;
         this.movies = movies;
         this.movieClickListener = movieClickListener;
+        this.userInfo = userInfo;
+
     }
 
     @NonNull
@@ -65,6 +70,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
                         // If no click listener, launch MovieDetailsActivity directly
                         Intent intent = new Intent(context, MovieDetailsActivity.class);
                         intent.putExtra("movieDetails", movies.get(position));
+                        intent.putExtra("USER_INFO", userInfo);
                         context.startActivity(intent);
                     }
                 }
@@ -78,5 +84,11 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
                     .into(movieThumbnail);
             movieTitle.setText(movie.getTitle());
         }
+    }
+
+    public void updateMovies(List<MovieModel> newMovies) {
+        this.movies.clear();
+        this.movies.addAll(newMovies);
+        notifyDataSetChanged();
     }
 }
