@@ -5,40 +5,41 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.util.Log;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.netflix_app4.R;
 import com.example.netflix_app4.model.MovieModel;
+import com.example.netflix_app4.util.ThemeManager;
 import com.example.netflix_app4.viewmodel.CategoryViewModel;
 import com.example.netflix_app4.viewmodel.UserViewModel;
 import com.google.android.material.appbar.MaterialToolbar;
-
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
-
     private RecyclerView categoriesRecyclerView;
     private CategoryAdapter categoryAdapter;
     private CategoryViewModel categoryViewModel;
     private UserViewModel userViewModel;
     private String userId;
     private String token;
-    private String mongoUserId = "679615afd6aeeebe1038f023";
-
+    private ThemeManager themeManager;
+    private String mongoUserId = "678c10fe72b00e76a2d02581";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        themeManager = new ThemeManager(this);
+        themeManager.init();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -68,15 +69,6 @@ public class MainActivity extends AppCompatActivity {
         // Initialize Toolbar
         MaterialToolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        // Set up logout button in toolbar
-        toolbar.setOnMenuItemClickListener(item -> {
-            if (item.getItemId() == R.id.action_logout) {
-                logout();
-                return true;
-            }
-            return false;
-        });
     }
 
     private void setupViewModels() {
@@ -97,7 +89,6 @@ public class MainActivity extends AppCompatActivity {
         Button fetchButton = findViewById(R.id.fetchButton);
         fetchButton.setOnClickListener(v -> categoryViewModel.fetchCategories(mongoUserId));
     }
-
 
     private void observeViewModels() {
         // Observe categories
@@ -171,6 +162,39 @@ public class MainActivity extends AppCompatActivity {
         // Refresh categories when activity resumes
         if (userId != null) {
             categoryViewModel.fetchCategories(userId);
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        updateThemeIcon(menu.findItem(R.id.action_toggle_theme));
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int itemId = item.getItemId();
+        if (itemId == R.id.action_search) {
+            Intent intent = new Intent(this, SearchActivity.class);
+            startActivity(intent);
+            return true;
+        } else if (itemId == R.id.action_toggle_theme) {
+            boolean newDarkMode = !themeManager.isDarkMode();
+            themeManager.setDarkMode(newDarkMode);
+            updateThemeIcon(item);
+            return true;
+        } else if (itemId == R.id.action_logout) {
+            logout();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void updateThemeIcon(MenuItem item) {
+        if (item != null) {
+            item.setIcon(themeManager.isDarkMode() ?
+                    R.drawable.ic_theme_light : R.drawable.ic_theme_dark);
         }
     }
 }

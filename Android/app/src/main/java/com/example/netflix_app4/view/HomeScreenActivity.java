@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -18,6 +19,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
+import android.util.Log;
+import com.example.netflix_app4.components.CustomNavbar;
+import com.example.netflix_app4.model.User;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
@@ -25,14 +29,17 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.netflix_app4.R;
 import com.example.netflix_app4.model.CategoriesResponse;
 import com.example.netflix_app4.model.CategoryModel;
 import com.example.netflix_app4.model.CategoryPromoted;
 import com.example.netflix_app4.model.MovieModel;
+import com.example.netflix_app4.model.UserInfo;
 import com.example.netflix_app4.network.MovieApiService;
 import com.example.netflix_app4.network.RetrofitClient;
 import com.example.netflix_app4.viewmodel.CategoryViewModel;
+import com.example.netflix_app4.viewmodel.HomeScreenViewModel;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -48,10 +55,12 @@ import java.util.Properties;
 
 
 public class HomeScreenActivity extends AppCompatActivity {
+    private static final String TAG = "HomeScreenActivity";
 
+    private CustomNavbar customNavbar;
     private RecyclerView categoriesRecyclerView;
     private CategoryAdapter categoryAdapter;
-
+    private HomeScreenViewModel viewModel;
     private CategoryViewModel categoryViewModel;
 
     private TextView movieTitle;
@@ -60,14 +69,34 @@ public class HomeScreenActivity extends AppCompatActivity {
     private Button infoButton;
     private FrameLayout moviePlayerWrapper;
 
-    private String userId = "679615afd6aeeebe1038f023";
+    private Button navbarToggleButton;
+    private boolean isNavbarVisible = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_screen);
 
-        // Initialize views
+        customNavbar = findViewById(R.id.custom_navbar);
+        customNavbar.setVisibility(View.GONE);  //
+        navbarToggleButton = findViewById(R.id.navbarToggleButton);
+        navbarToggleButton.setOnClickListener(v -> toggleNavbar());
+
+        // יצירת ViewModel
+        categoryViewModel = new ViewModelProvider(this).get(CategoryViewModel.class);
+
+        // אתחול ה-CustomNavbar
+        customNavbar = findViewById(R.id.custom_navbar);
+        customNavbar.initializeCategoryViewModel(categoryViewModel);
+
+
+        String token = getIntent().getStringExtra("USER_TOKEN");
+        if (token == null) {
+            redirectToLogin();
+            return;
+        }
+
+        // Initialize views - keeping your original initialization
         movieTitle = findViewById(R.id.movieTitle);
         movieDescription = findViewById(R.id.movieDescription);
         playButton = findViewById(R.id.playButton);
@@ -81,31 +110,55 @@ public class HomeScreenActivity extends AppCompatActivity {
         categoryAdapter = new CategoryAdapter(this, new ArrayList<>(), this::showMoviePopup);
         categoriesRecyclerView.setAdapter(categoryAdapter);
 
-        // Initialize ViewModel
-        categoryViewModel = new ViewModelProvider(this).get(CategoryViewModel.class);
+        // Initialize ViewModels
+        setupViewModels();
 
-        // Observe ViewModel for data updates
-        observeViewModel();
+        // Observe ViewModels after setting them up
+        observeViewModels();
 
-        // Fetch categories and random movie
-        categoryViewModel.fetchCategories(userId);
-        categoryViewModel.fetchRandomMovie(this, userId);
+        // Validate token and fetch data
+        viewModel.validateToken(token);
     }
 
-    private void observeViewModel() {
-        // Observe categories for RecyclerView
+    private void setupViewModels() {
+        viewModel = new ViewModelProvider(this).get(HomeScreenViewModel.class);
+        categoryViewModel = new ViewModelProvider(this).get(CategoryViewModel.class);
+    }
+
+    private void observeViewModels() {
+        // Token validation
+        viewModel.getUserInfo().observe(this, userInfo -> {
+            if (userInfo != null) {
+                // Once token is validated, fetch the data
+                updateUIWithUserInfo(userInfo);
+                categoryViewModel.fetchCategories(userInfo.getUserId());
+                categoryViewModel.fetchRandomMovie(this, userInfo.getUserId());
+
+                if (customNavbar != null) {
+                    customNavbar.setUserDetails(new UserInfo(
+                            userInfo.getName(),
+                            userInfo.getAvatar(),
+                            userInfo.getUserId(),
+                            userInfo.getToken(),
+                            userInfo.isAdmin()
+                    ));
+
+                    //customNavbar.setupEventListeners();
+                }
+            }
+        });
+
+        // Original observers
         categoryViewModel.getPromotedCategoriesLiveData().observe(this, categories -> {
             if (categories != null) {
                 categoryAdapter.updateData(categories);
             }
         });
 
-        // Observe random movie for UI updates
         categoryViewModel.getRandomMovieLiveData().observe(this, movie -> {
             if (movie != null) {
                 updateMovieUI(movie);
 
-                // Set up button listeners
                 infoButton.setOnClickListener(v -> {
                     Intent intent = new Intent(HomeScreenActivity.this, MovieDetailsActivity.class);
                     intent.putExtra("movieDetails", movie);
@@ -120,14 +173,30 @@ public class HomeScreenActivity extends AppCompatActivity {
             }
         });
 
-        // Observe errors
         categoryViewModel.getErrorLiveData().observe(this, error -> {
             if (error != null) {
                 Toast.makeText(this, "Error: " + error, Toast.LENGTH_SHORT).show();
             }
         });
+
+        // Token validation error
+        viewModel.getValidationError().observe(this, error -> {
+            if (error != null) {
+                Toast.makeText(this, error, Toast.LENGTH_SHORT).show();
+                if (error.contains("Token validation failed")) {
+                    redirectToLogin();
+                }
+            }
+        });
     }
 
+    private void updateUIWithUserInfo(UserInfo userInfo) {
+        TextView welcomeText = findViewById(R.id.welcomeText);
+        welcomeText.setText(getString(R.string.welcome_message, userInfo.getName()));
+        // Add any other UI updates based on user info
+    }
+
+    // Your existing methods remain unchanged
     private void updateMovieUI(MovieModel movie) {
         movieTitle.setText(movie.getTitle());
         movieDescription.setText(movie.getDescription());
@@ -212,6 +281,30 @@ public class HomeScreenActivity extends AppCompatActivity {
 
         dialog.show();
     }
+
+    private void redirectToLogin() {
+        Intent intent = new Intent(this, LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
+    }
+
+    private void toggleNavbar() {
+        isNavbarVisible = !isNavbarVisible;
+
+        if (isNavbarVisible) {
+            customNavbar.setVisibility(View.VISIBLE);
+            customNavbar.animate()
+                    .alpha(1f)
+                    .setDuration(200)
+                    .start();
+        } else {
+            customNavbar.animate()
+                    .alpha(0f)
+                    .setDuration(200)
+                    .withEndAction(() ->
+                            customNavbar.setVisibility(View.GONE))
+                    .start();
+        }
+    }
 }
-
-

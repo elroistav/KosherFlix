@@ -39,9 +39,10 @@ const createMovie = async (req, res) => {
         console.log('Received body data:', { title, description, categories, length, director, releaseDate, language });
 
 
-        const videoUrl = req.files?.videoUrl ? `http://localhost:4000/uploads/${req.files.videoUrl[0].filename}` : null;
-        const thumbnail = req.files?.thumbnail ? `http://localhost:4000/uploads/${req.files.thumbnail[0].filename}` : null;
-
+        // const videoUrl = req.files?.videoUrl ? `http://localhost:4000/uploads/${req.files.videoUrl[0].filename}` : null;
+        // const thumbnail = req.files?.thumbnail ? `http://localhost:4000/uploads/${req.files.thumbnail[0].filename}` : null;
+        const videoUrl = req.body.videoUrl;
+        const thumbnail = req.body.thumbnail;
 
         console.log('File paths:', { videoUrl, thumbnail });
 

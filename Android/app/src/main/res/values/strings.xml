@@ -24,8 +24,26 @@
     <string name="play_movie">Play Movie</string>
     <string name="close_popup">Close</string>
     <string name="back_button">Back</string>
+    <string name="search">Search</string>
+    <string name="toggle_theme">Toggle Theme</string>
+
+    <string name="registerTextView">Register</string>
+    <string name="fullNameHint">Full Name (English letters only)</string>
+    <string name="emailHint">Email</string>
+    <string name="selectProfilePicture">Select Profile Picture</string>
+    <string name="registerButton">Register</string>
+
+    <string name="error_field_required">This field is required</string>
+    <string name="error_invalid_username">Username must be 3-15 characters and contain only letters, numbers, underscores, and hyphens</string>
+    <string name="error_invalid_name">Name must contain only English letters</string>
+    <string name="error_invalid_email">Invalid email address</string>
+    <string name="error_invalid_password">Password must be at least 8 characters with at least one letter and one number</string>
+    <string name="error_profile_picture_required">Profile picture is required</string>
     <string name="get_info">Get Info</string>
     <string name="play">Play</string>
     <string name="movie_description_goes_here">Movie Description goes here</string>
     <string name="switch_theme">Switch Theme</string>
+
+    <string name="welcome_message">Hello, %1$s</string>
+
 </resources>

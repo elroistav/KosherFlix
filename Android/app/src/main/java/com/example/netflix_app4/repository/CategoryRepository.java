@@ -3,12 +3,15 @@ package com.example.netflix_app4.repository;
 import android.content.Context;
 import android.util.Log;
 
+import com.example.netflix_app4.model.CategoriesListResponse;
+import com.example.netflix_app4.model.CategoryModel;
 import com.example.netflix_app4.model.CategoryPromoted;
 import com.example.netflix_app4.model.MovieModel;
 import com.example.netflix_app4.network.MovieApiService;
 import com.example.netflix_app4.network.RetrofitClient;
 import com.example.netflix_app4.model.CategoriesResponse;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -71,7 +74,7 @@ public class CategoryRepository {
                                 MovieModel movie = movieResponse.body();
                                 Log.d("CategoryRepository", "Fetched random movie: " + movie.getTitle());
                                 // Set the video URL for the demo video
-                                movie.setVideoUrl(RetrofitClient.getBackendUrl(context) + "/uploads/sample.mp4");
+                                //movie.setVideoUrl(Config.getBaseUrl() + "/uploads/lion.mp4");
                                 Log.d("CategoryRepository", "videoUrl: " + movie.getVideoUrl());
                                 callback.onSuccess(movie);
                             } else {
@@ -106,6 +109,42 @@ public class CategoryRepository {
     public interface RandomMovieCallback {
         void onSuccess(MovieModel randomMovie);
         void onError(String error);
+    }
+
+    public interface AllCategoriesCallback {
+        void onSuccess(List<CategoryModel> categories);
+        void onError(String error);
+    }
+
+    public void getAllCategories(String userId, AllCategoriesCallback callback) {
+        Log.d("CategoryRepository", "Fetching all categories for user: " + userId);
+        apiService.getAllCategories(userId)
+                .enqueue(new Callback<CategoriesListResponse>() {
+                    @Override
+                    public void onResponse(Call<CategoriesListResponse> call, Response<CategoriesListResponse> response) {
+                        if (response.isSuccessful() && response.body() != null) {
+                            List<CategoryModel> categories = response.body().getCategories();
+                            Log.d("CategoryRepository", "Successfully fetched " + categories.size() + " categories");
+                            callback.onSuccess(categories);
+                        } else {
+                            try {
+                                String errorBody = response.errorBody() != null ?
+                                        response.errorBody().string() : "No error body";
+                                Log.e("CategoryRepository", "Failed to fetch ALL categories. Status: "
+                                        + response.code() + ", Error: " + errorBody);
+                            } catch (IOException e) {
+                                Log.e("CategoryRepository", "Error reading error body", e);
+                            }
+                            callback.onError("Failed to fetch categories");
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<CategoriesListResponse> call, Throwable t) {
+                        Log.e("CategoryRepository", "Network call failed", t);
+                        callback.onError("Network error: " + t.getMessage());
+                    }
+                });
     }
 }
 

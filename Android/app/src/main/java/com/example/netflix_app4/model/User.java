@@ -7,15 +7,16 @@ import com.google.gson.annotations.SerializedName;
 
 @Entity(tableName = "users")
 public class User {
-    @PrimaryKey
-    @NonNull
+
     @SerializedName("_id")  // MongoDB uses _id
     private String id;
 
+    @PrimaryKey
+    @NonNull
     @SerializedName("userName")
     private String userName;
 
-    private String password;  // Consider if you want to store this locally
+    private String password;
 
     @SerializedName("token")
     private String token;

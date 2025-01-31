@@ -31,6 +31,7 @@
         <item name="colorPrimary">@color/netflix_red</item>
         <item name="colorPrimaryVariant">@color/netflix_red_dark</item>
         <item name="colorOnPrimary">@color/text_primary_light</item>
+        <item name="colorOnPrimary">@color/white</item>
 
         <!-- Secondary brand color -->
         <item name="colorSecondary">@color/teal_200</item>

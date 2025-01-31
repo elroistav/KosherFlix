@@ -19,6 +19,8 @@ import android.widget.MediaController;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
+
+import java.io.IOException;
 import java.util.Properties;
 
 
@@ -30,6 +32,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.netflix_app4.R;
 import com.example.netflix_app4.model.MovieModel;
+import com.example.netflix_app4.network.Config;
 import com.example.netflix_app4.network.MovieApiService;
 import com.example.netflix_app4.network.RetrofitClient;
 
@@ -57,7 +60,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
     private TextView recommendationTitle;
     private VideoView videoView;
 
-    private String userId = "679615afd6aeeebe1038f023";
+    private String userId = "678c10fe72b00e76a2d02581";
 
 
 
@@ -79,7 +82,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
 
         // Retrieve the movie details from Intent
         MovieModel movie = getIntent().getParcelableExtra("movieDetails");
-        movie.setVideoUrl(getBackendUrl() + "/uploads/sample.mp4");
+        //movie.setVideoUrl(Config.getBaseUrl() + "/uploads/sample.mp4");
         if (movie != null) {
             Log.d("MovieDetailsActivity", "Movie details: " + movie);
             if (movie.getVideoUrl() != null) {
@@ -249,17 +252,6 @@ public class MovieDetailsActivity extends AppCompatActivity {
 
         // Add the card to the GridLayout
         movieInfoGrid.addView(infoCard);
-    }
-
-    private String getBackendUrl() {
-        try (InputStream inputStream = getAssets().open("config.properties")) {
-            Properties properties = new Properties();
-            properties.load(inputStream);
-            return properties.getProperty("backend_url");
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
     }
 }
 

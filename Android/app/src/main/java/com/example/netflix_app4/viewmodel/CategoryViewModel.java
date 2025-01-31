@@ -5,8 +5,8 @@ import android.content.Context;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
-
 import com.example.netflix_app4.model.CategoriesResponse;
+import com.example.netflix_app4.model.CategoryModel;
 import com.example.netflix_app4.model.CategoryPromoted;
 import com.example.netflix_app4.model.LastWatched;
 import com.example.netflix_app4.model.MovieModel;
@@ -31,6 +31,9 @@ public class CategoryViewModel extends ViewModel {
 
     private final MovieApiService movieApiService;
     private final CategoryRepository categoryRepository;
+
+    private final MutableLiveData<List<CategoryModel>> allCategoriesLiveData = new MutableLiveData<>();
+
 
 
     public CategoryViewModel() {
@@ -82,6 +85,25 @@ public class CategoryViewModel extends ViewModel {
             @Override
             public void onSuccess(MovieModel randomMovie) {
                 randomMovieLiveData.postValue(randomMovie);
+            }
+
+            @Override
+            public void onError(String error) {
+                errorLiveData.postValue(error);
+            }
+        });
+    }
+
+    // Expose LiveData for all categories
+    public LiveData<List<CategoryModel>> getAllCategoriesLiveData() {
+        return allCategoriesLiveData;
+    }
+
+    public void fetchAllCategories(String userId) {
+        categoryRepository.getAllCategories(userId, new CategoryRepository.AllCategoriesCallback() {
+            @Override
+            public void onSuccess(List<CategoryModel> categories) {
+                allCategoriesLiveData.postValue(categories);
             }
 
             @Override

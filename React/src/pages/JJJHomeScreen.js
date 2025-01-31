@@ -16,6 +16,7 @@ import { useLocation } from 'react-router-dom';
 
 
 function HomeScreen( {isAdmin} ) {
+  const BASE_URL = process.env.REACT_APP_BASE_URL;
   const [movies, setMovies] = useState([]);
   const [randomMovie, setRandomMovie] = useState(null);
   const [searchResults, setSearchResults] = useState([]);
@@ -30,13 +31,13 @@ function HomeScreen( {isAdmin} ) {
     async function checkToken() {
       try {
         if (!token) throw new Error('Token not found');
-        const response = await axios.get('http://localhost:4000/api/tokens', {
+        const response = await axios.get(BASE_URL + '/api/tokens', {
           headers: { Authorization: `Bearer ${token}` },
         });
 
         if (response.status === 200) {
           console.log('User is logged in');
-          const avatarUrl = `http://localhost:4000/${response.data.avatar}`;
+          const avatarUrl = `${BASE_URL}/${response.data.avatar}`;
           console.log('the returned data is ' + JSON.stringify(response.data));
 
           setUserInfo({
@@ -73,7 +74,7 @@ function HomeScreen( {isAdmin} ) {
       try {
         //get user-id from the tokes first
         console.log('The user id is: ' + userInfo.userId);
-        const response = await axios.get('http://localhost:4000/api/movies', {
+        const response = await axios.get(BASE_URL + '/api/movies', {
           headers: { 'user-id': userInfo.userId }
         });
 
@@ -83,7 +84,7 @@ function HomeScreen( {isAdmin} ) {
           const fetchedMovies = [];
           for (const movieId of category.movies) {
             try {
-              const movieResponse = await axios.get(`http://localhost:4000/api/movies/${movieId}`, {
+              const movieResponse = await axios.get(`${BASE_URL}/api/movies/${movieId}`, {
                   headers: { 'user-id': userInfo.userId }
               });
               fetchedMovies.push(movieResponse.data);
@@ -120,7 +121,7 @@ function HomeScreen( {isAdmin} ) {
 
         // Delete category in backend
         await axios.delete(
-            `http://localhost:4000/api/categories/${categoryId}`,
+            `${BASE_URL}/api/categories/${categoryId}`,
             {headers: { 'user-id': userInfo.userId }
           }
         );
@@ -141,7 +142,7 @@ function HomeScreen( {isAdmin} ) {
         setMovies(updatedMovies);
         
         // Update categories in backend
-        await axios.delete(`http://localhost:4000/api/movies/${movieId}`, {
+        await axios.delete(`${BASE_URL}/api/movies/${movieId}`, {
             headers: { 'user-id': userInfo.userId }
         });
     } catch (error) {
@@ -199,28 +200,6 @@ function HomeScreen( {isAdmin} ) {
         {searchResults.length === 0 ? (
           <div className="movieCategories">
           {movies.length > 0 && movies.map((category, index) => (
-            isAdmin ? (
-                <AdminCategoryRow 
-                    key={index} 
-                    category={category}  // Remove movies prop since it's included in category
-                    onMovieClick={handleMovieClick}
-                    onMovieUpdate={handleMovieUpdate} 
-                    onMovieDelete={handleMovieDelete}
-                    onCategoryDelete={handleCategoryDelete}
-                />
-            ) : (
-                <CategoryRow 
-                    key={index} 
-                    categoryName={category.category} 
-                    movies={category.movies} 
-                    onMovieClick={handleMovieClick} 
-                />
-            )
-        ))}
-          </div>
-        ) : (
-          <SearchResults searchResults={searchResults} handleMovieClick={handleMovieClick} isAdmin={isAdmin} />
-        )}
             isAdmin ? (
                 <AdminCategoryRow 
                     key={index} 

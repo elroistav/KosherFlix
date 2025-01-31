@@ -7,7 +7,30 @@ import MovieInfo from './MovieInfo';
 import '../styles/MoviePopup.css';
 //import user from '../../../NetflixProj3/models/user';
 
+/**
+ * MoviePopup component displays a popup with movie details and recommendations.
+ * 
+ * @component
+ * @param {Object} props - The component props.
+ * @param {Object} props.userInfo - The user information.
+ * @param {string} props.userInfo.userId - The user's ID.
+ * @param {Object} props.initialMovie - The initial movie to display in the popup.
+ * @param {string} props.initialMovie._id - The movie's ID.
+ * @param {string} props.initialMovie.title - The movie's title.
+ * @param {string} [props.initialMovie.videoUrl] - The URL of the movie's video.
+ * @param {Function} props.onClose - The function to call when the popup is closed.
+ * 
+ * @returns {JSX.Element|null} The rendered component or null if no movie is provided.
+ * 
+ * @example
+ * <MoviePopup 
+ *   userInfo={{ userId: '12345' }} 
+ *   initialMovie={{ _id: '67890', title: 'Example Movie', videoUrl: 'http://example.com/video.mp4' }} 
+ *   onClose={() => console.log('Popup closed')} 
+ * />
+ */
 function MoviePopup({ userInfo, initialMovie, onClose }) {
+  const BASE_URL = process.env.REACT_APP_BASE_URL;
   const [movie, setMovie] = useState(initialMovie);
   const [recommendations, setRecommendations] = useState([]);
   const [loadingRecommendations, setLoadingRecommendations] = useState(false);
@@ -26,9 +49,9 @@ function MoviePopup({ userInfo, initialMovie, onClose }) {
         console.log('Fetching recommendations for movie:', movie.title, movie._id);
         console.log('fetch User ID:', userInfo.userId);
         const response = await axios.get(
-          `http://localhost:4000/api/movies/${movie._id}/recommend`,
+          `${BASE_URL}/api/movies/${movie._id}/recommend`,
           {
-              headers: { 'user-id': userInfo.userId } // כאן מעבירים את ה-Headers
+              headers: { 'user-id': userInfo.userId }
           }
       );
         const recommendedMovieIds = response.data; // Assuming the response is a list of movie IDs
@@ -37,7 +60,7 @@ function MoviePopup({ userInfo, initialMovie, onClose }) {
         const recommendedMovies = await Promise.all(
           recommendedMovieIds.map(async (id) => {
             try {
-              const movieResponse = await axios.get(`http://localhost:4000/api/movies/${id}`, {
+              const movieResponse = await axios.get(`${BASE_URL}/api/movies/${id}`, {
                 headers: { 'user-id': userInfo.userId }
               });
               return movieResponse.data;
@@ -81,14 +104,24 @@ function MoviePopup({ userInfo, initialMovie, onClose }) {
     }
   };
 
+  /**
+   * Handles the click event for watching a movie.
+   * Sends a POST request to recommend the movie for the user.
+   * Navigates to the movie page after the request is completed.
+   * 
+   * @async
+   * @function handleWatchClick
+   * @returns {Promise<void>} A promise that resolves when the operation is complete.
+   * @throws Will log an error message if the request fails.
+   */
   const handleWatchClick = async () => {
     try {
         console.log('post User ID:', userInfo.userId);
         await axios.post(
-            `http://localhost:4000/api/movies/${movie._id}/recommend`,
-            {}, // גוף הבקשה (אם אין מידע בגוף, העבר אובייקט ריק)
+            `${BASE_URL}/api/movies/${movie._id}/recommend`,
+            {},
             {
-                headers: { 'user-id': userInfo.userId } // כאן מעבירים את ה-Headers
+                headers: { 'user-id': userInfo.userId }
             }
         );
         navigate('/movie', { state: { movie } });

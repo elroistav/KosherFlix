@@ -6,6 +6,8 @@ import '../styles/RegisterLogin.css';
 import AuthForm from '../components/AutoForm';
 
 const Welcome = () => {
+    const BASE_URL = process.env.REACT_APP_BASE_URL;
+    console.log('BASE_URL:', BASE_URL);
     const navigate = useNavigate(); 
     const [userName, setUserName] = useState(''); 
     const [name, setName] = useState(''); 
@@ -39,7 +41,7 @@ const Welcome = () => {
         console.log('User data:', dataToSend);
     
         try {
-            const response = await axios.post('http://localhost:4000/api/tokens', dataToSend, {
+            const response = await axios.post(BASE_URL + '/api/tokens', dataToSend, {
                 headers: {
                     'Content-Type': 'application/json'
                 }
