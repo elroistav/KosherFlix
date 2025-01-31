@@ -57,6 +57,10 @@ public class AdminActivity extends AppCompatActivity implements
 
     private MovieEditDialog dialog;
 
+    private ArrayList<String> categories = new ArrayList<>();
+
+
+
     private static final int PERMISSION_REQUEST = 100;
 
 
@@ -304,14 +308,20 @@ public class AdminActivity extends AppCompatActivity implements
         }
 
         currentAddMovieDialog = new MovieAddDialog(this,
-                (newMovie, thumbnailUri, videoUri) ->
-                        movieViewModel.addMovie(
-                                newMovie,
-                                thumbnailUri,
-                                videoUri,
-                                userInfo.getUserId(),
-                                this
-                        )
+                (newMovie, thumbnailUri, videoUri, selectedCategories) -> {
+                    // Update the categories field
+                    this.categories = selectedCategories;
+
+                    // Call ViewModel to add movie with categories
+                    movieViewModel.addMovie(
+                            newMovie,
+                            selectedCategories,
+                            thumbnailUri,
+                            videoUri,
+                            userInfo.getUserId(),
+                            this
+                    );
+                }
         );
         currentAddMovieDialog.show();
     }

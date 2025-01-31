@@ -8,6 +8,8 @@ import androidx.lifecycle.ViewModel;
 import com.example.netflix_app4.model.MovieModel;
 import com.example.netflix_app4.repository.MovieRepository;
 
+import java.util.List;
+
 public class MovieViewModel extends ViewModel {
     private final MutableLiveData<MovieModel> movieLiveData = new MutableLiveData<>();
     private final MutableLiveData<String> errorLiveData = new MutableLiveData<>();
@@ -36,8 +38,8 @@ public class MovieViewModel extends ViewModel {
 
 
     // New add movie with files
-    public void addMovie(MovieModel movie, Uri thumbnailUri, Uri videoUri, String userId, Context context) {
-        movieRepository.addMovie(movie, thumbnailUri, videoUri, userId, context, new MovieRepository.MovieCallback() {
+    public void addMovie(MovieModel movie, List<String> categories,Uri thumbnailUri, Uri videoUri, String userId, Context context) {
+        movieRepository.addMovie(movie, categories, thumbnailUri, videoUri, userId, context, new MovieRepository.MovieCallback() {
             @Override
             public void onSuccess(MovieModel movie) {
                 movieLiveData.postValue(movie);

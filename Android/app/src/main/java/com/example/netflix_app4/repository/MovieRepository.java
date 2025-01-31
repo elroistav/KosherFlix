@@ -9,6 +9,7 @@ import com.example.netflix_app4.model.CategoriesResponse;
 import com.example.netflix_app4.network.MovieApiService;
 import com.example.netflix_app4.network.RetrofitClient;
 import com.example.netflix_app4.model.MovieModel;
+import com.google.gson.Gson;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -154,7 +155,7 @@ public class MovieRepository {
         });
     }
 
-    public void addMovie(MovieModel movie, Uri thumbnailUri, Uri videoUri, String userId, Context context, MovieCallback callback) {
+    public void addMovie(MovieModel movie, List<String> categories, Uri thumbnailUri, Uri videoUri, String userId, Context context, MovieCallback callback) {
         try {
             // Convert movie data to RequestBody objects
             RequestBody title = RequestBody.create(MediaType.parse("text/plain"), movie.getTitle());
@@ -165,13 +166,18 @@ public class MovieRepository {
             RequestBody releaseDate = RequestBody.create(MediaType.parse("text/plain"), movie.getReleaseDate());
             RequestBody language = RequestBody.create(MediaType.parse("text/plain"), movie.getLanguage());
 
+            // Convert categories list to JSON format
+            String categoriesJson = new Gson().toJson(categories);
+            RequestBody categoriesBody = RequestBody.create(MediaType.parse("text/plain"), categoriesJson);
+
+
             // Convert URIs to MultipartBody.Parts
             MultipartBody.Part thumbnailPart = uriToMultipartBodyPart(context, thumbnailUri, "thumbnail");
             MultipartBody.Part videoPart = uriToMultipartBodyPart(context, videoUri, "videoUrl");
 
             movieApiService.addMovie(
                     title, description, rating, length, director, releaseDate, language,
-                    thumbnailPart, videoPart, userId
+                    categoriesBody, thumbnailPart, videoPart, userId
             ).enqueue(new Callback<MovieModel>() {
                 @Override
                 public void onResponse(Call<MovieModel> call, Response<MovieModel> response) {

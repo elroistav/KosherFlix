@@ -44,8 +44,10 @@ public class MovieAddDialog extends Dialog {
 
     private final Activity activity;
 
+    private ArrayList<String> selectedCategories = new ArrayList<>();
+
     public interface OnMovieSaveListener {
-        void onMovieSave(MovieModel newMovie, Uri thumbnailUri, Uri videoUri);
+        void onMovieSave(MovieModel newMovie, Uri thumbnailUri, Uri videoUri, ArrayList<String> categories);
     }
 
     public MovieAddDialog(@NonNull Context context, OnMovieSaveListener saveListener) {
@@ -159,6 +161,21 @@ public class MovieAddDialog extends Dialog {
             return;
         }
 
+        EditText categoriesInput = findViewById(R.id.editTextMovieCategories);
+        String categoriesText = categoriesInput.getText().toString().trim();
+        selectedCategories = new ArrayList<>();
+
+        if (!TextUtils.isEmpty(categoriesText)) {
+            // Split categories by comma and trim whitespace
+            String[] categoryArray = categoriesText.split(",");
+            for (String category : categoryArray) {
+                String trimmedCategory = category.trim();
+                if (!TextUtils.isEmpty(trimmedCategory)) {
+                    selectedCategories.add(trimmedCategory);
+                }
+            }
+        }
+
         try {
             double rating = Double.parseDouble(((EditText) findViewById(R.id.editTextMovieRating)).getText().toString());
             int length = Integer.parseInt(((EditText) findViewById(R.id.editTextMovieLength)).getText().toString());
@@ -173,11 +190,17 @@ public class MovieAddDialog extends Dialog {
                     ((EditText) findViewById(R.id.editTextMovieLanguage)).getText().toString()
             );
 
+            Intent resultIntent = new Intent();
+            resultIntent.putStringArrayListExtra("categories", selectedCategories);
+            activity.setResult(Activity.RESULT_OK, resultIntent);
+            activity.finish();
+
+
             isSaving = true;
             findViewById(R.id.buttonSave).setEnabled(false);
 
             if (saveListener != null) {
-                saveListener.onMovieSave(newMovie, selectedImageUri, selectedVideoUri);
+                saveListener.onMovieSave(newMovie, selectedImageUri, selectedVideoUri, selectedCategories);
             }
         } catch (NumberFormatException e) {
             showError("Invalid number format in rating or length");
