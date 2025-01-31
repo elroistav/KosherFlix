@@ -1,22 +1,20 @@
-import React, { useState, useEffect } from 'react'; // **הוספתי useState ו-useEffect**
+import React, { useState, useEffect } from 'react'; // Added useState and useEffect
 import ReactDOM from 'react-dom';
 
 import axios from 'axios';
-import { FaEdit, FaTrash } from 'react-icons/fa'; // **הוספתי את FaEdit**
+import { FaEdit, FaTrash } from 'react-icons/fa'; // Added FaEdit
 import AdminMovieCard from './AdminMovieCard';
-import CategoryEditModal from './CategoryEditModal'; // **הוספתי את המודל של עריכת קטגוריה**
+import CategoryEditModal from './CategoryEditModal'; // Added the category edit modal
 import '../styles/AdminCategoryRow.css';
 
 function AdminCategoryRow({ category, onMovieClick, onMovieUpdate, onMovieDelete, onCategoryDelete, onCategoryUpdate, userInfo, loading }) {
-    console.log('Category:', category);
-    console.log('Name: ', category.category);
-
+    const BASE_URL = process.env.REACT_APP_BASE_URL;
     const [isSaving, setIsSaving] = useState(false);
     const [error, setError] = useState(null);
-    const [isModalOpen, setIsModalOpen] = useState(false); // **הוספתי מצב למודל**
-    const [categoryData, setCategoryData] = useState(category); // **הוספתי מצב לקטגוריה**
+    const [isModalOpen, setIsModalOpen] = useState(false); // Added state for modal
+    const [categoryData, setCategoryData] = useState(category); // Added state for category
 
-    useEffect(() => { // **הוספתי useEffect לעדכון קטגוריה**
+    useEffect(() => { // Added useEffect to update category
         setCategoryData(category);
     }, [category]);
 
@@ -31,7 +29,7 @@ function AdminCategoryRow({ category, onMovieClick, onMovieUpdate, onMovieDelete
         if (window.confirm(`Are you sure you want to delete the category "${category.category}"?`)) {
             try {
                 await axios.delete(
-                    `http://localhost:4000/api/categories/${category._id}`,
+                    `${BASE_URL}/api/categories/${category._id}`,
                     { headers: { 'user-id': userInfo.userId } }
                 );
 
@@ -55,7 +53,7 @@ function AdminCategoryRow({ category, onMovieClick, onMovieUpdate, onMovieDelete
         }
     };
 
-    // **הוספתי פונקציה שתפתח את המודל לעריכת קטגוריה**
+    // Added function to open the category edit modal
     const handleCategoryEdit = (e) => {
         e.stopPropagation();
 
@@ -68,13 +66,13 @@ function AdminCategoryRow({ category, onMovieClick, onMovieUpdate, onMovieDelete
         document.body.style.overflow = 'hidden'; // Disable scrolling when modal is open
     };
 
-    // **הוספתי פונקציה לסגור את המודל**
+    // Added function to close the modal
     const handleCloseModal = () => {
         setIsModalOpen(false);
         document.body.style.overflow = 'unset'; // Enable scrolling when modal is closed
     };
 
-    // **הוספתי פונקציה לשמירה של הקטגוריה**
+    // Added function to save the category
     const handleSaveCategory = async (updatedCategory) => {
         if (loading || !userInfo) {
             console.error('Cannot save category: userInfo is not ready yet.');
@@ -95,24 +93,24 @@ function AdminCategoryRow({ category, onMovieClick, onMovieUpdate, onMovieDelete
                 return;
             } 
             const response = await axios.patch(
-                `http://localhost:4000/api/categories/${category._id}`,
+                `${BASE_URL}/api/categories/${category._id}`,
                 updatedCategory,
                 { headers: { 'user-id': userInfo.userId }}
             );
     
-            // עדכון הסטייט המקומי
+            // Update local state
             setCategoryData(response.data);
             if (onCategoryUpdate) {
-                onCategoryUpdate(response.data); // עדכון ההורה
+                onCategoryUpdate(response.data); // Update parent
             }
     
-            handleCloseModal(); // סגירת המודל
+            handleCloseModal(); // Close modal
         } catch (error) {
-            // טיפול בטעויות ועדכון error
+            // Handle errors and update error state
             console.error('Error saving category:', error);
             setError('An error occurred while saving the category. Please try again.');
         } finally {
-            // סיום שמירה
+            // Finish saving
             setIsSaving(false);
         }
     };
@@ -124,7 +122,7 @@ function AdminCategoryRow({ category, onMovieClick, onMovieUpdate, onMovieDelete
                 <button className="delete-category-button" onClick={handleCategoryDelete}>
                     <FaTrash />
                 </button>
-                {/* **הוספתי כפתור לעריכת הקטגוריה** */}
+                {/* Added button to edit the category */}
                 <button className="edit-category-button" onClick={handleCategoryEdit}>
                     <FaEdit />
                 </button>
@@ -143,7 +141,7 @@ function AdminCategoryRow({ category, onMovieClick, onMovieUpdate, onMovieDelete
                 ))}
             </div>
 
-            {/* **הוספתי את המודל של עריכת הקטגוריה** */}
+            {/* Added the category edit modal */}
             {isModalOpen && ReactDOM.createPortal(
                 <CategoryEditModal
                     category={categoryData} 
@@ -160,80 +158,3 @@ function AdminCategoryRow({ category, onMovieClick, onMovieUpdate, onMovieDelete
 }
 
 export default AdminCategoryRow;
-
-
-// import React from 'react';
-// import axios from 'axios';
-// import { FaTrash } from 'react-icons/fa';
-// import AdminMovieCard from './AdminMovieCard';
-// import '../styles/AdminCategoryRow.css';
-
-// function AdminCategoryRow({ category, onMovieClick, onMovieUpdate, onMovieDelete, onCategoryDelete, userInfo, loading }) {
-//     console.log('Category:', category);
-//     console.log('Name: ', category.category);
-
-//     const handleCategoryDelete = async (e) => {
-//         e.stopPropagation();
-
-//         if (loading || !userInfo) { 
-//             console.error('Cannot delete category: userInfo is not ready yet.');
-//             return;
-//         }
-        
-//         if (window.confirm(`Are you sure you want to delete the category "${category.category}"?`)) {
-//             try {
-//                 await axios.delete(
-//                     `http://localhost:4000/api/categories/${category._id}`,
-//                     { headers: { 'user-id': userInfo.userId } }
-//                 );
-                
-//                 if (onCategoryDelete) {
-//                     onCategoryDelete(category._id);
-//                 }
-//             } catch (error) {
-//                 console.error('Error deleting category:', error);
-//             }
-//         }
-//     };
-
-//     const handleMovieDelete = (movieId) => {
-
-//         if (loading || !userInfo) {  
-//             console.error('Cannot delete movie: userInfo is not ready yet.');
-//             return;
-//         }
-
-//         if (onMovieDelete) {
-//             onMovieDelete(movieId);
-//         }
-//     };
-
-//     return (
-//         <div className="category-row">
-//             <h3>
-//                 {category.category} 
-//                 <button className="delete-category-button" onClick={handleCategoryDelete}>
-//                     <FaTrash />
-//                 </button>
-//                 <button className="add-movie-button" onClick={() => onMovieUpdate(category._id)}>
-//                     <FaTrash />
-//                 </button>
-//             </h3>
-//             <div className="category-movies">
-//                 {category.movies.map((movie) => (
-//                     <AdminMovieCard 
-//                         key={movie._id}
-//                         movie={movie} 
-//                         onClick={() => onMovieClick(movie._id)} 
-//                         onMovieUpdate={onMovieUpdate}
-//                         onMovieDelete={handleMovieDelete} 
-//                         userInfo={userInfo}
-//                         loading={loading}
-//                     />
-//                 ))}
-//             </div>
-//         </div>
-//     );
-// }
-
-// export default AdminCategoryRow;

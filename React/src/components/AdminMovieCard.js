@@ -4,13 +4,17 @@ import axios from 'axios';
 import { FaEdit, FaTrash } from 'react-icons/fa';
 import MovieEditModal from './MovieEditModal';
 import '../styles/AdminMovieCard.css';
-//import user from '../../../NetflixProj3/models/user';
 
 function AdminMovieCard({ movie, onClick, onMovieUpdate, onMovieDelete, userInfo, loading }) {
+    const BASE_URL = process.env.REACT_APP_BASE_URL;
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
     const [error, setError] = useState(null);
     const [movieData, setMovieData] = useState(movie);
+
+
+    console.log("movie.thumbnail**: " + movie.thumbnail);
+    console.log("full thumbnail url: **" + `${BASE_URL}/${movie.thumbnail}`);
 
     // Add useEffect to update movieData when movie prop changes
     useEffect(() => {
@@ -78,7 +82,7 @@ function AdminMovieCard({ movie, onClick, onMovieUpdate, onMovieDelete, userInfo
         }
 
         const response = await axios.put(
-            `http://localhost:4000/api/movies/${movie._id}`, 
+            `${BASE_URL}/api/movies/${movie._id}`, 
             updatedMovie, 
             { headers: { 'user-id': userInfo.userId }}
         );
@@ -116,7 +120,7 @@ function AdminMovieCard({ movie, onClick, onMovieUpdate, onMovieDelete, userInfo
             try {
               console.log('user id is: ' + JSON.stringify(userInfo));
                 await axios.delete(
-                    `http://localhost:4000/api/movies/${movie._id}`,
+                    `${BASE_URL}/api/movies/${movie._id}`,
                     { headers: { 'user-id': userInfo.userId }}
                   );
                 
@@ -137,7 +141,7 @@ function AdminMovieCard({ movie, onClick, onMovieUpdate, onMovieDelete, userInfo
         className="movie-card"
         onClick={onClick}
         style={{
-          backgroundImage: `url(${movie.thumbnail})`,
+          backgroundImage: `url(${BASE_URL}/${movie.thumbnail})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
         }}
