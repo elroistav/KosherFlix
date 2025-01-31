@@ -3,6 +3,7 @@ import axios from 'axios';
 import '../styles/MovieEditModal.css';
 
 const MovieAddModal = ({ isOpen, onClose, onSave, error: propError, userInfo }) => {
+    const BASE_URL = process.env.REACT_APP_BASE_URL;
     const [localError, setLocalError] = useState(null);
 
     // Format date for input field
@@ -33,25 +34,25 @@ const MovieAddModal = ({ isOpen, onClose, onSave, error: propError, userInfo }) 
         setFormData({ ...formData, [field]: e.target.files[0] }); // עדכון השדה בהתאם
     };
 
-    // עדכון שדה הקטגוריות
+    // Update category field
     const handleCategoryChange = (e) => {
-        setFormData({ ...formData, categories: e.target.value }); // מקבלים את כל הקטגוריות כטקסט
+        setFormData({ ...formData, categories: e.target.value }); // Receive all categories as text
     };
 
     const converCategoriesToIDs = async (categories) => {
         const categoriesIDs = [];
         
-        // קריאה לשרת כדי לקבל את כל הקטגוריות
-        const response = await axios.get('http://localhost:4000/api/categories',
+        // Call the server to get all categories
+        const response = await axios.get(BASE_URL + '/api/categories',
                                          { headers: { 'user-id': userInfo.userId } });
         const allCategories = response.data.categories;
 
-        // עבור כל קטגוריה במערך הקטגוריות
+        // For each category in the categories array
         categories.split(',').map(item => item.trim()).forEach((category) => {
-            // חיפוש אחר הקטגוריה במערך הקטגוריות
+            // Search for the category in the categories array
             const categoryData = allCategories.find((cat) => cat.name === category);
             if (categoryData) {
-                // אם קיימת הקטגוריה, מוסיפים את ה-ID שלה למערך הקטגוריות
+                // If the category exists, add its ID to the categories array
                 categoriesIDs.push(categoryData._id);
             }
         });
@@ -65,12 +66,12 @@ const MovieAddModal = ({ isOpen, onClose, onSave, error: propError, userInfo }) 
         try {
             setLocalError(null);
 
-            // יצירת FormData
+            // Create FormData
             const formDataToSend = new FormData();
 
             const categoryIds = await converCategoriesToIDs(formData.categories);
 
-            // הוספת שדות רגילים
+            // Add regular fields
             formDataToSend.append('title', formData.title);
             formDataToSend.append('description', formData.description);
             formDataToSend.append('rating', formData.rating);
@@ -81,22 +82,25 @@ const MovieAddModal = ({ isOpen, onClose, onSave, error: propError, userInfo }) 
             formDataToSend.append('ageRestriction', formData.ageRestriction);
 
             categoryIds.forEach(id => formDataToSend.append('categories[]', id));
-
-            // הוספת קבצים
+            console.log("thumbnail", formData.thumbnail);
+            console.log("videoUrl", formData.videoUrl);
+            console.log("thumbnailName", formData.thumbnail.name);
+            console.log("videoUrlName", formData.videoUrl.name);
+            // Add files
             if (formData.thumbnail) {
-                formDataToSend.append('thumbnail', formData.thumbnail);
+                formDataToSend.append('thumbnail', 'uploads/' + formData.thumbnail.name);
             }
 
             if (formData.videoUrl) {
-                formDataToSend.append('videoUrl', formData.videoUrl);
+                formDataToSend.append('videoUrl', 'uploads/' + formData.videoUrl.name);
             }
 
-            // הוספת שדות אחרים כמו cast, subtitles, categories
+            // Add other fields like cast, subtitles, categories
             formData.cast.forEach((castMember) => formDataToSend.append('cast[]', castMember));
             formData.subtitles.forEach((subtitle) => formDataToSend.append('subtitles[]', subtitle));
 
-            // קריאה לפונקציה שמבצעת את שליחת הנתונים
-            await onSave(formDataToSend); // כאן לשלוח את ה-FormData
+            // Call the function that sends the data
+            await onSave(formDataToSend); // Send the FormData here
         } catch (error) {
             if (error.response?.data?.code === 11000) {
                 setLocalError('A movie with this title already exists. Please choose a different title.');
@@ -230,7 +234,7 @@ const MovieAddModal = ({ isOpen, onClose, onSave, error: propError, userInfo }) 
                         <input
                             type="text"
                             value={formData.categories}
-                            onChange={handleCategoryChange} // עדכון הקטגוריות
+                            onChange={handleCategoryChange}
                         />
                     </div>
                     <div className="modal-buttons">

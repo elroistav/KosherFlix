@@ -1,10 +1,22 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import WelcomeBar from '../components/WelcomeBar'; // ייבוא ה-navbar
+import WelcomeBar from '../components/WelcomeBar';
 import '../styles/Welcome.css';
 
+/**
+ * Welcome component renders the welcome page of the application.
+ * It includes a welcome message, some promotional text, and a register button.
+ * 
+ * @component
+ * @example
+ * return (
+ *   <Welcome />
+ * )
+ * 
+ * @returns {JSX.Element} The Welcome component.
+ */
 const Welcome = () => {
-    const navigate = useNavigate(); // מאפשר ניווט בין מסכים
+    const navigate = useNavigate();
 
     return (
         <div className="welcome-page">
