@@ -7,7 +7,7 @@
     <color name="semi_transparent">#B3000000</color>
 
     <color name="background">@color/background_dark</color>
-    <color name="surface">@color/surface_dark</color>
+    <color name="surface">@color/netflix_red_dark</color>
     <color name="text_primary">@color/text_primary_dark</color>
     <color name="text_secondary">@color/text_secondary_dark</color>
     

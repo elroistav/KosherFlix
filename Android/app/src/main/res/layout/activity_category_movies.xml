@@ -38,13 +38,13 @@
                 android:background="@color/background"/>
         </RelativeLayout>
 
-        <!-- Categories Main Title -->
+        <!-- Category Title -->
         <TextView
-            android:id="@+id/categoriesMainTitle"
+            android:id="@+id/categoryTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/navbarSection"
-            android:text="Categories"
+            android:text="Category Name"
             android:textColor="@color/text_primary"
             android:textSize="20sp"
             android:textStyle="bold"
@@ -52,12 +52,12 @@
             android:layout_marginTop="16dp"
             android:layout_marginBottom="12dp"/>
 
-        <!-- Categories RecyclerView -->
+        <!-- Movies RecyclerView -->
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/categoriesRecyclerView"
+            android:id="@+id/moviesRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/categoriesMainTitle"
+            android:layout_below="@id/categoryTitle"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="16dp"

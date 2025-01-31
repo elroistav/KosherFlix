@@ -4,8 +4,11 @@ import static androidx.core.content.ContextCompat.startActivity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.widget.LinearLayout;
 import android.widget.ImageView;
@@ -14,13 +17,17 @@ import android.widget.TextView;
 import android.widget.Button;
 import android.widget.Switch;
 
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.lifecycle.LifecycleOwner;
 
 import com.bumptech.glide.Glide;
 import com.example.netflix_app4.R;
 import com.example.netflix_app4.model.CategoryModel;
 import com.example.netflix_app4.model.UserInfo;
+import com.example.netflix_app4.view.AdminActivity;
 import com.example.netflix_app4.view.AllCategoriesActivity;
+import com.example.netflix_app4.view.CategoryMoviesActivity;
+import com.example.netflix_app4.view.HomeScreenActivity;
 import com.example.netflix_app4.viewmodel.CategoryViewModel;
 
 import java.util.List;
@@ -31,10 +38,12 @@ public class CustomNavbar extends LinearLayout {
     // אותם שדות כמו קודם
     private ImageView userAvatarImageView;
     private TextView userNameTextView;
-    private Button searchButton;
+    private SearchBarComponent searchComponent;
     private LinearLayout categoriesContainer;
     private Switch darkModeSwitch;
     private Button adminButton;
+    private Button homeButton;
+
     private UserInfo userInfo;
 
     private Button categoriesButton;
@@ -57,15 +66,41 @@ public class CustomNavbar extends LinearLayout {
 
     private void initializeComponents() {
         Log.d(TAG, "Starting initializeComponents");
+        Log.d(TAG, "Current night mode: " +
+                (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES ? "NIGHT" : "DAY"));
+
         userAvatarImageView = findViewById(R.id.user_avatar);
         userNameTextView = findViewById(R.id.user_name);
-        searchButton = findViewById(R.id.search_button);
+        searchComponent = findViewById(R.id.search_component);
         categoriesButton = findViewById(R.id.categories_button);
-        setupCategoriesButton();  //
         darkModeSwitch = findViewById(R.id.dark_mode_switch);
+        setupCategoriesButton();
+
+        // בדיקת המצב ההתחלתי של ה-Switch
+        Log.d(TAG, "Initial switch state: " + darkModeSwitch.isChecked());
+
+        darkModeSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            Log.d(TAG, "Switch changed to: " + isChecked);
+            if (isChecked) {
+                Log.d(TAG, "Attempting to switch to night mode");
+                androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode(
+                        androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES
+                );
+            } else {
+                Log.d(TAG, "Attempting to switch to day mode");
+                androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode(
+                        androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO
+                );
+            }
+        });
+
         adminButton = findViewById(R.id.admin_button);
+        homeButton = findViewById(R.id.home_button);
+        setupHomeButton();
+        adminButton.setOnClickListener(v -> navigateToAdminPanel());
         Log.d(TAG, "Finished initializeComponents");
     }
+
 
     public void initializeCategoryViewModel(CategoryViewModel viewModel) {
         Log.d(TAG, "Initializing CategoryViewModel");
@@ -97,6 +132,8 @@ public class CustomNavbar extends LinearLayout {
         }
 
         adminButton.setVisibility(userInfo.isAdmin() ? VISIBLE : GONE);
+        Log.d(TAG, "Is admin: " + userInfo.isAdmin());
+
 
         // categories after we have userInfo
         if (categoryViewModel != null) {
@@ -106,6 +143,8 @@ public class CustomNavbar extends LinearLayout {
             Log.e(TAG, "CategoryViewModel not initialized yet");
         }
 
+        searchComponent.setUserInfo(userInfo);
+
         Log.d(TAG, "setUserDetails completed");
 
     }
@@ -114,7 +153,8 @@ public class CustomNavbar extends LinearLayout {
     }
     private void showCategoriesMenu() {
         PopupMenu popup = new PopupMenu(getContext(), categoriesButton);
-        popup.getMenu().add("All");
+
+        popup.getMenu().add("All Categories");
 
         if (currentCategories != null) {
             for (CategoryModel category : currentCategories) {
@@ -124,7 +164,7 @@ public class CustomNavbar extends LinearLayout {
 
         popup.setOnMenuItemClickListener(item -> {
             String selectedCategory = item.getTitle().toString();
-            if (selectedCategory.equals("All")) {
+            if (selectedCategory.equals("All Categories")) {
                 navigateToAllCategories();
             } else {
                 CategoryModel selectedModel = currentCategories.stream()
@@ -165,7 +205,15 @@ public class CustomNavbar extends LinearLayout {
     }
 
     private void navigateToAdminPanel() {
-        Log.d(TAG, "navigateToAdminPanel called");
+            Log.d(TAG, "navigateToAdminPanel called");
+
+            if (userInfo != null && userInfo.isAdmin()) {
+                Intent intent = new Intent(getContext(), AdminActivity.class);
+                intent.putExtra("userInfo", userInfo);
+                getContext().startActivity(intent);
+            } else {
+                Log.e(TAG, "User is not an admin, cannot navigate to admin panel.");
+            }
     }
 
     private void navigateToAllCategories() {
@@ -175,12 +223,25 @@ public class CustomNavbar extends LinearLayout {
     }
 
     private void navigateToCategoryMovies(CategoryModel category) {
-        //Intent intent = new Intent(this, CategoryMoviesActivity.class);
-//        intent.putExtra("category", category);
-//        startActivity(intent);
+        Intent intent = new Intent(getContext(), CategoryMoviesActivity.class);
+        intent.putExtra("category", category);
+        intent.putExtra("userInfo", userInfo);
+        getContext().startActivity(intent);
     }
 
     private void setupCategoriesListeners() {
         Log.d(TAG, "setupCategoriesListeners called");
+    }
+
+    private void setupHomeButton() {
+        homeButton.setOnClickListener(v -> navigateToHome());
+    }
+
+    private void navigateToHome() {
+
+
+        Intent intent = new Intent(getContext(), HomeScreenActivity.class);
+        intent.putExtra("USER_TOKEN", userInfo.getToken());
+        getContext().startActivity(intent);
     }
 }

@@ -19,19 +19,24 @@
         <item name="android:statusBarColor">?attr/colorPrimaryDark</item>
     </style>
 
-    <!-- SearchView style -->
-    <style name="SearchViewStyle" parent="Widget.AppCompat.SearchView">
-        <!-- Search text color -->
-        <item name="android:textColor">?android:attr/textColorPrimary</item>
-        <item name="android:textColorHint">?android:attr/textColorSecondary</item>
+    <!-- Improved SearchView style -->
+    <style name="NetflixSearchViewStyle" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:textColorHint">@color/text_secondary</item>
 
-        <!-- Search icon color -->
-        <item name="android:tint">?android:attr/textColorSecondary</item>
+        <!-- Cursor and icon colors -->
+        <item name="colorControlActivated">@color/primary</item>
 
-        <!-- Close icon color -->
-        <item name="android:tintMode">src_in</item>
+        <!-- Remove default backgrounds -->
+        <item name="android:background">@null</item>
 
-        <!-- Cursor color -->
-        <item name="colorControlActivated">?attr/colorAccent</item>
+        <!-- Optional: remove default cursor -->
+        <item name="android:textCursorDrawable">@null</item>
+    </style>
+
+    <style name="PopupMenuStyle" parent="Widget.MaterialComponents.PopupMenu">
+        <item name="android:background">@color/background</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:itemBackground">@color/background</item>
     </style>
 </resources>

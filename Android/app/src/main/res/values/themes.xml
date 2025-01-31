@@ -23,6 +23,9 @@
         <item name="android:textColor">@color/text_primary_light</item>
         <item name="android:textColorPrimary">@color/text_primary_light</item>
         <item name="android:textColorSecondary">@color/text_secondary_light</item>
+
+        <!-- PopupMenu style -->
+        <item name="android:popupMenuStyle">@android:style/Widget.Material.PopupMenu</item>
     </style>
 
     <!-- Base application theme (Light Mode) with ActionBar (default) -->
@@ -73,6 +76,9 @@
         <item name="android:textColor">@color/text_primary_dark</item>
         <item name="android:textColorPrimary">@color/text_primary_dark</item>
         <item name="android:textColorSecondary">@color/text_secondary_dark</item>
+
+        <!-- PopupMenu style -->
+        <item name="android:popupMenuStyle">@android:style/Widget.Material.PopupMenu</item>
     </style>
 
     <!-- Dark Mode Base application theme with ActionBar -->
@@ -100,4 +106,3 @@
         <item name="android:textColorSecondary">@color/text_secondary_dark</item>
     </style>
 </resources>
-
