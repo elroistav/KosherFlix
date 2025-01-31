@@ -6,6 +6,9 @@ The **Registration** process allows new users to create an account on the platfo
 
 Both the **Web** and **Android** applications follow the same registration flow, connected to a shared backend.
 
+### Welcome Page
+![Welcome Page](./Screenshots/web_welcome.png)
+
 ## Key Features
 - **Create Account**: New users can sign up by providing basic details like name, email, and password.
 - **Responsive Interface**: The registration form is designed to be responsive, ensuring a smooth experience on both desktop and mobile devices.
@@ -33,6 +36,6 @@ Both the **Web** and **Android** applications follow the same registration flow,
 6. Now you should be able to log in using your credentials.
 
 ### Example
-![Registration Page](./Screenshots/registration_form.png)
+![Registration Page](./Screenshots/web_registration_form.png)
 
 For any problems with registration please contact our help office at YedYoniElroi@barilan.com or call 1800-NOT-FLIC

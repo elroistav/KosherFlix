@@ -6,6 +6,9 @@ The **Login** process allows registered users to access their accounts on the **
 
 The login system is designed with security in mind, featuring token-based authentication to ensure the safety of user data.
 
+### Welcome Page
+![Welcome Page](./Screenshots/web_welcome.png)
+
 ## Key Features
 - **Login with Email and Password**: Users can log in using the credentials they provided during registration.
 - **Token-based Authentication**: Once logged in, the user receives a token (JWT) for secure access to the app.
@@ -28,7 +31,7 @@ The login system is designed with security in mind, featuring token-based authen
 5. If the login fails, an error message will appear indicating incorrect credentials.
 
 ### Screenshot
-![Login Page](./Screenshots/login_form.png)
+![Login Page](./Screenshots/web_login_form.png)
 
 ## Tips
 - Ensure that you are using the correct userName and password combination.

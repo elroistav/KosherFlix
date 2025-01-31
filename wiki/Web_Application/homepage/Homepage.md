@@ -86,7 +86,7 @@ At the top-right of the homepage, the **Profile Button** offers different functi
 In the middle of the navigation bar you can open a dropdown menu to filter movies to a **single category** or all of them (not just the promoted ones)
 
 ### Example
-![Category Selector](./Screenshots/category_selector.png)
+![Category Selector](./Screenshots/web_category_selector.png)
 
 ### Step-by-Step Instructions
 
@@ -112,3 +112,4 @@ In the middle of the navigation bar you can open a dropdown menu to filter movie
 - If you're looking for specific genres or movie types, use the **Search Bar** to quickly locate content.
 - Keep track of your **Last Watched List** to easily continue watching movies you’ve started.
 
+For any problems with registration please contact our help office at YedYoniElroi@barilan.com or call 1800-NOT-FLIC
