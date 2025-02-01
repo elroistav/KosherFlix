@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -63,10 +64,7 @@ public class MovieRepository {
         void onError(String error);
     }
 
-    public interface MovieOperationCallback {
-        void onSuccess();
-        void onError(String error);
-    }
+
 
     // Get categories
     public interface CategoryConversionCallback {
@@ -127,7 +125,7 @@ public class MovieRepository {
             @Override
             public void onSuccess(List<String> categoryIds) {
                 try {
-                    // Create request bodies for all fields
+                    // Create regular request bodies
                     RequestBody title = RequestBody.create(MediaType.parse("text/plain"), movie.getTitle());
                     RequestBody description = RequestBody.create(MediaType.parse("text/plain"), movie.getDescription());
                     RequestBody rating = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(movie.getRating()));
@@ -140,17 +138,22 @@ public class MovieRepository {
                     MultipartBody.Part thumbnailPart = uriToMultipartBodyPart(context, thumbnailUri, "thumbnail");
                     MultipartBody.Part videoPart = uriToMultipartBodyPart(context, videoUri, "videoUrl");
 
-                    // Convert categoryIds list to a JSON array string
-                    String categoriesJson = new JSONArray(categoryIds).toString();
-                    RequestBody categoriesBody = RequestBody.create(
-                            MediaType.parse("application/json"),
-                            categoriesJson
-                    );
+                    // המפתח לשינוי: במקום JSON string, נשלח מערך של Request Bodies
+                    List<RequestBody> categoryBodies = new ArrayList<>();
+                    for (String categoryId : categoryIds) {
+                        RequestBody categoryBody = RequestBody.create(
+                                MediaType.parse("text/plain"),
+                                categoryId
+                        );
+                        categoryBodies.add(categoryBody);
+                    }
 
-                    // Make the API call
+                    // עדכון ה-MovieApiService interface כך שיקבל List<RequestBody>
                     movieApiService.addMovie(
-                            title, description, rating, length, director, releaseDate, language,
-                            categoriesBody, thumbnailPart, videoPart, userId
+                            title, description, rating, length, director,
+                            releaseDate, language,
+                            categoryBodies, // השינוי העיקרי כאן
+                            thumbnailPart, videoPart, userId
                     ).enqueue(new Callback<MovieModel>() {
                         @Override
                         public void onResponse(Call<MovieModel> call, Response<MovieModel> response) {
@@ -166,6 +169,7 @@ public class MovieRepository {
                             callback.onError(t.getMessage());
                         }
                     });
+
                 } catch (IOException e) {
                     callback.onError("Error processing files: " + e.getMessage());
                 }
@@ -261,5 +265,98 @@ public class MovieRepository {
             }
         }
         return result;
+    }
+
+    // Update movie
+    // Update movie with same pattern as add
+    public void updateMovie(String movieId, MovieModel movie, List<String> categoryNames, Uri thumbnailUri, Uri videoUri,
+                            String userId, Context context, MovieCallback callback) {
+
+        // First convert category names to IDs - exactly like in add
+        convertCategoryNamesToIds(categoryNames, userId, new CategoryConversionCallback() {
+            @Override
+            public void onSuccess(List<String> categoryIds) {
+                try {
+                    // Create request bodies for all fields - same as add
+                    RequestBody title = RequestBody.create(MediaType.parse("text/plain"), movie.getTitle());
+                    RequestBody description = RequestBody.create(MediaType.parse("text/plain"), movie.getDescription());
+                    RequestBody rating = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(movie.getRating()));
+                    RequestBody length = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(movie.getLength()));
+                    RequestBody director = RequestBody.create(MediaType.parse("text/plain"), movie.getDirector());
+                    RequestBody releaseDate = RequestBody.create(MediaType.parse("text/plain"), movie.getReleaseDate());
+                    RequestBody language = RequestBody.create(MediaType.parse("text/plain"), movie.getLanguage());
+
+                    // Convert URIs to MultipartBody.Parts
+                    MultipartBody.Part thumbnailPart = uriToMultipartBodyPart(context, thumbnailUri, "thumbnail");
+                    MultipartBody.Part videoPart = uriToMultipartBodyPart(context, videoUri, "videoUrl");
+
+                    // Create category RequestBodies - same as add
+                    List<RequestBody> categoryBodies = new ArrayList<>();
+                    for (String categoryId : categoryIds) {
+                        RequestBody categoryBody = RequestBody.create(
+                                MediaType.parse("text/plain"),
+                                categoryId
+                        );
+                        categoryBodies.add(categoryBody);
+                    }
+
+                    // Make the API call
+                    movieApiService.updateMovie(
+                            movieId, // only difference from add - we need the ID
+                            title, description, rating, length, director, releaseDate, language,
+                            categoryBodies,
+                            thumbnailPart, videoPart,
+                            userId
+                    ).enqueue(new Callback<MovieModel>() {
+                        @Override
+                        public void onResponse(Call<MovieModel> call, Response<MovieModel> response) {
+                            if (response.isSuccessful() && response.body() != null) {
+                                callback.onSuccess(response.body());
+                            } else {
+                                callback.onError("Failed to update movie");
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<MovieModel> call, Throwable t) {
+                            callback.onError("Network error: " + t.getMessage());
+                        }
+                    });
+
+                } catch (IOException e) {
+                    callback.onError("Error processing files: " + e.getMessage());
+                }
+            }
+
+            @Override
+            public void onError(String error) {
+                callback.onError("Failed to convert categories: " + error);
+            }
+        });
+    }
+
+    // Delete movie
+    public void deleteMovie(String movieId, String userId, MovieOperationCallback callback) {
+        movieApiService.deleteMovie(movieId, userId).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    callback.onSuccess();
+                } else {
+                    callback.onError("Failed to delete movie");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                callback.onError("Network error: " + t.getMessage());
+            }
+        });
+    }
+
+    // Callback interface for simple operations
+    public interface MovieOperationCallback {
+        void onSuccess();
+        void onError(String error);
     }
 }
