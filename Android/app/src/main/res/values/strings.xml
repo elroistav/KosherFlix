@@ -45,5 +45,7 @@
     <string name="switch_theme">Switch Theme</string>
 
     <string name="welcome_message">Hello, %1$s</string>
+    <string name="last_watched">Last Watched</string>
+    <string name="welcome">Welcome</string>
 
 </resources>
