@@ -60,9 +60,14 @@ const createMovie = async (req, res) => {
         const { title, description, categories, length, director, releaseDate, language } = req.body;
         console.log('Received body data:', { title, description, categories, length, director, releaseDate, language });
 
-        // קבלת נתיבים של הקבצים
-        const videoUrl = req.body.videoUrl;
-        const thumbnail = req.body.thumbnail;
+        
+        // const videoUrl = req.files?.videoUrl ? uploads/${req.files.videoUrl[0].filename} : null;
+        // const thumbnail = req.files?.thumbnail ? uploads/${req.files.thumbnail[0].filename} : null;
+
+        const videoUrl = req.files.videoUrl ? `uploads/${req.files.videoUrl[0].filename}` : null;
+        const thumbnail = req.files.thumbnail ? `uploads/${req.files.thumbnail[0].filename}` : null;
+
+        
 
         console.log('File paths:', { videoUrl, thumbnail });
 
