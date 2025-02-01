@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.provider.OpenableColumns;
 
 import com.example.netflix_app4.model.CategoriesListResponse;
+import com.example.netflix_app4.model.CategoryModel;
 import com.example.netflix_app4.model.MovieModel;
 import com.example.netflix_app4.network.MovieApiService;
 import com.example.netflix_app4.network.RetrofitClient;
@@ -50,10 +51,7 @@ public class MovieRepository {
         void onError(String error);
     }
 
-    public interface CategoryConversionCallback {
-        void onSuccess(List<String> categoryIds);
-        void onError(String error);
-    }
+
 
     public interface MovieCallback {
         void onSuccess(MovieModel movie);
@@ -71,57 +69,61 @@ public class MovieRepository {
     }
 
     // Get categories
-    public void getCategories(String userId, CategoryCallback callback) {
+    public interface CategoryConversionCallback {
+        void onSuccess(List<String> categoryIds);
+        void onError(String error);
+    }
+
+    /**
+     * Converts a list of category names to their corresponding IDs
+     * @param categoryNames List of category names to convert
+     * @param userId User ID for API authentication
+     * @param callback Callback to handle the result
+     */
+    public void convertCategoryNamesToIds(List<String> categoryNames, String userId, CategoryConversionCallback callback) {
+        // First fetch all categories
         movieApiService.getAllCategories(userId).enqueue(new Callback<CategoriesListResponse>() {
             @Override
-            public void onResponse(Call<CategoriesListResponse> call,
-                                   Response<CategoriesListResponse> response) {
+            public void onResponse(Call<CategoriesListResponse> call, Response<CategoriesListResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    callback.onSuccess(response.body());
+                    List<CategoryModel> allCategories = response.body().getCategories();
+                    List<String> categoryIds = new ArrayList<>();
+
+                    // For each category name, find matching category and get its ID
+                    for (String name : categoryNames) {
+                        String normalizedName = name.trim().toLowerCase();
+
+                        for (CategoryModel category : allCategories) {
+                            if (category.getName().toLowerCase().equals(normalizedName)) {
+                                categoryIds.add(category.getId());
+                                break;
+                            }
+                        }
+                    }
+
+                    if (categoryIds.isEmpty()) {
+                        callback.onError("No matching categories found");
+                    } else {
+                        callback.onSuccess(categoryIds);
+                    }
                 } else {
-                    callback.onError("Failed to fetch categories.");
+                    callback.onError("Failed to fetch categories");
                 }
             }
 
             @Override
             public void onFailure(Call<CategoriesListResponse> call, Throwable t) {
-                callback.onError(t.getMessage());
+                callback.onError("Network error: " + t.getMessage());
             }
         });
     }
 
-    // Convert category names to IDs
-    public void convertCategoriesToIDs(List<String> categoryNames, String userId, CategoryConversionCallback callback) {
-        getCategories(userId, new CategoryCallback() {
-            @Override
-            public void onSuccess(CategoriesListResponse response) {
-                List<String> categoryIds = new ArrayList<>();
-                List<Map<String, Object>> categories = response.getCategories();
-
-                for (String categoryName : categoryNames) {
-                    for (Map<String, Object> category : categories) {
-                        String name = (String) category.get("name");
-                        if (categoryName.trim().equalsIgnoreCase(name.trim())) {
-                            categoryIds.add((String) category.get("_id"));
-                            break;
-                        }
-                    }
-                }
-                callback.onSuccess(categoryIds);
-            }
-
-            @Override
-            public void onError(String error) {
-                callback.onError(error);
-            }
-        });
-    }
-
-    // Add movie with category handling
+    // Updated addMovie method using the new conversion
     public void addMovie(MovieModel movie, List<String> categoryNames, Uri thumbnailUri, Uri videoUri,
                          String userId, Context context, MovieCallback callback) {
+
         // First convert category names to IDs
-        convertCategoriesToIDs(categoryNames, userId, new CategoryConversionCallback() {
+        convertCategoryNamesToIds(categoryNames, userId, new CategoryConversionCallback() {
             @Override
             public void onSuccess(List<String> categoryIds) {
                 try {

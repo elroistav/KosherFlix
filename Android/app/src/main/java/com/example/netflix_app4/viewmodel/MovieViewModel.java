@@ -56,7 +56,7 @@ public class MovieViewModel extends ViewModel {
 
     // Original update movie without files
     public void updateMovie(String movieId, MovieModel movie, String userId) {
-        movieRepository.updateMovie(movieId, movie, userId, new MovieRepository.MovieOperationCallback() {
+        /*movieRepository.updateMovie(movieId, movie, userId, new MovieRepository.MovieOperationCallback() {
             @Override
             public void onSuccess() {
                 operationSuccessLiveData.postValue(true);
@@ -67,12 +67,12 @@ public class MovieViewModel extends ViewModel {
                 errorLiveData.postValue(error);
                 operationSuccessLiveData.postValue(false);
             }
-        });
+        });*/
     }
 
     // New update movie with files
     public void updateMovieWithFiles(String movieId, MovieModel movie, Uri thumbnailUri, Uri videoUri, String userId, Context context) {
-        movieRepository.updateMovie(movieId, movie, thumbnailUri, videoUri, userId, context, new MovieRepository.MovieCallback() {
+        /*movieRepository.updateMovie(movieId, movie, thumbnailUri, videoUri, userId, context, new MovieRepository.MovieCallback() {
             @Override
             public void onSuccess(MovieModel movie) {
                 movieLiveData.postValue(movie);
@@ -84,11 +84,11 @@ public class MovieViewModel extends ViewModel {
                 errorLiveData.postValue(error);
                 operationSuccessLiveData.postValue(false);
             }
-        });
+        });*/
     }
 
     public void deleteMovie(String movieId, String userId) {
-        movieRepository.deleteMovie(movieId, userId, new MovieRepository.MovieOperationCallback() {
+        /*movieRepository.deleteMovie(movieId, userId, new MovieRepository.MovieOperationCallback() {
             @Override
             public void onSuccess() {
                 operationSuccessLiveData.postValue(true);
@@ -99,7 +99,7 @@ public class MovieViewModel extends ViewModel {
                 errorLiveData.postValue(error);
                 operationSuccessLiveData.postValue(false);
             }
-        });
+        });*/
     }
 
     // Getters for LiveData
