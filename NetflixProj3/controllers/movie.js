@@ -5,69 +5,49 @@ const path = require('path');
 
 const uploadDir = path.join(__dirname, 'uploads');
 
-// בדיקה אם תיקיית ההעלאה קיימת, אם לא ניצור אותה
 if (!fs.existsSync(uploadDir)) {
-    console.log('Upload directory not found. Creating directory...');
     fs.mkdirSync(uploadDir);
-    console.log('Upload directory created.');
 }
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        console.log('Setting destination folder for upload...');
-        const uploadPath = path.join(__dirname, 'uploads');
-        console.log('Upload path:', uploadPath);
-        cb(null, uploadPath);
+        cb(null, 'uploads/');
     },
     filename: (req, file, cb) => {
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
         const sanitizedOriginalName = file.originalname.replace(/\s/g, '-');
-        console.log('Generated unique filename for upload:', `${file.fieldname}-${uniqueSuffix}-${sanitizedOriginalName}`);
         cb(null, `${file.fieldname}-${uniqueSuffix}-${sanitizedOriginalName}`);
     },
 });
 
-const upload = multer({
-    storage,
- 
-}).fields([
-    { name: 'videoUrl', maxCount: 1 },
-    { name: 'thumbnail', maxCount: 1 },
+// **הוסף את הקונפיגורציה של multer**
+const upload = multer({ storage }).fields([
+    { name: 'videoUrl', maxCount: 1 }, // עבור קובץ הסרט
+    { name: 'thumbnail', maxCount: 1 } // עבור תמונת העטיפה
 ]);
 
 // Create a new movie
 const createMovie = async (req, res) => {
-    console.log('Starting movie creation process...');
-    upload(req, res, (err) => {
+    console.log('Creating movie...');
+    upload(req, res, async (err) => {
         if (err) {
             console.error('File upload failed:', err);
             return res.status(400).json({ error: 'File upload failed' });
         }
-        console.log('File upload completed successfully.');
-    
-        // Additional debug logs to check if files were written to the disk
-        const uploadDir = path.join(__dirname, 'uploads');
-        console.log('Checking uploaded files directory:', uploadDir);
-        fs.readdir(uploadDir, (err, files) => {
-            if (err) {
-                console.error('Error reading upload directory:', err);
-            } else {
-                console.log('Files in upload directory:', files);
-            }
-        });
-        console.log('File upload completed successfully.');
 
         const { title, description, categories, length, director, releaseDate, language } = req.body;
         console.log('Received body data:', { title, description, categories, length, director, releaseDate, language });
 
-        
-        // const videoUrl = req.files?.videoUrl ? uploads/${req.files.videoUrl[0].filename} : null;
-        // const thumbnail = req.files?.thumbnail ? uploads/${req.files.thumbnail[0].filename} : null;
+        console.log('Files in request:', req.files);
 
-        const videoUrl = req.files.videoUrl ? `uploads/${req.files.videoUrl[0].filename}` : null;
-        const thumbnail = req.files.thumbnail ? `uploads/${req.files.thumbnail[0].filename}` : null;
 
-        
+        // const videoUrl = req.files?.videoUrl ? `http://localhost:4000/uploads/${req.files.videoUrl[0].filename}` : null;
+        // const thumbnail = req.files?.thumbnail ? `http://localhost:4000/uploads/${req.files.thumbnail[0].filename}` : null;
+        // const videoUrl = req.body.videoUrl;
+        // const thumbnail = req.body.thumbnail;
+        const videoUrl = req.files?.videoUrl ? `uploads/${req.files.videoUrl[0].filename}` : null;
+        const thumbnail = req.files?.thumbnail ? `uploads/${req.files.thumbnail[0].filename}` : null;
+
 
         console.log('File paths:', { videoUrl, thumbnail });
 
@@ -85,7 +65,9 @@ const createMovie = async (req, res) => {
                 thumbnail // נתיב תמונת העטיפה
             });
 
+
             console.log('Movie created successfully:', movie);
+
             return res.status(201)
                 .location(`/movies/${movie._id}`)
                 .json(movie);
@@ -106,7 +88,6 @@ const createMovie = async (req, res) => {
         }
     });
 };
-
 
 // Get a movie by ID
 const getMovieById = async (req, res) => {
@@ -156,74 +137,28 @@ const getMovies = async (req, res) => {
     }
 };
 // Update a movie by ID
-// Update a movie by ID
 const updateMovie = async (req, res) => {
-    console.log('Updating movie...');
-    upload(req, res, async (err) => {
-        if (err) {
-            console.error('File upload failed:', err);
-            return res.status(400).json({ error: 'File upload failed' });
+    try {
+        const movie = await movieService.updateMovie(req.headers, req.params.id, req.body);
+        res.status(204).send();
+    } catch (error) {
+        if (error.message === 'No user ID found in headers' || error.message === 'Invalid user ID') {
+            return res.status(401).json({ error: error.message });
         }
-
-        const { 
-            title, 
-            description, 
-            categories, 
-            length, 
-            director, 
-            releaseDate, 
-            language 
-        } = req.body;
-
-        console.log('Received body data:', { 
-            title, 
-            description, 
-            categories, 
-            length, 
-            director, 
-            releaseDate, 
-            language 
-        });
-
-        // Use the same approach as in createMovie for files
-        const videoUrl = req.body.videoUrl;
-        const thumbnail = req.body.thumbnail;
-
-        console.log('File paths:', { videoUrl, thumbnail });
-
-        try {
-            console.log('Calling movieService.updateMovie...');
-            const movie = await movieService.updateMovie(req.headers, req.params.id, {
-                title,
-                description,
-                categories,
-                length,
-                director,
-                releaseDate,
-                language,
-                videoUrl,
-                thumbnail
-            });
-
-            console.log('Movie updated successfully:', movie);
-            return res.status(204).send();
-
-        } catch (error) {
-            console.error('Error occurred during movie update:', error);
-            if (error.message === 'No user ID found in headers' || error.message === 'Invalid user ID') {
-                return res.status(401).json({ error: error.message });
-            }
-            if (error.message.includes("Missing required fields")) {
-                return res.status(400).json({ error: error.message });
-            }
-            if (error.message.includes("Category with ID")) {
-                return res.status(404).json({ error: error.message });
-            }
+        if(error.message.includes("Missing required fields") || error.message.includes("Movie ID and complete movie data are required") || error.message.includes("Update failed")) {
+            return res.status(400).json({ error: error.message });
+        }
+        if(error.message.includes("Movie not found") || error.message.includes("Category with ID")) {
+            return res.status(404).json({ error: error.message });
+        }
+        else {
+            // Default error handler for unexpected errors
             console.error('Unexpected error:', error);
-            return res.status(500).json({ error: 'An unexpected error occurred.' });
+            res.status(500).json({ error: 'An unexpected error occurred.' });
         }
-    });
+    }
 };
+
 // Delete a movie by ID 
 const deleteMovie = async (req, res) => {
     try {
