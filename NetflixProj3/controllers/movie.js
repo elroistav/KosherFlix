@@ -5,42 +5,62 @@ const path = require('path');
 
 const uploadDir = path.join(__dirname, 'uploads');
 
+// בדיקה אם תיקיית ההעלאה קיימת, אם לא ניצור אותה
 if (!fs.existsSync(uploadDir)) {
+    console.log('Upload directory not found. Creating directory...');
     fs.mkdirSync(uploadDir);
+    console.log('Upload directory created.');
 }
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, 'uploads/');
+        console.log('Setting destination folder for upload...');
+        const uploadPath = path.join(__dirname, 'uploads');
+        console.log('Upload path:', uploadPath);
+        cb(null, uploadPath);
     },
     filename: (req, file, cb) => {
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
         const sanitizedOriginalName = file.originalname.replace(/\s/g, '-');
+        console.log('Generated unique filename for upload:', `${file.fieldname}-${uniqueSuffix}-${sanitizedOriginalName}`);
         cb(null, `${file.fieldname}-${uniqueSuffix}-${sanitizedOriginalName}`);
     },
 });
 
-// **הוסף את הקונפיגורציה של multer**
-const upload = multer({ storage }).fields([
-    { name: 'videoUrl', maxCount: 1 }, // עבור קובץ הסרט
-    { name: 'thumbnail', maxCount: 1 } // עבור תמונת העטיפה
+const upload = multer({
+    storage,
+ 
+}).fields([
+    { name: 'videoUrl', maxCount: 1 },
+    { name: 'thumbnail', maxCount: 1 },
 ]);
 
 // Create a new movie
 const createMovie = async (req, res) => {
-    console.log('Creating movie...');
-    upload(req, res, async (err) => {
+    console.log('Starting movie creation process...');
+    upload(req, res, (err) => {
         if (err) {
             console.error('File upload failed:', err);
             return res.status(400).json({ error: 'File upload failed' });
         }
+        console.log('File upload completed successfully.');
+    
+        // Additional debug logs to check if files were written to the disk
+        const uploadDir = path.join(__dirname, 'uploads');
+        console.log('Checking uploaded files directory:', uploadDir);
+        fs.readdir(uploadDir, (err, files) => {
+            if (err) {
+                console.error('Error reading upload directory:', err);
+            } else {
+                console.log('Files in upload directory:', files);
+            }
+        });
+        console.log('File upload completed successfully.');
 
         const { title, description, categories, length, director, releaseDate, language } = req.body;
         console.log('Received body data:', { title, description, categories, length, director, releaseDate, language });
 
-
-        // const videoUrl = req.files?.videoUrl ? `http://localhost:4000/uploads/${req.files.videoUrl[0].filename}` : null;
-        // const thumbnail = req.files?.thumbnail ? `http://localhost:4000/uploads/${req.files.thumbnail[0].filename}` : null;
+        // קבלת נתיבים של הקבצים
         const videoUrl = req.body.videoUrl;
         const thumbnail = req.body.thumbnail;
 
@@ -60,9 +80,7 @@ const createMovie = async (req, res) => {
                 thumbnail // נתיב תמונת העטיפה
             });
 
-
             console.log('Movie created successfully:', movie);
-
             return res.status(201)
                 .location(`/movies/${movie._id}`)
                 .json(movie);
@@ -83,6 +101,7 @@ const createMovie = async (req, res) => {
         }
     });
 };
+
 
 // Get a movie by ID
 const getMovieById = async (req, res) => {
