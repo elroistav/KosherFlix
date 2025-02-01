@@ -221,54 +221,70 @@ const shuffleArray = array => {
 // Update a movie
 const updateMovie = async (headers, id, movieData) => {
     try {
+        console.log("Starting movie update process...");
+
         await validateUserId(headers);
-        const userId = headers['user-id'];
-        // 1. Initial input validation
-        if (!id || !movieData) {
-            throw new Error('Movie ID and complete movie data are required');
-        }
-        const command = await deleteToString(userId, id);
+        console.log("User ID validated successfully.");
 
-        // 2. Schema validation
-        const requiredFields = Object.keys(Movie.schema.paths).filter(
-            path => Movie.schema.paths[path].isRequired
-        );
-
-        const missingFields = requiredFields.filter(field => movieData[field] === undefined);
-        if (missingFields.length > 0) {
-            throw new Error(`Missing required fields: ${missingFields.join(', ')}`);
-        }
-
-        // 3. Check if movie exists
+        // Check if movie exists
         const existingMovie = await Movie.findById(id);
-        const intId = existingMovie.intId;
         if (!existingMovie) {
             throw new Error('Movie not found');
         }
 
-        // 4. Handle category updates 
-        
+        // Keep the original intId
+        const intId = existingMovie.intId;
+        console.log(`Using existing intId: ${intId}`);
+
+        // Merge existing data with new data
+        // Keep existing thumbnail and videoUrl if not provided in update
+        const updatedMovieData = {
+            ...movieData,
+            thumbnail: movieData.thumbnail || existingMovie.thumbnail,
+            videoUrl: movieData.videoUrl || existingMovie.videoUrl,
+            intId // Keep the original intId
+        };
+
+        // Check if required fields are present (excluding thumbnail and videoUrl)
+        const requiredFields = Object.keys(Movie.schema.paths)
+            .filter(path => 
+                Movie.schema.paths[path].isRequired && 
+                path !== 'thumbnail' && 
+                path !== 'videoUrl'
+            );
+
+        const missingFields = requiredFields.filter(field => !updatedMovieData[field]);
+        if (missingFields.length > 0) {
+            console.log(`Missing required fields: ${missingFields.join(', ')}`);
+            throw new Error(`Missing required fields: ${missingFields.join(', ')}`);
+        }
+        console.log("All required fields are present.");
+
+        // Handle categories
         await removeUpdateCategoriesArray(existingMovie.categories, id);
         await addUpdateCategoriesArray(movieData.categories, id);
+        console.log("Categories updated successfully.");
 
+        // Remove from watched movies and send server command
         await removeFromWatchedMovies(id);
-
+        const userId = headers['user-id'];
+        const command = await deleteToString(userId, id);
         await sendToServer(command);
-        
 
-        // 5. Replace the document
+        // Update the movie document
         const result = await Movie.replaceOne(
             { _id: id },
-            { ...movieData, intId },
+            updatedMovieData,
             { runValidators: true }
         );
 
         if (result.modifiedCount === 0) {
             throw new Error('Update failed');
         }
-        // 6. Return updated document
+
+        console.log("Movie updated successfully");
         return await Movie.findById(id).populate('categories');
-        
+
     } catch (error) {
         console.log('Error updating movie:', error.message);
         throw error;
