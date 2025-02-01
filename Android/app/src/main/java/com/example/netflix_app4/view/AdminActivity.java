@@ -256,16 +256,20 @@ public class AdminActivity extends AppCompatActivity implements
 
     @Override
     public void onMovieEdit(MovieModel movie) {
-//        dialog = new MovieEditDialog(this, movie,
-//                updatedMovie -> {
-//                    // Update through ViewModel
-//                    movieViewModel.updateMovie(
-//                            updatedMovie.getId(),
-//                            updatedMovie,
-//                            userInfo.getUserId()
-//                    );
-//                });
-//        dialog.show();
+        dialog = new MovieEditDialog(this, movie,
+                (updatedMovie, thumbnailUri, videoUri, selectedCategories) -> {
+                    // Update through ViewModel - now passing all the required parameters
+                    movieViewModel.updateMovie(
+                            updatedMovie.getId(),
+                            updatedMovie,
+                            selectedCategories,  // pass category names
+                            thumbnailUri,        // pass thumbnail if changed
+                            videoUri,            // pass video if changed
+                            userInfo.getUserId(),
+                            this                 // pass context
+                    );
+                });
+        dialog.show();
     }
 
     private void showMovieDetails(MovieModel movie) {
@@ -291,6 +295,10 @@ public class AdminActivity extends AppCompatActivity implements
         // Pass file selection results to the dialog
         if (currentAddMovieDialog != null) {
             currentAddMovieDialog.handleFileSelection(requestCode, resultCode, data);
+        }
+
+        if (dialog != null) {
+            dialog.handleFileSelection(requestCode, resultCode, data);
         }
     }
 

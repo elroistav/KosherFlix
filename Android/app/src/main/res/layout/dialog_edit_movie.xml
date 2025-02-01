@@ -9,7 +9,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Edit Movie"
+        android:text="Add New Category"
         android:textSize="18sp"
         android:textStyle="bold"
         android:layout_marginBottom="16dp"/>
@@ -26,11 +26,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp">
+
         <EditText
-            android:id="@+id/editTextMovieTitle"
+            android:id="@+id/editTextCategoryName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Movie Title"
+            android:hint="Category Name"
             android:inputType="text"/>
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -38,8 +39,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp">
+
         <EditText
-            android:id="@+id/editTextMovieDescription"
+            android:id="@+id/editTextCategoryDescription"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Description"
@@ -47,89 +49,12 @@
             android:lines="3"/>
     </com.google.android.material.textfield.TextInputLayout>
 
-    <com.google.android.material.textfield.TextInputLayout
+    <CheckBox
+        android:id="@+id/checkBoxPromoted"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp">
-        <EditText
-            android:id="@+id/editTextMovieThumbnail"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Thumbnail URL"
-            android:inputType="textUri"/>
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp">
-        <EditText
-            android:id="@+id/editTextMovieVideoUrl"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Video URL"
-            android:inputType="textUri"/>
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp">
-        <EditText
-            android:id="@+id/editTextMovieRating"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Rating (0-10)"
-            android:inputType="numberDecimal"/>
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp">
-        <EditText
-            android:id="@+id/editTextMovieLength"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Length (minutes)"
-            android:inputType="number"/>
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp">
-        <EditText
-            android:id="@+id/editTextMovieDirector"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Director"
-            android:inputType="text"/>
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp">
-        <EditText
-            android:id="@+id/editTextMovieReleaseDate"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Release Date"
-            android:inputType="date"/>
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp">
-        <EditText
-            android:id="@+id/editTextMovieLanguage"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Language"
-            android:inputType="text"/>
-    </com.google.android.material.textfield.TextInputLayout>
+        android:text="Promote this category (Show in top section)"
+        android:layout_marginBottom="16dp"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -142,7 +67,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_marginEnd="8dp"
-            android:text="Save Changes"/>
+            android:text="Add Category"/>
 
         <Button
             android:id="@+id/buttonCancel"
