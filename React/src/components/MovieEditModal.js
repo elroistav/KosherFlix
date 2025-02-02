@@ -62,49 +62,90 @@ const MovieEditModal = ({ movie, isOpen, onClose, onSave, error: propError, user
     };
 
     const handleSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            setLocalError(null);
-
-            // Create FormData
-            const formDataToSend = new FormData();
-
-            const categoryIds = await converCategoriesToIDs(formData.categories);
-
-            // Add regular fields
-            formDataToSend.append('title', formData.title);
-            formDataToSend.append('description', formData.description);
-            formDataToSend.append('rating', formData.rating);
-            formDataToSend.append('length', formData.length);
-            formDataToSend.append('director', formData.director);
-            formDataToSend.append('releaseDate', formData.releaseDate);
-            formDataToSend.append('language', formData.language);
-            formDataToSend.append('ageRestriction', formData.ageRestriction);
-
-            // Add categories
-            categoryIds.forEach(id => formDataToSend.append('categories[]', id));
-
-            // Add files if they exist
-            if (formData.thumbnail) {
-                formDataToSend.append('thumbnail', formData.thumbnail);
-            }
-
-            if (formData.videoUrl) {
-                formDataToSend.append('videoUrl', formData.videoUrl);
-            }
-
-            // Add other fields
-            formData.cast.forEach((castMember) => formDataToSend.append('cast[]', castMember));
-            formData.subtitles.forEach((subtitle) => formDataToSend.append('subtitles[]', subtitle));
-
-            // Call the function that sends the data
-            await onSave(formDataToSend);
-        } catch (error) {
-            if (error.response?.data?.code === 11000) {
-                setLocalError('A movie with this title already exists. Please choose a different title.');
-            }
-        }
-    };
+      e.preventDefault(); // מונע את ההתנהגות הברירת מחדל של הטופס
+      try {
+          console.log('Form submitted'); // לוג ראשוני
+          console.log('Form data:', formData); // הדפסת המידע בטופס
+          console.log('onSave function:', onSave); // וודא שהפונקציה קיימת
+   
+          // נקה שגיאות קודמות
+          setLocalError(null);
+   
+          // צור FormData חדש
+          const formDataToSend = new FormData();
+   
+          // המר קטגוריות למזהים
+          const categoryIds = await converCategoriesToIDs(formData.categories, );
+          console.log('Category IDs:', categoryIds);
+   
+          // הוסף שדות רגילים
+          formDataToSend.append('title', formData.title);
+          formDataToSend.append('description', formData.description);
+          formDataToSend.append('rating', formData.rating);
+          formDataToSend.append('length', formData.length);
+          formDataToSend.append('director', formData.director);
+          formDataToSend.append('releaseDate', formData.releaseDate);
+          formDataToSend.append('language', formData.language);
+          formDataToSend.append('ageRestriction', formData.ageRestriction);
+   
+          // הוסף קטגוריות
+          categoryIds.forEach(id => formDataToSend.append('categories[]', id));
+   
+          // הוסף קבצים אם קיימים
+          if (formData.thumbnail) {
+              console.log('Thumbnail file:', formData.thumbnail);
+              formDataToSend.append('thumbnail', formData.thumbnail);
+          }
+   
+          if (formData.videoUrl) {
+              console.log('Video file:', formData.videoUrl);
+              formDataToSend.append('videoUrl', formData.videoUrl);
+          }
+   
+          // הוסף שדות נוספים
+          formData.cast.forEach((castMember) => {
+              formDataToSend.append('cast[]', castMember);
+          });
+          formData.subtitles.forEach((subtitle) => {
+              formDataToSend.append('subtitles[]', subtitle);
+          });
+   
+          // וודא שישנה פונקציית onSave
+          if (typeof onSave !== 'function') {
+              console.error('onSave is not a valid function');
+              setLocalError('Error: Save function is not defined');
+              return;
+          }
+   
+          // קרא לפונקציית השמירה
+          console.log('Calling onSave with FormData');
+          await onSave(formDataToSend);
+   
+          console.log('Save completed successfully');
+      } catch (error) {
+          // טיפול בשגיאות
+          console.error('Full error in submit:', error);
+          
+          if (error.response) {
+              // שגיאה מהשרת
+              console.error('Server error response:', error.response.data);
+              setLocalError(error.response.data.message || 'Failed to save movie');
+          } else if (error.request) {
+              // הבקשה נשלחה אך לא התקבלה תגובה
+              console.error('No response received');
+              setLocalError('No response from server');
+          } else {
+              // שגיאה אחרת
+              console.error('Error', error.message);
+              setLocalError(error.message || 'An unexpected error occurred');
+          }
+   
+          // טיפול בשגיאה ספציפית של כפילות
+          if (error.response?.data?.code === 11000) {
+              setLocalError('A movie with this title already exists. Please choose a different title.');
+          }
+      }
+   };
 
     if (!isOpen) return null;
 

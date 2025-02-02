@@ -14,8 +14,6 @@ import AdminCategoryRow from '../components/AdminCategoryRow';  // Importing the
 import AdminBar from '../components/AdminBar';
 import MovieAddModal from '../components/MovieAddModal';  
 import CategoryAddModal from '../components/CategoryAddModal';
-import MovieEditModal from '../components/MovieEditModal';
-
 
 //import user from '../../../NetflixProj3/models/user';
 //import user from '../../../NetflixProj3/models/user';
@@ -32,7 +30,6 @@ function HomeScreen({ isDarkMode, setIsDarkMode }) {
   const token = location.state?.token;
   const [loading, setLoading] = useState(true);
   const [userInfo, setUserInfo] = useState(null);
-  const [isMovieEditModalOpen, setIsMovieEditModalOpen] = useState(false);
 
   const [isMovieAddModalOpen, setIsMovieAddModalOpen] = useState(false);
   const [isCategoryAddModalOpen, setIsCategoryAddModalOpen] = useState(false);
@@ -213,35 +210,22 @@ function HomeScreen({ isDarkMode, setIsDarkMode }) {
   };
 
 
-  const handleMovieUpdate = async (movieData) => {
-    setIsSaving(true);
-    try {
-      const response = await axios.put(`${BASE_URL}/api/movies/${selectedMovieForModal._id}`, movieData, {
-        headers: { 
-          'user-id': userInfo.userId,
-          'Content-Type': 'multipart/form-data'
-        }
-      });
 
-      const updatedMovies = movies.map(category => ({
+  const handleMovieUpdate = (updatedMovie) => {
+
+    if (loading || !userInfo) { 
+        console.error('Cannot delete movie: userInfo is not ready yet.');
+        return;
+      }
+
+    const updatedMovies = movies.map(category => ({
         ...category,
         movies: category.movies.map(movie => 
-          movie._id === selectedMovieForModal._id ? response.data : movie
+            movie._id === updatedMovie._id ? updatedMovie : movie
         )
-      }));
-      setMovies(updatedMovies);
-    } catch (error) {
-      console.error('Error updating movie:', error);
-    } finally {
-      setIsSaving(false);
-      setIsMovieEditModalOpen(false);
-    }
-  };
-
-  const handleEditMovieClick = (movie) => {
-    setSelectedMovieForModal(movie);
-    setIsMovieEditModalOpen(true);
-  };
+    }));
+    setMovies(updatedMovies);
+};
 
 
 
@@ -337,15 +321,6 @@ function HomeScreen({ isDarkMode, setIsDarkMode }) {
         userInfo={userInfo}
       />
 
-        <MovieEditModal 
-          movie={selectedMovieForModal}
-          isOpen={isMovieEditModalOpen} 
-          onClose={() => setIsMovieEditModalOpen(false)} 
-          onSave={handleMovieUpdate} 
-          isSaving={isSaving}
-          userInfo={userInfo}
-        />
-
         <CategoryAddModal 
         isOpen={isCategoryAddModalOpen} 
         onClose={() => setIsCategoryAddModalOpen(false)} 
@@ -368,7 +343,7 @@ function HomeScreen({ isDarkMode, setIsDarkMode }) {
                     key={index} 
                     category={category}  // Remove movies prop since it's included in category
                     onMovieClick={handleMovieClick}
-                    onEditMovie={handleEditMovieClick} 
+                    onMovieUpdate={handleMovieUpdate} 
                     onMovieDelete={handleMovieDelete}
                     onCategoryDelete={handleCategoryDelete}
                     onCategoryUpdate={handleCategoryUpdate}

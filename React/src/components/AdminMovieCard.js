@@ -41,25 +41,37 @@ function AdminMovieCard({ movie, onClick, onMovieUpdate, onMovieDelete, userInfo
       document.body.style.overflow = 'unset';
     };
   
-    const validateMovie = (movie) => {
-        const required = [
-            'title', 
-            'description', 
-            'thumbnail', 
-            'videoUrl', 
-            'rating', 
-            'length',
-            'director',
-            'releaseDate',
-            'language'
-        ];
-        const missing = required.filter(field => !movie[field]);
-        
-        if (missing.length > 0) {
-            return `Missing required fields: ${missing.join(', ')}`;
-        }
-        return null;
-      };
+    const validateMovie = (formData) => {
+      const required = [
+          'title', 
+          'description', 
+          'rating', 
+          'length',
+          'director',
+          'releaseDate',
+          'language'
+      ];
+      
+      const missing = required.filter(field => {
+          // עבור FormData, בודקים את הערך באמצעות get
+          const value = formData.get(field);
+          return !value || value.trim() === '';
+      });
+      
+      // בדיקה נפרדת לקבצים
+      if (!formData.get('thumbnail')) {
+          missing.push('thumbnail');
+      }
+      
+      if (!formData.get('videoUrl')) {
+          missing.push('videoUrl');
+      }
+      
+      if (missing.length > 0) {
+          return `Missing required fields: ${missing.join(', ')}`;
+      }
+      return null;
+  };
     
     const handleSave = async (updatedMovie) => {
       if (loading || !userInfo) {
@@ -82,10 +94,15 @@ function AdminMovieCard({ movie, onClick, onMovieUpdate, onMovieDelete, userInfo
         }
 
         const response = await axios.put(
-            `${BASE_URL}/api/movies/${movie._id}`, 
-            updatedMovie, 
-            { headers: { 'user-id': userInfo.userId }}
-        );
+          `${BASE_URL}/api/movies/${movie._id}`, 
+          updatedMovie, 
+          { 
+              headers: { 
+                  'user-id': userInfo.userId,
+                  'Content-Type': 'multipart/form-data'
+              }
+          }
+      );
 
         console.log('API Response:', response.data);
         setMovieData(response.data); // Update local state
@@ -158,6 +175,7 @@ function AdminMovieCard({ movie, onClick, onMovieUpdate, onMovieDelete, userInfo
             onSave={handleSave}
             isSaving={isSaving}
             error={error}
+            userInfo={userInfo}
         />,
         document.body
         )}
