@@ -378,20 +378,21 @@ const deleteToString = async (userHexId, movieHexId) => {
 };
 
 const convertIntIdsToHexIds = async (intIds) => {
-    try {
-        const hexIds = [];
-        for (const intId of intIds) {
+    const hexIds = [];
+    
+    for (const intId of intIds) {
+        try {
             const movie = await Movie.findOne({ intId });
-            if (!movie) {
-                throw new Error(`Movie with intId ${intId} not found`);
+            if (movie) {
+                hexIds.push(movie._id);
             }
-            hexIds.push(movie._id);
+        } catch (error) {
+            console.warn(`Error processing movie with intId ${intId}:`, error.message);
+            continue;
         }
-        return hexIds;
-    } catch (error) {
-        console.log('Error converting intIds to hexIds:', error.message);
-        throw error;
     }
+    
+    return hexIds;
 };
 
 const hexUserToDec = async (hexId) => {
