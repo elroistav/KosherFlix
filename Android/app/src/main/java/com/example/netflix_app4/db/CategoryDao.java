@@ -21,6 +21,7 @@ public interface CategoryDao {
     void insertCategoryMovieCrossRefs(List<CategoryMovieCrossRef> crossRefs);
 
     @Query("SELECT * FROM categories WHERE isPromoted = 1")
+    @Transaction
     LiveData<List<CategoryWithMovies>> getPromotedCategories();
 }
 

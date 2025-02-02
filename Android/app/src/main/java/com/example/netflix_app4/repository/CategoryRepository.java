@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import retrofit2.Call;
@@ -46,20 +47,6 @@ public class CategoryRepository {
         categoryDao = database.categoryDao();
         movieDao = database.movieDao();
         lastWatchedDao = database.lastWatchedDao();
-    }
-
-    public void insertCategories(CategoriesResponse response) {
-        List<CategoryEntity> categories = EntityConverter.convertResponseToCategories(response);
-        List<MovieEntity> movies = EntityConverter.convertResponseToMovies(response);
-        List<CategoryMovieCrossRef> crossRefs = EntityConverter.convertResponseToCategoryMovieCrossRefs(response);
-        List<LastWatchedEntity> lastWatchedEntities = EntityConverter.convertLastWatchedToEntities(response.getLastWatched());
-
-        AppDatabase.databaseWriteExecutor.execute(() -> {
-            categoryDao.insertCategories(categories);
-            movieDao.insertMovies(movies);
-            categoryDao.insertCategoryMovieCrossRefs(crossRefs);
-            lastWatchedDao.insertLastWatched(lastWatchedEntities);
-        });
     }
 
     // Fetch categories using a callback
@@ -98,46 +85,54 @@ public class CategoryRepository {
             @Override
             public void onSuccess(CategoriesResponse response) {
                 List<CategoryEntity> categories = EntityConverter.convertResponseToCategories(response);
-                List<MovieEntity> movies = EntityConverter.convertResponseToMovies(response);
                 List<CategoryMovieCrossRef> crossRefs = EntityConverter.convertResponseToCategoryMovieCrossRefs(response);
                 List<LastWatchedEntity> lastWatchedEntities = EntityConverter.convertLastWatchedToEntities(response.getLastWatched());
 
+                // Create an AtomicInteger to track completed movie fetches
+                AtomicInteger movieFetchCount = new AtomicInteger(0);
+                int totalMoviesToFetch = response.getPromotedCategories()
+                        .stream()
+                        .mapToInt(cat -> cat.getMovies().size())
+                        .sum();
+
+                // Insert categories first
                 AppDatabase.databaseWriteExecutor.execute(() -> {
                     database.categoryDao().insertCategories(categories);
-                    database.movieDao().insertMovies(movies);
-                    database.categoryDao().insertCategoryMovieCrossRefs(crossRefs);
-                    database.lastWatchedDao().insertLastWatched(lastWatchedEntities);
                 });
 
-                // Select a random movie from the API response
-                List<String> allMovieIds = response.getPromotedCategories()
-                        .stream()
-                        .flatMap(cat -> cat.getMovies().stream())
-                        .collect(Collectors.toList());
+                // Fetch and insert movies
+                for (CategoryPromoted category : response.getPromotedCategories()) {
+                    for (String movieId : category.getMovies()) {
+                        apiService.getMovieById(movieId, userId).enqueue(new Callback<MovieModel>() {
+                            @Override
+                            public void onResponse(Call<MovieModel> call, Response<MovieModel> movieResponse) {
+                                if (movieResponse.isSuccessful() && movieResponse.body() != null) {
+                                    MovieModel movie = movieResponse.body();
+                                    Log.d("MovieApp", "Fetched movie: " + movie.getTitle());
 
-                if (!allMovieIds.isEmpty()) {
-                    String randomMovieId = allMovieIds.get(new Random().nextInt(allMovieIds.size()));
-                    apiService.getMovieById(randomMovieId, userId).enqueue(new Callback<MovieModel>() {
-                        @Override
-                        public void onResponse(Call<MovieModel> call, Response<MovieModel> movieResponse) {
-                            if (movieResponse.isSuccessful() && movieResponse.body() != null) {
-                                MovieModel movie = movieResponse.body();
-                                AppDatabase.databaseWriteExecutor.execute(() -> {
-                                    database.movieDao().insertMovie(convertMovieModelToEntity(movie));
-                                });
-                                callback.onSuccess(movie);
-                            } else {
-                                callback.onError("Failed to fetch movie details.");
+                                    AppDatabase.databaseWriteExecutor.execute(() -> {
+                                        // Insert the movie
+                                        database.movieDao().insertMovie(convertMovieModelToEntity(movie));
+
+                                        // If this was the last movie to be fetched, insert cross-references
+                                        if (movieFetchCount.incrementAndGet() == totalMoviesToFetch) {
+                                            database.runInTransaction(() -> {
+                                                database.categoryDao().insertCategoryMovieCrossRefs(crossRefs);
+                                                database.lastWatchedDao().insertLastWatched(lastWatchedEntities);
+                                            });
+                                        }
+                                    });
+                                }
                             }
-                        }
 
-                        @Override
-                        public void onFailure(Call<MovieModel> call, Throwable t) {
-                            callback.onError("Error fetching movie details: " + t.getMessage());
-                        }
-                    });
-                } else {
-                    callback.onError("No movies found.");
+                            @Override
+                            public void onFailure(Call<MovieModel> call, Throwable t) {
+                                Log.e("MovieApp", "Error fetching movie details: " + t.getMessage());
+                                // Still increment counter even on failure to maintain consistency
+                                movieFetchCount.incrementAndGet();
+                            }
+                        });
+                    }
                 }
             }
 
@@ -147,6 +142,7 @@ public class CategoryRepository {
             }
         });
     }
+
 
     private MovieEntity convertMovieModelToEntity(MovieModel model) {
         return new MovieEntity(

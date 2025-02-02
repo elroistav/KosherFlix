@@ -3,12 +3,12 @@ package com.example.netflix_app4.viewmodel;
 
 import static com.example.netflix_app4.db.EntityConverter.convertLastWatchedToEntities;
 import static com.example.netflix_app4.db.EntityConverter.convertResponseToCategoryMovieCrossRefs;
-import static com.example.netflix_app4.db.EntityConverter.convertResponseToMovies;
 
 import android.app.Application;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -30,10 +30,13 @@ import com.example.netflix_app4.network.MovieApiService;
 import com.example.netflix_app4.network.RetrofitClient;
 import com.example.netflix_app4.repository.CategoryRepository;
 import com.example.netflix_app4.db.AppDatabase;
+import com.example.netflix_app4.repository.MovieRepository;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -49,6 +52,8 @@ public class CategoryViewModel extends AndroidViewModel {
     private final MutableLiveData<List<CategoryModel>> allCategoriesLiveData = new MutableLiveData<>();
     private final MutableLiveData<Boolean> operationSuccessLiveData = new MutableLiveData<>();
     private AppDatabase database;
+    private final MovieRepository movieRepository;
+
 
     private final MovieApiService movieApiService;
     private final CategoryRepository categoryRepository;
@@ -62,6 +67,7 @@ public class CategoryViewModel extends AndroidViewModel {
         Retrofit retrofit = RetrofitClient.getRetrofitInstance();
         movieApiService = retrofit.create(MovieApiService.class);
         categoryRepository = new CategoryRepository(application.getApplicationContext());
+        movieRepository = new MovieRepository(); // Initialize movieRepository
         database = AppDatabase.getDatabase(application);
     }
 
@@ -85,49 +91,75 @@ public class CategoryViewModel extends AndroidViewModel {
         return errorLiveData;
     }
 
-    // Fetch categories
     public void fetchCategories(String userId) {
-        // Ensure this runs on the main thread
         new Handler(Looper.getMainLooper()).post(() -> {
-            // Fetch cached categories with their movies
             LiveData<List<CategoryWithMovies>> cachedCategoriesWithMovies = database.categoryDao().getPromotedCategories();
 
             cachedCategoriesWithMovies.observeForever(categoryWithMoviesList -> {
                 if (categoryWithMoviesList != null && !categoryWithMoviesList.isEmpty()) {
-                    // Convert CategoryWithMovies to CategoryPromoted and post to LiveData
                     List<CategoryPromoted> categories = convertWithMoviesToPromoted(categoryWithMoviesList);
                     promotedCategoriesLiveData.postValue(categories);
                 } else {
-                    // Fetch categories from the repository if not cached
                     AppDatabase.databaseWriteExecutor.execute(() -> {
                         categoryRepository.getCategories(userId, new CategoryRepository.CategoryCallback() {
                             @Override
                             public void onSuccess(CategoriesResponse response) {
-                                // Convert response to entities and insert into the database
                                 List<CategoryEntity> categoryEntities = convertResponseToEntities(response);
-                                List<MovieEntity> movieEntities = convertResponseToMovies(response);
                                 List<CategoryMovieCrossRef> crossRefs = convertResponseToCategoryMovieCrossRefs(response);
                                 List<LastWatchedEntity> lastWatchedEntities = convertLastWatchedToEntities(response.getLastWatched());
 
-                                AppDatabase.databaseWriteExecutor.execute(() -> {
-                                    database.categoryDao().insertCategories(categoryEntities);
-                                    database.movieDao().insertMovies(movieEntities);
-                                    database.categoryDao().insertCategoryMovieCrossRefs(crossRefs);
-                                    database.lastWatchedDao().insertLastWatched(lastWatchedEntities);
+                                // Step 1: Get unique movie IDs from response
+                                Set<String> movieIds = new HashSet<>();
+                                for (CategoryPromoted category : response.getPromotedCategories()) {
+                                    movieIds.addAll(category.getMovies());
+                                }
 
-                                    // Switch back to the main thread before updating LiveData
+                                // Step 2: Query Room for existing movie IDs
+                                List<String> existingMovies = database.movieDao().getExistingMovieIds(new ArrayList<>(movieIds));
+                                movieIds.removeAll(existingMovies); // Keep only missing movies
+
+                                if (!movieIds.isEmpty()) {
+                                    // Step 3: Fetch missing movie details from API
+                                    movieRepository.getMovieDetails(new ArrayList<>(movieIds), userId, new MovieRepository.MovieDetailsCallback() { // Pass userId here
+                                        @Override
+                                        public void onSuccess(List<MovieEntity> movies) {
+                                            Log.d("CategoryViewModel", "Fetched missing movies: " + movies);
+                                            AppDatabase.databaseWriteExecutor.execute(() -> {
+                                                database.movieDao().insertMovies(movies);
+                                                database.categoryDao().insertCategories(categoryEntities);
+                                                database.categoryDao().insertCategoryMovieCrossRefs(crossRefs);
+                                                database.lastWatchedDao().insertLastWatched(lastWatchedEntities);
+
+                                                new Handler(Looper.getMainLooper()).post(() -> {
+                                                    promotedCategoriesLiveData.setValue(response.getPromotedCategories());
+                                                    lastWatchedLiveData.setValue(response.getLastWatched());
+                                                });
+                                            });
+                                        }
+
+                                        @Override
+                                        public void onError(String error) {
+                                            new Handler(Looper.getMainLooper()).post(() -> errorLiveData.setValue(error));
+                                        }
+                                    });
+                                } else {
+                                    // If no missing movies, insert categories and update UI
+                                    AppDatabase.databaseWriteExecutor.execute(() -> {
+                                        database.categoryDao().insertCategories(categoryEntities);
+                                        database.categoryDao().insertCategoryMovieCrossRefs(crossRefs);
+                                        database.lastWatchedDao().insertLastWatched(lastWatchedEntities);
+                                    });
+
                                     new Handler(Looper.getMainLooper()).post(() -> {
                                         promotedCategoriesLiveData.setValue(response.getPromotedCategories());
                                         lastWatchedLiveData.setValue(response.getLastWatched());
                                     });
-                                });
+                                }
                             }
 
                             @Override
                             public void onError(String error) {
-                                new Handler(Looper.getMainLooper()).post(() -> {
-                                    errorLiveData.setValue(error);
-                                });
+                                new Handler(Looper.getMainLooper()).post(() -> errorLiveData.setValue(error));
                             }
                         });
                     });
@@ -135,6 +167,7 @@ public class CategoryViewModel extends AndroidViewModel {
             });
         });
     }
+
 
 
 

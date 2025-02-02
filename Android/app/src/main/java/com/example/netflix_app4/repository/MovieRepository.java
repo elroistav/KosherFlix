@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.provider.OpenableColumns;
 
+import com.example.netflix_app4.db.MovieEntity;
 import com.example.netflix_app4.model.CategoriesResponse;
 import com.example.netflix_app4.network.MovieApiService;
 import com.example.netflix_app4.network.RetrofitClient;
@@ -14,7 +15,10 @@ import com.google.gson.Gson;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -28,7 +32,7 @@ public class MovieRepository {
     private static MovieRepository instance;
     private final MovieApiService movieApiService;
 
-    private MovieRepository() {
+    public MovieRepository() {
         Retrofit retrofit = RetrofitClient.getRetrofitInstance();
         this.movieApiService = retrofit.create(MovieApiService.class);
     }
@@ -118,6 +122,40 @@ public class MovieRepository {
         void onSuccess();
         void onError(String error);
     }
+
+    public interface MovieDetailsCallback {
+        void onSuccess(List<MovieEntity> movies);
+        void onError(String error);
+    }
+
+    public void getMovieDetails(List<String> movieIds, String userId, MovieDetailsCallback callback) {
+        List<MovieEntity> movieEntities = new ArrayList<>();
+        AtomicInteger counter = new AtomicInteger(movieIds.size()); // Track remaining requests
+        AtomicBoolean errorOccurred = new AtomicBoolean(false);
+
+        for (String movieId : movieIds) {
+            movieApiService.getMovieById(movieId, userId).enqueue(new Callback<MovieModel>() {
+                @Override
+                public void onResponse(Call<MovieModel> call, Response<MovieModel> response) {
+                    if (response.isSuccessful() && response.body() != null) {
+                        MovieModel movie = response.body();
+                        movieEntities.add(new MovieEntity(movie.getId(), movie.getTitle(), movie.getThumbnail()));
+                    }
+
+                    if (counter.decrementAndGet() == 0 && !errorOccurred.get()) {
+                        callback.onSuccess(movieEntities); // Call success when all requests are done
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<MovieModel> call, Throwable t) {
+                    errorOccurred.set(true);
+                    callback.onError("Failed to fetch movie details: " + t.getMessage());
+                }
+            });
+        }
+    }
+
 
     public void updateMovie(String movieId, MovieModel movie, String userId, MovieOperationCallback callback) {
         movieApiService.updateMovie(movieId, movie, userId).enqueue(new Callback<MovieModel>() {

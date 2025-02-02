@@ -20,5 +20,8 @@ public interface MovieDao {
 
     @Query("SELECT * FROM movies WHERE id = :movieId LIMIT 1")
     MovieEntity getMovieById(String movieId);
+
+    @Query("SELECT id FROM movies WHERE id IN (:movieIds)")
+    List<String> getExistingMovieIds(List<String> movieIds);
 }
 
