@@ -1,33 +1,33 @@
 package com.example.netflix_app4.view;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.bumptech.glide.Glide;
 import com.example.netflix_app4.R;
 import com.example.netflix_app4.model.MovieModel;
+import com.example.netflix_app4.model.UserInfo;
+
 import java.util.List;
-import com.example.netflix_app4.view.CategoryAdapter;
 
 public class LastWatchedAdapter extends RecyclerView.Adapter<LastWatchedAdapter.ViewHolder> {
     private final Context context;
     private List<MovieModel> movies;
-    private final CategoryAdapter.OnMovieClickListener movieClickListener;
-    public interface OnMovieClickListener {
-        void onMovieClick(MovieModel movie);
-    }
+    private final UserInfo userInfo;
 
-    public LastWatchedAdapter(Context context, List<MovieModel> movies,
-                              CategoryAdapter.OnMovieClickListener movieClickListener) {
+    public LastWatchedAdapter(Context context, List<MovieModel> movies, UserInfo userInfo) {
         this.context = context;
         this.movies = movies;
-        this.movieClickListener = movieClickListener;
+        this.userInfo = userInfo;
     }
 
     @NonNull
@@ -58,7 +58,6 @@ public class LastWatchedAdapter extends RecyclerView.Adapter<LastWatchedAdapter.
         private final ImageView movieThumbnail;
         private final TextView movieTitle;
 
-
         ViewHolder(@NonNull View itemView) {
             super(itemView);
             movieThumbnail = itemView.findViewById(R.id.movieThumbnail);
@@ -66,8 +65,11 @@ public class LastWatchedAdapter extends RecyclerView.Adapter<LastWatchedAdapter.
 
             itemView.setOnClickListener(v -> {
                 int position = getAdapterPosition();
-                if (position != RecyclerView.NO_POSITION && movieClickListener != null) {
-                    movieClickListener.onMovieClick(movies.get(position));
+                if (position != RecyclerView.NO_POSITION) {
+                    Intent intent = new Intent(context, MovieDetailsActivity.class);
+                    intent.putExtra("movieDetails", movies.get(position));
+                    intent.putExtra("USER_INFO", userInfo);
+                    context.startActivity(intent);
                 }
             });
         }

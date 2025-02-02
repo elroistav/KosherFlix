@@ -5,19 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
-    android:background="@color/black"> <!-- Optional: Add a background color -->
+    android:background="@color/black">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingBottom="16dp"
         tools:context=".view.MovieDetailsActivity">
-
-        <!-- Back Button -->
-
-        <!-- Watch Button -->
-
-
-        <!-- Movie Title -->
 
         <ImageButton
             android:id="@+id/backButton"
@@ -37,95 +31,81 @@
             android:id="@+id/watchButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="end"
             android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
             android:backgroundTint="@color/red"
             android:padding="12dp"
-            android:text="Watch"
+            android:text="@string/watch"
             android:textColor="@android:color/white"
             android:textSize="18sp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.959"
-            app:layout_constraintStart_toEndOf="@+id/backButton"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/movieTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Movie Title"
-            android:textSize="24sp"
-            android:textColor="@android:color/white"
+            android:layout_marginTop="24dp"
             android:gravity="center"
-            android:textStyle="bold"
             android:letterSpacing="0.02"
+            android:text="@string/movie_title"
             android:textAllCaps="true"
-            app:layout_constraintTop_toBottomOf="@id/backButton"
-            app:layout_constraintStart_toStartOf="parent"
+            android:textColor="@android:color/white"
+            android:textSize="24sp"
+            android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="24dp" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/backButton" />
 
         <VideoView
             android:id="@+id/videoView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="200dp"
             android:layout_marginTop="16dp"
-            android:background="#000"
-            app:layout_constraintTop_toBottomOf="@id/movieTitle"
-            app:layout_constraintBottom_toTopOf="@id/movieDescription" />
+            app:layout_constraintTop_toBottomOf="@id/movieTitle" />
 
-        <!-- Movie Description -->
         <TextView
             android:id="@+id/movieDescription"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="16dp"
             android:lineSpacingExtra="5dp"
             android:text="Movie description goes here."
             android:textColor="@android:color/white"
             android:textSize="16sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/videoView" />
 
-        <!-- Movie Info Grid -->
         <GridLayout
             android:id="@+id/movieInfoGrid"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:columnCount="2"
+            android:layout_marginHorizontal="16dp"
             android:layout_marginTop="16dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            app:layout_constraintTop_toBottomOf="@id/movieDescription"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent">
-
-            <!-- Grid Items will be added dynamically in Java -->
-        </GridLayout>
+            android:columnCount="2"
+            app:layout_constraintTop_toBottomOf="@id/movieDescription" />
 
         <TextView
             android:id="@+id/recommendationTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="You might like based on your previously watched"
-            android:textSize="18sp"
-            android:textColor="@color/white"
+            android:layout_marginTop="24dp"
             android:fontFamily="sans-serif-medium"
-            app:layout_constraintTop_toBottomOf="@+id/movieInfoGrid"
-            app:layout_constraintStart_toStartOf="parent"
+            android:text="@string/you_might_like_based_on_your_previously_watched"
+            android:textColor="@color/white"
+            android:textSize="18sp"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="16dp" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/movieInfoGrid" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recommendationRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
             android:orientation="horizontal"
             android:padding="16dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/recommendationTitle" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>
-

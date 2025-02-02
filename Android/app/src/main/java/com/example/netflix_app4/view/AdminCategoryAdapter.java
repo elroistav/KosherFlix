@@ -49,14 +49,12 @@ public class AdminCategoryAdapter extends RecyclerView.Adapter<AdminCategoryAdap
 
     private final OnCategoryDeleteListener deleteListener;
     private final OnCategoryEditListener editListener;
-    private final CategoryAdapter.OnMovieClickListener movieClickListener;
 
     public AdminCategoryAdapter(Context context,
                                 List<CategoryModel> categories,
                                 UserInfo userInfo,
                                 OnCategoryDeleteListener deleteListener,
                                 OnCategoryEditListener editListener,
-                                CategoryAdapter.OnMovieClickListener movieClickListener,
                                 AdminMovieAdapter.OnMovieEditListener movieEditListener,
                                 AdminMovieAdapter.OnMovieDeleteListener movieDeleteListener) {
         this.context = context;
@@ -64,7 +62,6 @@ public class AdminCategoryAdapter extends RecyclerView.Adapter<AdminCategoryAdap
         this.userInfo = userInfo;
         this.deleteListener = deleteListener;
         this.editListener = editListener;
-        this.movieClickListener = movieClickListener;
         this.movieEditListener = movieEditListener;
         this.movieDeleteListener = movieDeleteListener;
         this.apiService = RetrofitClient.getRetrofitInstance().create(MovieApiService.class);
@@ -99,7 +96,6 @@ public class AdminCategoryAdapter extends RecyclerView.Adapter<AdminCategoryAdap
         private final ImageButton editButton;
         private final ImageButton deleteButton;
         private final RecyclerView moviesRecyclerView;
-
 
         public AdminCategoryViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -162,7 +158,6 @@ public class AdminCategoryAdapter extends RecyclerView.Adapter<AdminCategoryAdap
                                                 context,
                                                 movieDetails,
                                                 userInfo,
-                                                movieClickListener,
                                                 movieEditListener,
                                                 movieDeleteListener
                                         );
@@ -183,6 +178,7 @@ public class AdminCategoryAdapter extends RecyclerView.Adapter<AdminCategoryAdap
             }
         }
     }
+
     public interface OnMovieEditListener {
         void onMovieEdit(MovieModel movie);
     }
@@ -190,5 +186,4 @@ public class AdminCategoryAdapter extends RecyclerView.Adapter<AdminCategoryAdap
     public interface OnMovieDeleteListener {
         void onMovieDelete(String movieId);
     }
-
 }
