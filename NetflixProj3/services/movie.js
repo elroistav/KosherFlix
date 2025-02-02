@@ -232,36 +232,33 @@ const updateMovie = async (headers, id, movieData) => {
             throw new Error('Movie not found');
         }
 
-        // Keep the original intId
-        const intId = existingMovie.intId;
-        console.log(`Using existing intId: ${intId}`);
+        // Check if required fields are present
+        const requiredFields = Object.keys(Movie.schema.paths).filter(
+            path => Movie.schema.paths[path].isRequired // Check if the field is required
+        );
 
-        // Merge existing data with new data
-        // Keep existing thumbnail and videoUrl if not provided in update
-        const updatedMovieData = {
-            ...movieData,
-            thumbnail: movieData.thumbnail || existingMovie.thumbnail,
-            videoUrl: movieData.videoUrl || existingMovie.videoUrl,
-            intId // Keep the original intId
-        };
+        const missingFields = requiredFields.filter(field => 
+            field !== 'thumbnail' && 
+            field !== 'videoUrl' && 
+            movieData[field] === undefined
+        );
 
-        // Check if required fields are present (excluding thumbnail and videoUrl)
-        const requiredFields = Object.keys(Movie.schema.paths)
-            .filter(path => 
-                Movie.schema.paths[path].isRequired && 
-                path !== 'thumbnail' && 
-                path !== 'videoUrl'
-            );
-
-        const missingFields = requiredFields.filter(field => !updatedMovieData[field]);
         if (missingFields.length > 0) {
             console.log(`Missing required fields: ${missingFields.join(', ')}`);
             throw new Error(`Missing required fields: ${missingFields.join(', ')}`);
         }
         console.log("All required fields are present.");
 
-        // Handle categories
+        // Update movie data
+        const updatedMovieData = {
+            ...movieData,
+            intId: existingMovie.intId // Keep the original intId
+        };
+
+        // Remove existing category associations
         await removeUpdateCategoriesArray(existingMovie.categories, id);
+        
+        // Add new category associations
         await addUpdateCategoriesArray(movieData.categories, id);
         console.log("Categories updated successfully.");
 
@@ -272,24 +269,28 @@ const updateMovie = async (headers, id, movieData) => {
         await sendToServer(command);
 
         // Update the movie document
-        const result = await Movie.replaceOne(
-            { _id: id },
-            updatedMovieData,
-            { runValidators: true }
-        );
+        const updatedMovie = await Movie.findByIdAndUpdate(
+            id, 
+            updatedMovieData, 
+            { 
+                new: true, // Return the updated document
+                runValidators: true // Run schema validation
+            }
+        ).populate('categories');
 
-        if (result.modifiedCount === 0) {
+        if (!updatedMovie) {
             throw new Error('Update failed');
         }
 
-        console.log("Movie updated successfully");
-        return await Movie.findById(id).populate('categories');
+        console.log("Movie updated successfully:", updatedMovie);
+        return updatedMovie;
 
     } catch (error) {
         console.log('Error updating movie:', error.message);
         throw error;
     }
 };
+
 
 // Delete a movie
 const deleteMovie = async (headers, id) => {
