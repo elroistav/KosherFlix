@@ -5,6 +5,7 @@ import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MovieModel implements Parcelable {
@@ -21,7 +22,7 @@ public class MovieModel implements Parcelable {
     private String thumbnail;
     private String videoUrl;
 
-    protected MovieModel(Parcel in) {
+    public MovieModel(Parcel in) {
         _id = in.readString();
         title = in.readString();
         description = in.readString();
@@ -47,6 +48,20 @@ public class MovieModel implements Parcelable {
             return new MovieModel[size];
         }
     };
+
+    public MovieModel(String id, String title, String description, double rating, int length, String director, List<CategoryModel> categories, String language, String releaseDate, String thumbnail, String videoUrl) {
+        this._id = id;
+        this.title = title;
+        this.description = description;
+        this.rating = rating;
+        this.length = length;
+        this.director = director;
+        this.categories = categories;
+        this.language = language;
+        this.releaseDate = releaseDate;
+        this.thumbnail = thumbnail;
+        this.videoUrl = videoUrl;
+    }
 
     // Getters
     public String getId() {

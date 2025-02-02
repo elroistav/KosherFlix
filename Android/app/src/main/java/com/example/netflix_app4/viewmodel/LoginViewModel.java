@@ -7,7 +7,7 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.example.netflix_app4.model.User;
+import com.example.netflix_app4.db.User;
 import com.example.netflix_app4.repository.UserRepository;
 
 public class LoginViewModel extends AndroidViewModel {

@@ -1,8 +1,18 @@
 package com.example.netflix_app4.repository;
 
+
 import android.content.Context;
 import android.util.Log;
 
+import com.example.netflix_app4.db.AppDatabase;
+import com.example.netflix_app4.db.CategoryDao;
+import com.example.netflix_app4.db.CategoryEntity;
+import com.example.netflix_app4.db.CategoryMovieCrossRef;
+import com.example.netflix_app4.db.EntityConverter;
+import com.example.netflix_app4.db.LastWatchedDao;
+import com.example.netflix_app4.db.LastWatchedEntity;
+import com.example.netflix_app4.db.MovieDao;
+import com.example.netflix_app4.db.MovieEntity;
 import com.example.netflix_app4.model.CategoriesListResponse;
 import com.example.netflix_app4.model.CategoryModel;
 import com.example.netflix_app4.model.CategoryPromoted;
@@ -15,6 +25,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -23,9 +34,32 @@ import retrofit2.Response;
 public class CategoryRepository {
     private static final String TAG = "CategoryRepository";
     private final MovieApiService apiService;
+    private AppDatabase database;
+    private CategoryDao categoryDao;
+    private MovieDao movieDao;
+    private LastWatchedDao lastWatchedDao;
 
-    public CategoryRepository() {
+
+    public CategoryRepository(Context context) {
         apiService = RetrofitClient.getRetrofitInstance().create(MovieApiService.class);
+        database = AppDatabase.getDatabase(context.getApplicationContext());  // Fix: Use application context
+        categoryDao = database.categoryDao();
+        movieDao = database.movieDao();
+        lastWatchedDao = database.lastWatchedDao();
+    }
+
+    public void insertCategories(CategoriesResponse response) {
+        List<CategoryEntity> categories = EntityConverter.convertResponseToCategories(response);
+        List<MovieEntity> movies = EntityConverter.convertResponseToMovies(response);
+        List<CategoryMovieCrossRef> crossRefs = EntityConverter.convertResponseToCategoryMovieCrossRefs(response);
+        List<LastWatchedEntity> lastWatchedEntities = EntityConverter.convertLastWatchedToEntities(response.getLastWatched());
+
+        AppDatabase.databaseWriteExecutor.execute(() -> {
+            categoryDao.insertCategories(categories);
+            movieDao.insertMovies(movies);
+            categoryDao.insertCategoryMovieCrossRefs(crossRefs);
+            lastWatchedDao.insertLastWatched(lastWatchedEntities);
+        });
     }
 
     // Fetch categories using a callback
@@ -47,36 +81,50 @@ public class CategoryRepository {
         });
     }
 
-    // Fetch a random movie by first fetching categories
     public void getRandomMovie(Context context, String userId, RandomMovieCallback callback) {
-        Log.d("CategoryRepository", "Fetching random movie for user: " + userId);
+        AppDatabase.databaseWriteExecutor.execute(() -> {
+            List<MovieEntity> cachedMovies = database.movieDao().getAllMovies();
+            if (!cachedMovies.isEmpty()) {
+                MovieEntity randomMovie = cachedMovies.get(new Random().nextInt(cachedMovies.size()));
+                callback.onSuccess(convertEntityToMovieModel(randomMovie));
+            } else {
+                fetchMoviesFromApi(userId, callback);
+            }
+        });
+    }
+
+    private void fetchMoviesFromApi(String userId, RandomMovieCallback callback) {
         getCategories(userId, new CategoryCallback() {
             @Override
             public void onSuccess(CategoriesResponse response) {
-                Log.d("CategoryRepository", "Fetched categories successfully.");
-                List<CategoryPromoted> promotedCategories = response.getPromotedCategories();
-                List<String> allMovieIds = new ArrayList<>();
+                List<CategoryEntity> categories = EntityConverter.convertResponseToCategories(response);
+                List<MovieEntity> movies = EntityConverter.convertResponseToMovies(response);
+                List<CategoryMovieCrossRef> crossRefs = EntityConverter.convertResponseToCategoryMovieCrossRefs(response);
+                List<LastWatchedEntity> lastWatchedEntities = EntityConverter.convertLastWatchedToEntities(response.getLastWatched());
 
-                // Gather all movie IDs from promoted categories
-                for (CategoryPromoted category : promotedCategories) {
-                    allMovieIds.addAll(category.getMovies());
-                }
+                AppDatabase.databaseWriteExecutor.execute(() -> {
+                    database.categoryDao().insertCategories(categories);
+                    database.movieDao().insertMovies(movies);
+                    database.categoryDao().insertCategoryMovieCrossRefs(crossRefs);
+                    database.lastWatchedDao().insertLastWatched(lastWatchedEntities);
+                });
+
+                // Select a random movie from the API response
+                List<String> allMovieIds = response.getPromotedCategories()
+                        .stream()
+                        .flatMap(cat -> cat.getMovies().stream())
+                        .collect(Collectors.toList());
 
                 if (!allMovieIds.isEmpty()) {
-                    // Pick a random movie ID
                     String randomMovieId = allMovieIds.get(new Random().nextInt(allMovieIds.size()));
-                    Log.d("CategoryRepository", "Random movie ID: " + randomMovieId);
-
-                    // Fetch movie details for the random movie ID
                     apiService.getMovieById(randomMovieId, userId).enqueue(new Callback<MovieModel>() {
                         @Override
                         public void onResponse(Call<MovieModel> call, Response<MovieModel> movieResponse) {
                             if (movieResponse.isSuccessful() && movieResponse.body() != null) {
                                 MovieModel movie = movieResponse.body();
-                                Log.d("CategoryRepository", "Fetched random movie: " + movie.getTitle());
-                                // Set the video URL for the demo video
-                                //movie.setVideoUrl(Config.getBaseUrl() + "/uploads/lion.mp4");
-                                Log.d("CategoryRepository", "videoUrl: " + movie.getVideoUrl());
+                                AppDatabase.databaseWriteExecutor.execute(() -> {
+                                    database.movieDao().insertMovie(convertMovieModelToEntity(movie));
+                                });
                                 callback.onSuccess(movie);
                             } else {
                                 callback.onError("Failed to fetch movie details.");
@@ -89,17 +137,44 @@ public class CategoryRepository {
                         }
                     });
                 } else {
-                    callback.onError("No movies found in promoted categories.");
+                    callback.onError("No movies found.");
                 }
             }
 
             @Override
             public void onError(String error) {
-                Log.e("CategoryRepository", "Failed to fetch categories: " + error);
                 callback.onError(error);
             }
         });
     }
+
+    private MovieEntity convertMovieModelToEntity(MovieModel model) {
+        return new MovieEntity(
+                model.getId(),      // Correct ID field
+                model.getTitle(),
+                model.getThumbnail()
+        );
+    }
+
+    private MovieModel convertEntityToMovieModel(MovieEntity entity) {
+        return new MovieModel(
+                entity.getId(),
+                entity.getTitle(),
+                "", // Default description (missing in MovieEntity)
+                0.0, // Default rating
+                0, // Default length
+                "", // Default director
+                new ArrayList<>(), // Empty categories list
+                "", // Default language
+                "", // Default releaseDate
+                entity.getThumbnail(),
+                "" // Default video URL
+        );
+    }
+
+
+
+
 
     // Callback interfaces
     public interface CategoryCallback {

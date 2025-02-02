@@ -21,7 +21,6 @@ import android.widget.Toast;
 import android.widget.VideoView;
 import android.util.Log;
 import com.example.netflix_app4.components.CustomNavbar;
-import com.example.netflix_app4.model.User;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
@@ -87,29 +86,33 @@ public class HomeScreenActivity extends AppCompatActivity {
 
         // Initialize navbar
         customNavbar = findViewById(R.id.custom_navbar);
-        customNavbar.setVisibility(View.GONE);
+        customNavbar.setVisibility(View.GONE);  //
         navbarToggleButton = findViewById(R.id.navbarToggleButton);
         navbarToggleButton.setOnClickListener(v -> toggleNavbar());
 
-        // Initialize ViewModels
-        categoryViewModel = new ViewModelProvider(this).get(CategoryViewModel.class);
+        // יצירת ViewModel
+        categoryViewModel = new ViewModelProvider(this,
+                new ViewModelProvider.AndroidViewModelFactory(getApplication()))
+                .get(CategoryViewModel.class);
+
+        // אתחול ה-CustomNavbar
+        customNavbar = findViewById(R.id.custom_navbar);
         customNavbar.initializeCategoryViewModel(categoryViewModel);
 
-        // Check token
+
         String token = getIntent().getStringExtra("USER_TOKEN");
         if (token == null) {
             redirectToLogin();
             return;
         }
 
-        // Initialize views
+        // Initialize views - keeping your original initialization
         movieTitle = findViewById(R.id.movieTitle);
         movieDescription = findViewById(R.id.movieDescription);
         playButton = findViewById(R.id.playButton);
         infoButton = findViewById(R.id.infoButton);
         moviePlayerWrapper = findViewById(R.id.moviePlayerWrapper);
 
-        // Setup RecyclerViews
         categoriesRecyclerView = findViewById(R.id.categoriesRecyclerView);
         categoriesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -118,8 +121,11 @@ public class HomeScreenActivity extends AppCompatActivity {
                 LinearLayoutManager.HORIZONTAL, false));
         lastWatchedRecyclerView.setAdapter(lastWatchedAdapter);
 
-        // Initialize ViewModels and observe
+
+        // Initialize ViewModels
         setupViewModels();
+
+        // Observe ViewModels after setting them up
         observeViewModels();
 
         // Validate token and fetch data
@@ -128,7 +134,9 @@ public class HomeScreenActivity extends AppCompatActivity {
 
     private void setupViewModels() {
         viewModel = new ViewModelProvider(this).get(HomeScreenViewModel.class);
-        categoryViewModel = new ViewModelProvider(this).get(CategoryViewModel.class);
+        categoryViewModel = new ViewModelProvider(this,
+                new ViewModelProvider.AndroidViewModelFactory(getApplication()))
+                .get(CategoryViewModel.class);
     }
 
     private void observeViewModels() {
@@ -177,6 +185,8 @@ public class HomeScreenActivity extends AppCompatActivity {
                             userInfo.getToken(),
                             userInfo.isAdmin()
                     ));
+
+                    //customNavbar.setupEventListeners();
                 }
             }
         });
@@ -226,8 +236,10 @@ public class HomeScreenActivity extends AppCompatActivity {
     private void updateUIWithUserInfo(UserInfo userInfo) {
         TextView welcomeText = findViewById(R.id.welcomeText);
         welcomeText.setText(getString(R.string.welcome_message, userInfo.getName()));
+        // Add any other UI updates based on user info
     }
 
+    // Your existing methods remain unchanged
     private void updateMovieUI(MovieModel movie) {
         movieTitle.setText(movie.getTitle());
         movieDescription.setText(movie.getDescription());
@@ -277,6 +289,7 @@ public class HomeScreenActivity extends AppCompatActivity {
             return true;
         });
     }
+
     private void adjustVideoViewSize(VideoView videoView, MediaPlayer mp) {
         int videoWidth = mp.getVideoWidth();
         int videoHeight = mp.getVideoHeight();
@@ -337,6 +350,4 @@ public class HomeScreenActivity extends AppCompatActivity {
                     .start();
         }
     }
-
-
 }
