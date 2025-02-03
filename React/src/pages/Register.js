@@ -7,6 +7,7 @@ import AuthForm from '../components/AutoForm';
 
 
 const Welcome = () => {
+    const BASE_URL = process.env.REACT_APP_BASE_URL;
     const navigate = useNavigate(); 
     const [userName, setUserName] = useState(''); 
     const [name, setName] = useState(''); 
@@ -94,7 +95,7 @@ const Welcome = () => {
         console.log('User data:', formData);
     
         try {
-            const response = await axios.post('http://localhost:4000/api/users', formData, {
+            const response = await axios.post(BASE_URL + '/api/users', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }

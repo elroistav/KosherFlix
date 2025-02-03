@@ -1,13 +1,15 @@
 import React from 'react';
 import '../styles/MovieCard.css';
 
+
 function MovieCard({ movie, onClick }) {
+  const BASE_URL = process.env.REACT_APP_BASE_URL;
   return (
     <div
         className="movie-card"
         onClick={onClick}
         style={{
-            backgroundImage: `url(${movie.thumbnail})`, // Set movie thumbnail dynamically
+            backgroundImage: `url(${BASE_URL}/${movie.thumbnail})`, // Set movie thumbnail dynamically
             backgroundSize: 'cover',
             backgroundPosition: 'center',
         }}

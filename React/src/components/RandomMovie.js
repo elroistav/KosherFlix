@@ -3,6 +3,26 @@ import { useNavigate } from 'react-router-dom';
 import MoviePlayer from './MoviePlayer';
 import '../styles/RandomMovie.css';
 
+/**
+ * RandomMovie component displays a random movie with options to play or get more information.
+ *
+ * @component
+ * @param {Object} props - The component props.
+ * @param {Object} props.movie - The movie object to display.
+ * @param {string} props.movie.title - The title of the movie.
+ * @param {string} props.movie.videoUrl - The URL of the movie video.
+ * @param {Function} props.onClick - The callback function to handle the "More Info" button click.
+ *
+ * @example
+ * const movie = {
+ *   title: "Inception",
+ *   videoUrl: "https://example.com/inception.mp4"
+ * };
+ * const handleMoreInfo = () => { console.log("More info clicked"); };
+ * <RandomMovie movie={movie} onClick={handleMoreInfo} />
+ *
+ * @returns {JSX.Element|null} The RandomMovie component or null if no movie is provided.
+ */
 function RandomMovie({ movie, onClick }) {
   const navigate = useNavigate();
   const [isVideoReady, setIsVideoReady] = useState(false);

@@ -20,6 +20,7 @@ import CategoryAddModal from '../components/CategoryAddModal';
 
 
 function HomeScreen({ isDarkMode, setIsDarkMode }) {
+  const BASE_URL = process.env.REACT_APP_BASE_URL;
   const [movies, setMovies] = useState([]);
   const [randomMovie, setRandomMovie] = useState(null);
   const [searchResults, setSearchResults] = useState([]);
@@ -40,13 +41,13 @@ function HomeScreen({ isDarkMode, setIsDarkMode }) {
     async function checkToken() {
       try {
         if (!token) throw new Error('Token not found');
-        const response = await axios.get('http://localhost:4000/api/tokens', {
+        const response = await axios.get(BASE_URL + '/api/tokens', {
           headers: { Authorization: `Bearer ${token}` },
         });
 
         if (response.status === 200) {
           console.log('User is logged in');
-          const avatarUrl = `http://localhost:4000/${response.data.avatar}`;
+          const avatarUrl = `${BASE_URL}/${response.data.avatar}`;
           console.log('the returned data is ' + JSON.stringify(response.data));
 
           setUserInfo({
@@ -88,7 +89,7 @@ function HomeScreen({ isDarkMode, setIsDarkMode }) {
       try {
         //get user-id from the tokes first
         console.log('The user id is: ' + userInfo.userId);
-        const response = await axios.get('http://localhost:4000/api/categories', {
+        const response = await axios.get(BASE_URL + '/api/categories', {
           headers: { 'user-id': userInfo.userId }
         });
 
@@ -99,7 +100,7 @@ function HomeScreen({ isDarkMode, setIsDarkMode }) {
           const fetchedMovies = [];
           for (const movieId of category.movies) {
             try {
-              const movieResponse = await axios.get(`http://localhost:4000/api/movies/${movieId}`, {
+              const movieResponse = await axios.get(`${BASE_URL}/api/movies/${movieId}`, {
                   headers: { 'user-id': userInfo.userId }
               });
               fetchedMovies.push(movieResponse.data);
@@ -142,7 +143,7 @@ function HomeScreen({ isDarkMode, setIsDarkMode }) {
 
         // Delete category in backend
         await axios.delete(
-            `http://localhost:4000/api/categories/${categoryId}`,
+            `${BASE_URL}/api/categories/${categoryId}`,
             {headers: { 'user-id': userInfo.userId }
           }
         );
@@ -161,7 +162,7 @@ function HomeScreen({ isDarkMode, setIsDarkMode }) {
 
         try {
             const response = await axios.patch(
-                `http://localhost:4000/api/categories/${updatedCategory._id}`,
+                `${BASE_URL}/api/categories/${updatedCategory._id}`,
                 updatedCategory,
                 { headers: { 'user-id': userInfo.userId }}
             );
@@ -194,7 +195,7 @@ function HomeScreen({ isDarkMode, setIsDarkMode }) {
         
         // Update categories in backend
         console.log('The user id is: ' + userInfo.userId);
-        await axios.delete(`http://localhost:4000/api/movies/${movieId}`, {
+        await axios.delete(`${BASE_URL}/api/movies/${movieId}`, {
             headers: { 'user-id': userInfo.userId }
         });
     } catch (error) {
@@ -246,7 +247,7 @@ function HomeScreen({ isDarkMode, setIsDarkMode }) {
     try {
         console.log('The user id is: ' + userInfo.userId);
         console.log('The movie data is: ' + JSON.stringify(movieData));
-        const response = await axios.post('http://localhost:4000/api/movies', movieData, {
+        const response = await axios.post(BASE_URL + '/api/movies', movieData, {
             headers: { 'user-id': userInfo.userId },
         });
         setMovies(prevMovies => prevMovies.map(category =>
@@ -265,7 +266,7 @@ function HomeScreen({ isDarkMode, setIsDarkMode }) {
   const handleAddCategory = async (categoryData) => {
     setIsSaving(true); // הצג את מצב השמירה
     try {
-      const response = await axios.post('http://localhost:4000/api/categories', categoryData, {
+      const response = await axios.post(BASE_URL + '/api/categories', categoryData, {
         headers: { 'user-id': userInfo.userId },
       });
       // עדכון ה-state אחרי שמתקבל התשובה מהשרת
