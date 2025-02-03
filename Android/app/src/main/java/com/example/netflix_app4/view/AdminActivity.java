@@ -110,7 +110,7 @@ public class AdminActivity extends AppCompatActivity implements
                 userInfo,
                 this,  // CategoryDeleteListener
                 this,  // CategoryEditListener
-                this::showMovieDetails,  // MovieClickListener
+                //this::showMovieDetails,  // MovieClickListener
                 this,  // MovieEditListener
                 this   // MovieDeleteListener
         );
