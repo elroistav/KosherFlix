@@ -23,11 +23,13 @@ import com.example.netflix_app4.model.CategoriesResponse;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -54,19 +56,35 @@ public class CategoryRepository {
     }
 
     // Fetch categories using a callback
+
     public void getCategories(String userId, CategoryCallback callback) {
+        Log.d(TAG, "Starting getCategories for userId: " + userId);
         apiService.getCategories(userId).enqueue(new Callback<CategoriesResponse>() {
             @Override
             public void onResponse(Call<CategoriesResponse> call, Response<CategoriesResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    fetchMovieDetails(response.body(), userId, callback);
+                    Log.d(TAG, "Successfully fetched categories response");
+                    CategoriesResponse categoriesResponse = response.body();
+                    Log.d(TAG, "Number of promoted categories: " +
+                            (categoriesResponse.getPromotedCategories() != null ?
+                                    categoriesResponse.getPromotedCategories().size() : 0));
+                    fetchMovieDetails(categoriesResponse, userId, callback);
                 } else {
+                    Log.e(TAG, "Failed to fetch categories. Response code: " + response.code());
+                    if (response.errorBody() != null) {
+                        try {
+                            Log.e(TAG, "Error body: " + response.errorBody().string());
+                        } catch (IOException e) {
+                            Log.e(TAG, "Error reading error body", e);
+                        }
+                    }
                     callback.onError("Failed to fetch categories.");
                 }
             }
 
             @Override
             public void onFailure(Call<CategoriesResponse> call, Throwable t) {
+                Log.e(TAG, "Network error fetching categories", t);
                 callback.onError(t.getMessage());
             }
         });
@@ -76,19 +94,29 @@ public class CategoryRepository {
         Set<String> movieIds = new HashSet<>();
         for (CategoryPromoted category : response.getPromotedCategories()) {
             movieIds.addAll(category.getMovies());
+            Log.d(TAG, "Category: " + category.getCategory() + " has " +
+                    category.getMovies().size() + " movies");
         }
 
+        Log.d(TAG, "Total unique movies to fetch: " + movieIds.size());
         CountDownLatch latch = new CountDownLatch(movieIds.size());
         AtomicBoolean hasError = new AtomicBoolean(false);
+        List<MovieModel> fetchedMovies = Collections.synchronizedList(new ArrayList<>());
 
         for (String movieId : movieIds) {
+            Log.d(TAG, "Fetching movie details for ID: " + movieId);
             apiService.getMovieById(movieId, userId).enqueue(new Callback<MovieModel>() {
                 @Override
                 public void onResponse(Call<MovieModel> call, Response<MovieModel> response) {
                     if (response.isSuccessful() && response.body() != null) {
-                        // Handle successful response
+                        MovieModel movie = response.body();
+                        Log.d(TAG, "Successfully fetched movie: " + movie.getTitle());
+                        fetchedMovies.add(movie);
                         latch.countDown();
+                        Log.d(TAG, "Remaining movies to fetch: " + latch.getCount());
                     } else {
+                        Log.e(TAG, "Failed to fetch movie " + movieId +
+                                ". Response code: " + response.code());
                         hasError.set(true);
                         latch.countDown();
                     }
@@ -96,11 +124,37 @@ public class CategoryRepository {
 
                 @Override
                 public void onFailure(Call<MovieModel> call, Throwable t) {
+                    Log.e(TAG, "Network error fetching movie " + movieId, t);
                     hasError.set(true);
                     latch.countDown();
                 }
             });
         }
+
+        // נוסיף קוד שמחכה ללאצ' ומעדכן את הקולבק
+        AppDatabase.databaseWriteExecutor.execute(() -> {
+            try {
+                boolean completed = latch.await(30, TimeUnit.SECONDS);
+                if (!completed) {
+                    Log.e(TAG, "Timeout waiting for movie fetches");
+                    callback.onError("Timeout fetching movies");
+                    return;
+                }
+
+                if (hasError.get()) {
+                    Log.e(TAG, "Errors occurred while fetching movies");
+                    callback.onError("Failed to fetch all movies");
+                    return;
+                }
+
+                Log.d(TAG, "Successfully fetched all " + fetchedMovies.size() +
+                        " movies. Calling callback.onSuccess");
+                callback.onSuccess(response);
+            } catch (InterruptedException e) {
+                Log.e(TAG, "Interrupted while waiting for movies", e);
+                callback.onError("Interrupted while fetching movies");
+            }
+        });
     }
 
     public void getRandomMovie(Context context, String userId, RandomMovieCallback callback) {
