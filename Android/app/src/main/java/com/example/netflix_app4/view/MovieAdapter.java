@@ -21,16 +21,12 @@ import java.util.List;
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHolder> {
     private final Context context;
     private final List<MovieModel> movies;
-    private final CategoryAdapter.OnMovieClickListener movieClickListener;
-
     private final UserInfo userInfo;
 
-    public MovieAdapter(Context context, List<MovieModel> movies, UserInfo userInfo, CategoryAdapter.OnMovieClickListener movieClickListener) {
+    public MovieAdapter(Context context, List<MovieModel> movies, UserInfo userInfo) {
         this.context = context;
         this.movies = movies;
-        this.movieClickListener = movieClickListener;
         this.userInfo = userInfo;
-
     }
 
     @NonNull
@@ -60,19 +56,13 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
             movieThumbnail = itemView.findViewById(R.id.movieThumbnail);
             movieTitle = itemView.findViewById(R.id.movieTitle);
 
-            // Handle item click
             itemView.setOnClickListener(v -> {
                 int position = getAdapterPosition();
                 if (position != RecyclerView.NO_POSITION) {
-                    if (movieClickListener != null) {
-                        movieClickListener.onMovieClick(movies.get(position));
-                    } else {
-                        // If no click listener, launch MovieDetailsActivity directly
-                        Intent intent = new Intent(context, MovieDetailsActivity.class);
-                        intent.putExtra("movieDetails", movies.get(position));
-                        intent.putExtra("USER_INFO", userInfo);
-                        context.startActivity(intent);
-                    }
+                    Intent intent = new Intent(context, MovieDetailsActivity.class);
+                    intent.putExtra("movieDetails", movies.get(position));
+                    intent.putExtra("USER_INFO", userInfo);
+                    context.startActivity(intent);
                 }
             });
         }
@@ -84,11 +74,5 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
                     .into(movieThumbnail);
             movieTitle.setText(movie.getTitle());
         }
-    }
-
-    public void updateMovies(List<MovieModel> newMovies) {
-        this.movies.clear();
-        this.movies.addAll(newMovies);
-        notifyDataSetChanged();
     }
 }

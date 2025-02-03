@@ -28,24 +28,18 @@ import retrofit2.Response;
 
 public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder> {
     private Context context;
-    private List<Object> categories; // יכול להכיל CategoryPromoted או CategoryModel
-    private OnMovieClickListener movieClickListener;
-    //private String userId = "67991fc041ad471db335232f";
-
-
+    private List<Object> categories;
     private String userId;
     private final UserInfo userInfo;
 
-    public CategoryAdapter(Context context, List<?> categories, OnMovieClickListener movieClickListener, UserInfo userInfo) {
+    public CategoryAdapter(Context context, List<?> categories, UserInfo userInfo) {
         this.context = context;
         this.categories = new ArrayList<>();
         if (categories != null) {
             this.categories.addAll(categories);
         }
-        this.movieClickListener = movieClickListener;
         this.userInfo = userInfo;
         this.userId = userInfo.getUserId();
-
     }
 
     @NonNull
@@ -96,7 +90,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
 
                     if (movieDetails.size() == movieIds.size()) {
                         Log.d("CategoryAdapter", "All movies fetched for category " + categoryTitle);
-                        MovieAdapter movieAdapter = new MovieAdapter(context, movieDetails, userInfo, movieClickListener);
+                        MovieAdapter movieAdapter = new MovieAdapter(context, movieDetails, userInfo);
                         holder.moviesRecyclerView.setAdapter(movieAdapter);
                         holder.moviesRecyclerView.setLayoutManager(
                                 new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
@@ -134,9 +128,5 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
             categoryTitle = itemView.findViewById(R.id.categoryTitle);
             moviesRecyclerView = itemView.findViewById(R.id.moviesRecyclerView);
         }
-    }
-
-    public interface OnMovieClickListener {
-        void onMovieClick(MovieModel movie);
     }
 }

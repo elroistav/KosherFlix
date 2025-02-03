@@ -17,30 +17,27 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-//import com.example.netflix_app4.Manifest;
+import android.Manifest;
+
 import com.example.netflix_app4.R;
 import com.example.netflix_app4.components.CustomNavbar;
 import com.example.netflix_app4.model.CategoryModel;
 import com.example.netflix_app4.model.MovieModel;
 import com.example.netflix_app4.model.UserInfo;
-
 import com.example.netflix_app4.viewmodel.CategoryViewModel;
 import com.example.netflix_app4.viewmodel.MovieViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 
-import android.Manifest;
-
-
-
 public class AdminActivity extends AppCompatActivity implements
         AdminCategoryAdapter.OnCategoryDeleteListener,
         AdminCategoryAdapter.OnCategoryEditListener,
         AdminMovieAdapter.OnMovieDeleteListener,
-        AdminMovieAdapter.OnMovieEditListener  {
+        AdminMovieAdapter.OnMovieEditListener {
 
     private static final String TAG = "AdminActivity";
+    private static final int PERMISSION_REQUEST = 100;
 
     private CustomNavbar customNavbar;
     private RecyclerView categoriesRecyclerView;
@@ -50,23 +47,10 @@ public class AdminActivity extends AppCompatActivity implements
     private FloatingActionButton addCategoryFab;
     private FloatingActionButton addMovieFab;
     private boolean isNavbarVisible = false;
-
     private CategoryAddDialog currentAddDialog;
-
     private MovieViewModel movieViewModel;
-
     private MovieEditDialog dialog;
-
     private ArrayList<String> categories = new ArrayList<>();
-
-
-
-    private static final int PERMISSION_REQUEST = 100;
-
-
-
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,7 +94,6 @@ public class AdminActivity extends AppCompatActivity implements
                 userInfo,
                 this,  // CategoryDeleteListener
                 this,  // CategoryEditListener
-                this::showMovieDetails,  // MovieClickListener
                 this,  // MovieEditListener
                 this   // MovieDeleteListener
         );
@@ -179,11 +162,6 @@ public class AdminActivity extends AppCompatActivity implements
                 if (dialog != null && dialog.isShowing()) {
                     dialog.dismiss();
                 }
-            }
-        });
-
-        movieViewModel.getOperationSuccess().observe(this, success -> {
-            if (success != null && success) {
                 if (currentAddMovieDialog != null && currentAddMovieDialog.isShowing()) {
                     currentAddMovieDialog.handleSaveResult(true, null);
                     Toast.makeText(this, "Movie added successfully", Toast.LENGTH_SHORT).show();
@@ -194,7 +172,6 @@ public class AdminActivity extends AppCompatActivity implements
         });
     }
 
-
     private void showAddCategoryDialog() {
         currentAddDialog = new CategoryAddDialog(this,
                 newCategory -> categoryViewModel.addCategory(
@@ -204,8 +181,6 @@ public class AdminActivity extends AppCompatActivity implements
         );
         currentAddDialog.show();
     }
-
-
 
     @Override
     public void onCategoryDelete(String categoryId) {
@@ -234,7 +209,6 @@ public class AdminActivity extends AppCompatActivity implements
                         userInfo.getUserId()
                 )
         );
-
         currentEditDialog.show();
     }
 
@@ -256,23 +230,7 @@ public class AdminActivity extends AppCompatActivity implements
 
     @Override
     public void onMovieEdit(MovieModel movie) {
-//        dialog = new MovieEditDialog(this, movie,
-//                updatedMovie -> {
-//                    // Update through ViewModel
-//                    movieViewModel.updateMovie(
-//                            updatedMovie.getId(),
-//                            updatedMovie,
-//                            userInfo.getUserId()
-//                    );
-//                });
-//        dialog.show();
-    }
-
-    private void showMovieDetails(MovieModel movie) {
-        Intent intent = new Intent(this, MovieDetailsActivity.class);
-        intent.putExtra("movieDetails", movie);
-        intent.putExtra("USER_INFO", userInfo);
-        startActivity(intent);
+        // Implement if needed
     }
 
     private void redirectToHome() {
@@ -343,6 +301,4 @@ public class AdminActivity extends AppCompatActivity implements
             }
         }
     }
-
-
 }

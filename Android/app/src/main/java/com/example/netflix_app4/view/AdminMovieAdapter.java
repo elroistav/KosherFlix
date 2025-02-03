@@ -37,7 +37,6 @@ public class AdminMovieAdapter extends RecyclerView.Adapter<AdminMovieAdapter.Ad
     private final Context context;
     private final List<MovieModel> movies;
     private final UserInfo userInfo;
-    private final CategoryAdapter.OnMovieClickListener movieClickListener;
     private final MovieApiService apiService;
 
     public interface OnMovieEditListener {
@@ -54,13 +53,11 @@ public class AdminMovieAdapter extends RecyclerView.Adapter<AdminMovieAdapter.Ad
     public AdminMovieAdapter(Context context,
                              List<MovieModel> movies,
                              UserInfo userInfo,
-                             CategoryAdapter.OnMovieClickListener movieClickListener,
                              OnMovieEditListener editListener,
                              OnMovieDeleteListener deleteListener) {
         this.context = context;
         this.movies = movies;
         this.userInfo = userInfo;
-        this.movieClickListener = movieClickListener;
         this.editListener = editListener;
         this.deleteListener = deleteListener;
         this.apiService = RetrofitClient.getRetrofitInstance().create(MovieApiService.class);
@@ -108,11 +105,12 @@ public class AdminMovieAdapter extends RecyclerView.Adapter<AdminMovieAdapter.Ad
                     .placeholder(R.drawable.placeholder_image)
                     .into(movieThumbnail);
 
-            // Setup click listeners
+            // Setup click listeners for viewing movie details
             itemView.setOnClickListener(v -> {
-                if (movieClickListener != null) {
-                    movieClickListener.onMovieClick(movie);
-                }
+                Intent intent = new Intent(context, MovieDetailsActivity.class);
+                intent.putExtra("movieDetails", movie);
+                intent.putExtra("USER_INFO", userInfo);
+                context.startActivity(intent);
             });
 
             editButton.setOnClickListener(v -> {
@@ -124,65 +122,56 @@ public class AdminMovieAdapter extends RecyclerView.Adapter<AdminMovieAdapter.Ad
             deleteButton.setOnClickListener(v -> showDeleteConfirmation(movie));
         }
 
-        private boolean isDialogShowing = false;  // Flag to prevent multiple dialogs from opening
+        private boolean isDialogShowing = false;
 
         private void showDeleteConfirmation(MovieModel movie) {
             if (isDialogShowing) {
-                Log.d("AdminMovieAdapter", "Dialog is already showing, returning.");
+                Log.d(TAG, "Dialog is already showing, returning.");
                 return;
             }
 
             isDialogShowing = true;
-            Log.d("AdminMovieAdapter", "Showing delete confirmation for movie: " + movie.getTitle());
+            Log.d(TAG, "Showing delete confirmation for movie: " + movie.getTitle());
 
             // Hide FAB buttons before showing the dialog
             FloatingActionButton addMovieFab = ((Activity) context).findViewById(R.id.addMovieFab);
             FloatingActionButton addCategoryFab = ((Activity) context).findViewById(R.id.addCategoryFab);
             addMovieFab.setVisibility(View.GONE);
             addCategoryFab.setVisibility(View.GONE);
-            Log.d("AdminMovieAdapter", "FAB buttons hidden.");
+            Log.d(TAG, "FAB buttons hidden.");
 
             AlertDialog deleteDialog = new AlertDialog.Builder(context)
                     .setTitle("Delete Movie")
                     .setMessage("Are you sure you want to delete this movie?")
                     .setPositiveButton("Yes", (dialog, which) -> {
-                        Log.d("AdminMovieAdapter", "Yes clicked for movie: " + movie.getTitle());
+                        Log.d(TAG, "Yes clicked for movie: " + movie.getTitle());
 
-                        // Simulate action delay to ensure the FAB visibility change happens after the dialog action
                         new Handler(Looper.getMainLooper()).postDelayed(() -> {
                             if (deleteListener != null) {
                                 deleteListener.onMovieDelete(movie.getId());
                             }
 
-                            // Show FAB buttons again after the dialog is dismissed
                             addMovieFab.setVisibility(View.VISIBLE);
                             addCategoryFab.setVisibility(View.VISIBLE);
-                            Log.d("AdminMovieAdapter", "FAB buttons visible again.");
+                            Log.d(TAG, "FAB buttons visible again.");
 
-                            // Dismiss the dialog explicitly
                             dialog.dismiss();
-
-                            // Reset the flag after dialog is closed
                             isDialogShowing = false;
-                        }, 200); // Delay of 200ms before performing the action
+                        }, 200);
                     })
                     .setNegativeButton("No", (dialog, which) -> {
-                        Log.d("AdminMovieAdapter", "No clicked for movie: " + movie.getTitle());
-                        isDialogShowing = false;  // Reset flag if canceled
+                        Log.d(TAG, "No clicked for movie: " + movie.getTitle());
+                        isDialogShowing = false;
 
-                        // Show FAB buttons again when dialog is canceled
                         addMovieFab.setVisibility(View.VISIBLE);
                         addCategoryFab.setVisibility(View.VISIBLE);
-                        Log.d("AdminMovieAdapter", "FAB buttons visible again after cancel.");
+                        Log.d(TAG, "FAB buttons visible again after cancel.");
 
-                        // Dismiss the dialog explicitly
                         dialog.dismiss();
                     })
-                    .create(); // Create the dialog explicitly
+                    .create();
             deleteDialog.show();
         }
-
-
     }
 
     public void updateMovies(List<MovieModel> newMovies) {
