@@ -23,6 +23,9 @@ public interface CategoryDao {
     @Query("SELECT * FROM categories WHERE isPromoted = 1")
     @Transaction
     LiveData<List<CategoryWithMovies>> getPromotedCategories();
+
+    @Query("SELECT COUNT(*) FROM movies WHERE id IN (:movieIds)")
+    int getMoviesCount(List<String> movieIds);
 }
 
 

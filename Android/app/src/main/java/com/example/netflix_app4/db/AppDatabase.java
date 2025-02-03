@@ -12,6 +12,9 @@ import java.util.concurrent.Executors;
 public abstract class AppDatabase extends RoomDatabase {
     private static volatile AppDatabase INSTANCE;
 
+    public static final long OPERATION_TIMEOUT_SECONDS = 30;
+
+
     // Create a fixed thread pool to handle database operations
     private static final int NUMBER_OF_THREADS = 4;
     public static final ExecutorService databaseWriteExecutor =

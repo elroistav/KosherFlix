@@ -23,8 +23,12 @@ import com.example.netflix_app4.model.CategoriesResponse;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -55,7 +59,7 @@ public class CategoryRepository {
             @Override
             public void onResponse(Call<CategoriesResponse> call, Response<CategoriesResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    callback.onSuccess(response.body());
+                    fetchMovieDetails(response.body(), userId, callback);
                 } else {
                     callback.onError("Failed to fetch categories.");
                 }
@@ -66,6 +70,37 @@ public class CategoryRepository {
                 callback.onError(t.getMessage());
             }
         });
+    }
+
+    private void fetchMovieDetails(CategoriesResponse response, String userId, CategoryCallback callback) {
+        Set<String> movieIds = new HashSet<>();
+        for (CategoryPromoted category : response.getPromotedCategories()) {
+            movieIds.addAll(category.getMovies());
+        }
+
+        CountDownLatch latch = new CountDownLatch(movieIds.size());
+        AtomicBoolean hasError = new AtomicBoolean(false);
+
+        for (String movieId : movieIds) {
+            apiService.getMovieById(movieId, userId).enqueue(new Callback<MovieModel>() {
+                @Override
+                public void onResponse(Call<MovieModel> call, Response<MovieModel> response) {
+                    if (response.isSuccessful() && response.body() != null) {
+                        // Handle successful response
+                        latch.countDown();
+                    } else {
+                        hasError.set(true);
+                        latch.countDown();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<MovieModel> call, Throwable t) {
+                    hasError.set(true);
+                    latch.countDown();
+                }
+            });
+        }
     }
 
     public void getRandomMovie(Context context, String userId, RandomMovieCallback callback) {

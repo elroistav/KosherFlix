@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 
 import com.example.netflix_app4.db.CategoryEntity;
@@ -33,10 +34,13 @@ import com.example.netflix_app4.db.AppDatabase;
 import com.example.netflix_app4.repository.MovieRepository;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -44,6 +48,8 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 
 public class CategoryViewModel extends AndroidViewModel {
+    private static final String TAG = "CategoryViewModel";
+
     private final MutableLiveData<List<CategoryPromoted>> promotedCategoriesLiveData = new MutableLiveData<>();
     private final MutableLiveData<LastWatched> lastWatchedLiveData = new MutableLiveData<>();
     private final MutableLiveData<MovieModel> randomMovieLiveData = new MutableLiveData<>();
@@ -93,79 +99,107 @@ public class CategoryViewModel extends AndroidViewModel {
 
     public void fetchCategories(String userId) {
         new Handler(Looper.getMainLooper()).post(() -> {
-            LiveData<List<CategoryWithMovies>> cachedCategoriesWithMovies = database.categoryDao().getPromotedCategories();
+            LiveData<List<CategoryWithMovies>> cachedData = database.categoryDao().getPromotedCategories();
 
-            cachedCategoriesWithMovies.observeForever(categoryWithMoviesList -> {
-                if (categoryWithMoviesList != null && !categoryWithMoviesList.isEmpty()) {
-                    List<CategoryPromoted> categories = convertWithMoviesToPromoted(categoryWithMoviesList);
-                    promotedCategoriesLiveData.postValue(categories);
-                } else {
-                    AppDatabase.databaseWriteExecutor.execute(() -> {
-                        categoryRepository.getCategories(userId, new CategoryRepository.CategoryCallback() {
-                            @Override
-                            public void onSuccess(CategoriesResponse response) {
-                                List<CategoryEntity> categoryEntities = convertResponseToEntities(response);
-                                List<CategoryMovieCrossRef> crossRefs = convertResponseToCategoryMovieCrossRefs(response);
-                                List<LastWatchedEntity> lastWatchedEntities = convertLastWatchedToEntities(response.getLastWatched());
+            cachedData.observeForever(new Observer<List<CategoryWithMovies>>() {
+                @Override
+                public void onChanged(List<CategoryWithMovies> categoryWithMoviesList) {
+                    cachedData.removeObserver(this);
 
-                                // Step 1: Get unique movie IDs from response
-                                Set<String> movieIds = new HashSet<>();
-                                for (CategoryPromoted category : response.getPromotedCategories()) {
-                                    movieIds.addAll(category.getMovies());
-                                }
+                    if (categoryWithMoviesList != null && !categoryWithMoviesList.isEmpty()) {
+                        promotedCategoriesLiveData.postValue(convertWithMoviesToPromoted(categoryWithMoviesList));
+                    } else {
+                        fetchFromServer(userId);
+                    }
+                }
+            });
+        });
+    }
 
-                                // Step 2: Query Room for existing movie IDs
-                                List<String> existingMovies = database.movieDao().getExistingMovieIds(new ArrayList<>(movieIds));
-                                movieIds.removeAll(existingMovies); // Keep only missing movies
+    private void fetchFromServer(String userId) {
+        categoryRepository.getCategories(userId, new CategoryRepository.CategoryCallback() {
+            @Override
+            public void onSuccess(CategoriesResponse response) {
+                AppDatabase.databaseWriteExecutor.execute(() -> {
+                    try {
+                        database.runInTransaction(() -> {
+                            // 1. First insert all categories
+                            List<CategoryEntity> categoryEntities = convertResponseToEntities(response);
+                            database.categoryDao().insertCategories(categoryEntities);
 
-                                if (!movieIds.isEmpty()) {
-                                    // Step 3: Fetch missing movie details from API
-                                    movieRepository.getMovieDetails(new ArrayList<>(movieIds), userId, new MovieRepository.MovieDetailsCallback() { // Pass userId here
+                            // 2. Get all movie IDs that need to be fetched
+                            Set<String> movieIds = new HashSet<>();
+                            for (CategoryPromoted category : response.getPromotedCategories()) {
+                                movieIds.addAll(category.getMovies());
+                            }
+
+                            // 3. Check which movies we already have
+                            List<String> existingMovies = database.movieDao().getExistingMovieIds(new ArrayList<>(movieIds));
+                            movieIds.removeAll(existingMovies);
+
+                            // 4. Fetch missing movies
+                            if (!movieIds.isEmpty()) {
+                                CountDownLatch latch = new CountDownLatch(movieIds.size());
+                                List<MovieEntity> newMovies = Collections.synchronizedList(new ArrayList<>());
+
+                                for (String movieId : movieIds) {
+                                    movieRepository.getMovieById(movieId, userId, new MovieRepository.MovieCallback() {
                                         @Override
-                                        public void onSuccess(List<MovieEntity> movies) {
-                                            Log.d("CategoryViewModel", "Fetched missing movies: " + movies);
-                                            AppDatabase.databaseWriteExecutor.execute(() -> {
-                                                database.movieDao().insertMovies(movies);
-                                                database.categoryDao().insertCategories(categoryEntities);
-                                                database.categoryDao().insertCategoryMovieCrossRefs(crossRefs);
-                                                database.lastWatchedDao().insertLastWatched(lastWatchedEntities);
-
-                                                new Handler(Looper.getMainLooper()).post(() -> {
-                                                    promotedCategoriesLiveData.setValue(response.getPromotedCategories());
-                                                    lastWatchedLiveData.setValue(response.getLastWatched());
-                                                });
-                                            });
+                                        public void onSuccess(MovieModel movie) {
+                                            newMovies.add(convertToMovieEntity(movie));
+                                            latch.countDown();
                                         }
 
                                         @Override
                                         public void onError(String error) {
-                                            new Handler(Looper.getMainLooper()).post(() -> errorLiveData.setValue(error));
+                                            latch.countDown();
                                         }
                                     });
-                                } else {
-                                    // If no missing movies, insert categories and update UI
-                                    AppDatabase.databaseWriteExecutor.execute(() -> {
-                                        database.categoryDao().insertCategories(categoryEntities);
-                                        database.categoryDao().insertCategoryMovieCrossRefs(crossRefs);
-                                        database.lastWatchedDao().insertLastWatched(lastWatchedEntities);
-                                    });
+                                }
 
-                                    new Handler(Looper.getMainLooper()).post(() -> {
-                                        promotedCategoriesLiveData.setValue(response.getPromotedCategories());
-                                        lastWatchedLiveData.setValue(response.getLastWatched());
-                                    });
+                                try {
+                                    latch.await(30, TimeUnit.SECONDS);
+                                } catch (InterruptedException e) {
+                                    Log.e(TAG, "Interrupted while waiting for movie fetches", e);
+                                    errorLiveData.postValue("Error fetching movies: " + e.getMessage());
+                                    return;
+                                }
+
+                                // 5. Insert all new movies
+                                if (!newMovies.isEmpty()) {
+                                    database.movieDao().insertMovies(newMovies);
                                 }
                             }
 
-                            @Override
-                            public void onError(String error) {
-                                new Handler(Looper.getMainLooper()).post(() -> errorLiveData.setValue(error));
-                            }
+                            // 6. Finally insert cross references
+                            List<CategoryMovieCrossRef> crossRefs = convertResponseToCategoryMovieCrossRefs(response);
+                            database.categoryDao().insertCategoryMovieCrossRefs(crossRefs);
                         });
-                    });
-                }
-            });
+
+                        // Update UI
+                        new Handler(Looper.getMainLooper()).post(() -> {
+                            promotedCategoriesLiveData.setValue(response.getPromotedCategories());
+                            lastWatchedLiveData.setValue(response.getLastWatched());
+                        });
+                    } catch (Exception e) {
+                        errorLiveData.postValue("Error saving data: " + e.getMessage());
+                    }
+                });
+            }
+
+            @Override
+            public void onError(String error) {
+                errorLiveData.postValue(error);
+            }
         });
+    }
+
+    private MovieEntity convertToMovieEntity(MovieModel movie) {
+        return new MovieEntity(
+                movie.getId(),
+                movie.getTitle(),
+                movie.getThumbnail()
+        );
     }
 
 
