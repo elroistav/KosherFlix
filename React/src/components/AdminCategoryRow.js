@@ -13,6 +13,9 @@ function AdminCategoryRow({ category, onMovieClick, onMovieUpdate, onMovieDelete
     const [error, setError] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false); // Added state for modal
     const [categoryData, setCategoryData] = useState(category); // Added state for category
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
+    
 
     useEffect(() => { // Added useEffect to update category
         setCategoryData(category);

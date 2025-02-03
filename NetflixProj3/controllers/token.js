@@ -6,6 +6,7 @@ const key = "Some super secret key shhhhhhhhhhhhhhhhh!!!!!"
 
 // Login
 const login = async (req, res) => {
+    console.log('start login try. The request body is: ' + JSON.stringify(req.body));
     const user = await tokenService.login(req.body.userName, req.body.password);
     if (!user) {
         return res.status(401).json({ error: 'Invalid details' });

@@ -221,59 +221,76 @@ const shuffleArray = array => {
 // Update a movie
 const updateMovie = async (headers, id, movieData) => {
     try {
+        console.log("Starting movie update process...");
+
         await validateUserId(headers);
-        const userId = headers['user-id'];
-        // 1. Initial input validation
-        if (!id || !movieData) {
-            throw new Error('Movie ID and complete movie data are required');
-        }
-        const command = await deleteToString(userId, id);
+        console.log("User ID validated successfully.");
 
-        // 2. Schema validation
-        const requiredFields = Object.keys(Movie.schema.paths).filter(
-            path => Movie.schema.paths[path].isRequired
-        );
-
-        const missingFields = requiredFields.filter(field => movieData[field] === undefined);
-        if (missingFields.length > 0) {
-            throw new Error(`Missing required fields: ${missingFields.join(', ')}`);
-        }
-
-        // 3. Check if movie exists
+        // Check if movie exists
         const existingMovie = await Movie.findById(id);
-        const intId = existingMovie.intId;
         if (!existingMovie) {
             throw new Error('Movie not found');
         }
 
-        // 4. Handle category updates 
-        
-        await removeUpdateCategoriesArray(existingMovie.categories, id);
-        await addUpdateCategoriesArray(movieData.categories, id);
-
-        await removeFromWatchedMovies(id);
-
-        await sendToServer(command);
-        
-
-        // 5. Replace the document
-        const result = await Movie.replaceOne(
-            { _id: id },
-            { ...movieData, intId },
-            { runValidators: true }
+        // Check if required fields are present
+        const requiredFields = Object.keys(Movie.schema.paths).filter(
+            path => Movie.schema.paths[path].isRequired // Check if the field is required
         );
 
-        if (result.modifiedCount === 0) {
+        const missingFields = requiredFields.filter(field => 
+            field !== 'thumbnail' && 
+            field !== 'videoUrl' && 
+            movieData[field] === undefined
+        );
+
+        if (missingFields.length > 0) {
+            console.log(`Missing required fields: ${missingFields.join(', ')}`);
+            throw new Error(`Missing required fields: ${missingFields.join(', ')}`);
+        }
+        console.log("All required fields are present.");
+
+        // Update movie data
+        const updatedMovieData = {
+            ...movieData,
+            intId: existingMovie.intId // Keep the original intId
+        };
+
+        // Remove existing category associations
+        await removeUpdateCategoriesArray(existingMovie.categories, id);
+        
+        // Add new category associations
+        await addUpdateCategoriesArray(movieData.categories, id);
+        console.log("Categories updated successfully.");
+
+        // Remove from watched movies and send server command
+        await removeFromWatchedMovies(id);
+        const userId = headers['user-id'];
+        const command = await deleteToString(userId, id);
+        await sendToServer(command);
+
+        // Update the movie document
+        const updatedMovie = await Movie.findByIdAndUpdate(
+            id, 
+            updatedMovieData, 
+            { 
+                new: true, // Return the updated document
+                runValidators: true // Run schema validation
+            }
+        ).populate('categories');
+
+        if (!updatedMovie) {
             throw new Error('Update failed');
         }
-        // 6. Return updated document
-        return await Movie.findById(id).populate('categories');
-        
+
+        console.log("Movie updated successfully:", updatedMovie);
+        return updatedMovie;
+
     } catch (error) {
         console.log('Error updating movie:', error.message);
         throw error;
     }
 };
+
 
 // Delete a movie
 const deleteMovie = async (headers, id) => {
@@ -361,20 +378,21 @@ const deleteToString = async (userHexId, movieHexId) => {
 };
 
 const convertIntIdsToHexIds = async (intIds) => {
-    try {
-        const hexIds = [];
-        for (const intId of intIds) {
+    const hexIds = [];
+    
+    for (const intId of intIds) {
+        try {
             const movie = await Movie.findOne({ intId });
-            if (!movie) {
-                throw new Error(`Movie with intId ${intId} not found`);
+            if (movie) {
+                hexIds.push(movie._id);
             }
-            hexIds.push(movie._id);
+        } catch (error) {
+            console.warn(`Error processing movie with intId ${intId}:`, error.message);
+            continue;
         }
-        return hexIds;
-    } catch (error) {
-        console.log('Error converting intIds to hexIds:', error.message);
-        throw error;
     }
+    
+    return hexIds;
 };
 
 const hexUserToDec = async (hexId) => {
