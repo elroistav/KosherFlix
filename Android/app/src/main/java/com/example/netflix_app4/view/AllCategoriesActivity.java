@@ -71,7 +71,7 @@ public class AllCategoriesActivity extends AppCompatActivity {
         categoriesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         // הגדרת האדפטר
-        categoryAdapter = new CategoryAdapter(this, new ArrayList<>(), this::showMoviePopup, userInfo);
+        categoryAdapter = new CategoryAdapter(this, new ArrayList<>(), userInfo);
         categoriesRecyclerView.setAdapter(categoryAdapter);
 
         // אתחול הצפייה במידע

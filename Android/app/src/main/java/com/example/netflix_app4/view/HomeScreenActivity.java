@@ -38,6 +38,7 @@ import com.example.netflix_app4.model.MovieModel;
 import com.example.netflix_app4.model.UserInfo;
 import com.example.netflix_app4.network.MovieApiService;
 import com.example.netflix_app4.network.RetrofitClient;
+import com.example.netflix_app4.repository.MovieRepository;
 import com.example.netflix_app4.viewmodel.CategoryViewModel;
 import com.example.netflix_app4.viewmodel.HomeScreenViewModel;
 
@@ -68,7 +69,8 @@ public class HomeScreenActivity extends AppCompatActivity {
     private Button playButton;
     private Button infoButton;
     private FrameLayout moviePlayerWrapper;
-
+    private LastWatchedAdapter lastWatchedAdapter;
+    private MovieRepository movieRepository;
     private Button navbarToggleButton;
     private boolean isNavbarVisible = false;
 
@@ -79,41 +81,43 @@ public class HomeScreenActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_screen);
 
+        // Initialize repository
+        movieRepository = MovieRepository.getInstance();
+
+        // Initialize navbar
         customNavbar = findViewById(R.id.custom_navbar);
-        customNavbar.setVisibility(View.GONE);  //
+        customNavbar.setVisibility(View.GONE);
         navbarToggleButton = findViewById(R.id.navbarToggleButton);
         navbarToggleButton.setOnClickListener(v -> toggleNavbar());
 
-        // יצירת ViewModel
+        // Initialize ViewModels
         categoryViewModel = new ViewModelProvider(this).get(CategoryViewModel.class);
-
-        // אתחול ה-CustomNavbar
-        customNavbar = findViewById(R.id.custom_navbar);
         customNavbar.initializeCategoryViewModel(categoryViewModel);
 
-
+        // Check token
         String token = getIntent().getStringExtra("USER_TOKEN");
         if (token == null) {
             redirectToLogin();
             return;
         }
 
-        // Initialize views - keeping your original initialization
+        // Initialize views
         movieTitle = findViewById(R.id.movieTitle);
         movieDescription = findViewById(R.id.movieDescription);
         playButton = findViewById(R.id.playButton);
         infoButton = findViewById(R.id.infoButton);
         moviePlayerWrapper = findViewById(R.id.moviePlayerWrapper);
 
+        // Setup RecyclerViews
         categoriesRecyclerView = findViewById(R.id.categoriesRecyclerView);
         categoriesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
+        RecyclerView lastWatchedRecyclerView = findViewById(R.id.lastWatchedRecyclerView);
+        lastWatchedRecyclerView.setLayoutManager(new LinearLayoutManager(this,
+                LinearLayoutManager.HORIZONTAL, false));
 
-
-        // Initialize ViewModels
+        // Initialize ViewModels and observe
         setupViewModels();
-
-        // Observe ViewModels after setting them up
         observeViewModels();
 
         // Validate token and fetch data
@@ -129,14 +133,46 @@ public class HomeScreenActivity extends AppCompatActivity {
         // Token validation
         viewModel.getUserInfo().observe(this, userInfo -> {
             if (userInfo != null) {
-                // Once token is validated, fetch the data
+                this.userInfo = userInfo;  // Store userInfo
+                Log.d(TAG, "User info received: " + userInfo.getUserId());
+
+                // Update UI and fetch data
                 updateUIWithUserInfo(userInfo);
                 categoryViewModel.fetchCategories(userInfo.getUserId());
                 categoryViewModel.fetchRandomMovie(this, userInfo.getUserId());
 
-                // Set up adapter for categories
-                categoryAdapter = new CategoryAdapter(this, new ArrayList<>(), this::showMoviePopup, userInfo);
+                // Set up adapters
+                categoryAdapter = new CategoryAdapter(this, new ArrayList<>(), userInfo);
+                lastWatchedAdapter = new LastWatchedAdapter(this, new ArrayList<>(), userInfo);
+
+                // Set adapters to RecyclerViews
                 categoriesRecyclerView.setAdapter(categoryAdapter);
+                RecyclerView lastWatchedRecyclerView = findViewById(R.id.lastWatchedRecyclerView);
+                lastWatchedRecyclerView.setAdapter(lastWatchedAdapter);
+
+                // Add last watched observer
+                categoryViewModel.getLastWatchedLiveData().observe(this, lastWatched -> {
+                    if (lastWatched != null && lastWatched.getMovies() != null) {
+                        Log.d(TAG, "Last watched movies received: " + lastWatched.getMovies().size());
+                        List<MovieModel> movieDetailsList = new ArrayList<>();
+                        for (String movieId : lastWatched.getMovies()) {
+                            movieRepository.getMovieById(movieId, userInfo.getUserId(), new MovieRepository.MovieCallback() {
+                                @Override
+                                public void onSuccess(MovieModel movie) {
+                                    movieDetailsList.add(movie);
+                                    if (movieDetailsList.size() == lastWatched.getMovies().size()) {
+                                        runOnUiThread(() -> lastWatchedAdapter.updateData(movieDetailsList));
+                                    }
+                                }
+
+                                @Override
+                                public void onError(String error) {
+                                    Log.e(TAG, "Error fetching movie details: " + error);
+                                }
+                            });
+                        }
+                    }
+                });
 
                 if (customNavbar != null) {
                     customNavbar.setUserDetails(new UserInfo(
@@ -146,8 +182,6 @@ public class HomeScreenActivity extends AppCompatActivity {
                             userInfo.getToken(),
                             userInfo.isAdmin()
                     ));
-
-                    //customNavbar.setupEventListeners();
                 }
             }
         });
@@ -166,6 +200,7 @@ public class HomeScreenActivity extends AppCompatActivity {
                 infoButton.setOnClickListener(v -> {
                     Intent intent = new Intent(HomeScreenActivity.this, MovieDetailsActivity.class);
                     intent.putExtra("movieDetails", movie);
+                    intent.putExtra("USER_INFO", userInfo);
                     startActivity(intent);
                 });
 
@@ -197,10 +232,8 @@ public class HomeScreenActivity extends AppCompatActivity {
     private void updateUIWithUserInfo(UserInfo userInfo) {
         TextView welcomeText = findViewById(R.id.welcomeText);
         welcomeText.setText(getString(R.string.welcome_message, userInfo.getName()));
-        // Add any other UI updates based on user info
     }
 
-    // Your existing methods remain unchanged
     private void updateMovieUI(MovieModel movie) {
         movieTitle.setText(movie.getTitle());
         movieDescription.setText(movie.getDescription());
@@ -250,7 +283,6 @@ public class HomeScreenActivity extends AppCompatActivity {
             return true;
         });
     }
-
     private void adjustVideoViewSize(VideoView videoView, MediaPlayer mp) {
         int videoWidth = mp.getVideoWidth();
         int videoHeight = mp.getVideoHeight();
@@ -266,24 +298,11 @@ public class HomeScreenActivity extends AppCompatActivity {
         videoView.setLayoutParams(layoutParams);
     }
 
-    public void showMoviePopup(MovieModel movie) {
-        Dialog dialog = new Dialog(this);
-        dialog.setContentView(R.layout.movie_details);
-        Objects.requireNonNull(dialog.getWindow()).setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-
-        TextView movieTitle = dialog.findViewById(R.id.movieTitle);
-        TextView movieDescription = dialog.findViewById(R.id.movieDescription);
-        Button watchButton = dialog.findViewById(R.id.watchButton);
-
-        movieTitle.setText(movie.getTitle());
-        movieDescription.setText(movie.getDescription());
-
-        watchButton.setOnClickListener(v -> {
-            Toast.makeText(this, "Watch Movie feature coming soon!", Toast.LENGTH_SHORT).show();
-        });
-
-        dialog.show();
+    private void showMoviePopup(MovieModel movie) {
+        Intent intent = new Intent(this, MovieDetailsActivity.class);
+        intent.putExtra("movieDetails", movie);
+        intent.putExtra("USER_INFO", userInfo);
+        startActivity(intent);
     }
 
     private void redirectToLogin() {
@@ -311,4 +330,6 @@ public class HomeScreenActivity extends AppCompatActivity {
                     .start();
         }
     }
+
+
 }

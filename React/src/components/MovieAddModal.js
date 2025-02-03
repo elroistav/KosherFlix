@@ -88,12 +88,12 @@ const MovieAddModal = ({ isOpen, onClose, onSave, error: propError, userInfo }) 
             console.log("videoUrlName", formData.videoUrl.name);
             // Add files
             if (formData.thumbnail) {
-                formDataToSend.append('thumbnail', 'uploads/' + formData.thumbnail.name);
+                formDataToSend.append('thumbnail', formData.thumbnail);
             }
 
             if (formData.videoUrl) {
-                formDataToSend.append('videoUrl', 'uploads/' + formData.videoUrl.name);
-            }
+                formDataToSend.append('videoUrl', formData.videoUrl);
+            }
 
             // Add other fields like cast, subtitles, categories
             formData.cast.forEach((castMember) => formDataToSend.append('cast[]', castMember));
