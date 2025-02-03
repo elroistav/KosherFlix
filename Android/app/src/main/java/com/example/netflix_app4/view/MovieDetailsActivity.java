@@ -24,13 +24,14 @@ import java.io.IOException;
 import java.util.Properties;
 
 
-
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.netflix_app4.R;
+import com.example.netflix_app4.model.CategoryModel;
 import com.example.netflix_app4.model.MovieModel;
 import com.example.netflix_app4.model.UserInfo;
 import com.example.netflix_app4.network.Config;
@@ -154,27 +155,54 @@ public class MovieDetailsActivity extends AppCompatActivity {
     }
 
     private void setupMovieDetails(MovieModel movie) {
-        // Play the video at the top
-        if (movie.getVideoUrl() != null) {
-            playVideo(movie.getVideoUrl());
-        } else {
-            Toast.makeText(this, "No video available", Toast.LENGTH_SHORT).show();
-        }
-
         // Set the movie title and description
         movieTitle.setText(movie.getTitle());
         movieDescription.setText(movie.getDescription());
 
-        // Populate the grid with additional info
-        addInfoToGrid("Length", movie.getLength() + " minutes");
-        addInfoToGrid("Director", movie.getDirector());
-        addInfoToGrid("Language", movie.getLanguage());
-        addInfoToGrid("Release Date", movie.getReleaseDate());
-    }
+        // Clear previous info from grid
+        movieInfoGrid.removeAllViews();
 
+        // Basic Information
+        if (movie.getRating() > 0) {
+            addInfoToGrid("Rating", String.format(Locale.getDefault(), "%.1f/10", movie.getRating()));
+        }
+
+        addInfoToGrid("Length", movie.getLength() + " minutes");
+
+        if (movie.getDirector() != null && !movie.getDirector().isEmpty()) {
+            addInfoToGrid("Director", movie.getDirector());
+        }
+
+        if (movie.getLanguage() != null && !movie.getLanguage().isEmpty()) {
+            addInfoToGrid("Language", movie.getLanguage());
+        }
+
+        // Categories
+        if (movie.getCategories() != null && !movie.getCategories().isEmpty()) {
+            StringBuilder categories = new StringBuilder();
+            for (int i = 0; i < movie.getCategories().size(); i++) {
+                if (i > 0) categories.append(", ");
+                categories.append(movie.getCategories().get(i).getName());
+            }
+            addInfoToGrid("Categories", categories.toString());
+        }
+
+        // Release Date
+        if (movie.getReleaseDate() != null && !movie.getReleaseDate().isEmpty()) {
+            addInfoToGrid("Release Date", movie.getReleaseDate());
+        }
+
+        // Video playback
+        if (movie.getVideoUrl() != null && !movie.getVideoUrl().isEmpty()) {
+            playVideo(movie.getVideoUrl());
+        } else {
+            videoView.setVisibility(View.GONE);
+        }
+    }
     private void fetchRecommendations(String movieId) {
         recommendationAdapter = new RecommendationAdapter(this);
-        recommendationRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        recommendationRecyclerView.setLayoutManager(new LinearLayoutManager(this,
+                LinearLayoutManager.HORIZONTAL, false));
         recommendationRecyclerView.setAdapter(recommendationAdapter);
 
         // Make a GET request
@@ -208,14 +236,14 @@ public class MovieDetailsActivity extends AppCompatActivity {
         for (String movieId : movieIds) {
             apiService.getMovieById(movieId, userId).enqueue(new Callback<MovieModel>() {
                 @Override
-                public void onResponse(Call<MovieModel> call, Response<MovieModel> response) {
+                public void onResponse(@NonNull Call<MovieModel> call, @NonNull Response<MovieModel> response) {
                     if (response.isSuccessful() && response.body() != null) {
                         recommendationAdapter.addMovie(response.body());
                     }
                 }
 
                 @Override
-                public void onFailure(Call<MovieModel> call, Throwable t) {
+                public void onFailure(@NonNull Call<MovieModel> call, Throwable t) {
                     Log.e("Recommendations", "Failed to fetch movie details: " + t.getMessage());
                 }
             });
@@ -225,15 +253,13 @@ public class MovieDetailsActivity extends AppCompatActivity {
     private void addInfoToGrid(String label, String value) {
         if (value == null || value.trim().isEmpty()) {
             Log.d("addInfoToGrid", "Skipped adding: " + label + " because value is empty or null.");
-            return; // Skip empty or null values
+            return;
         }
-        Log.d("addInfoToGrid", "Adding to grid - " + label + ": " + value);
 
-        // Create a new LinearLayout for the info card
         LinearLayout infoCard = new LinearLayout(this);
         infoCard.setOrientation(LinearLayout.VERTICAL);
         infoCard.setBackgroundResource(R.drawable.card_background);
-        infoCard.setPadding(16, 16, 16, 16);
+        infoCard.setPadding(24, 20, 24, 20); // Increased padding
 
         // Label TextView
         TextView labelView = new TextView(this);
@@ -242,26 +268,27 @@ public class MovieDetailsActivity extends AppCompatActivity {
         labelView.setTextSize(12);
         labelView.setTypeface(null, Typeface.BOLD);
         labelView.setGravity(Gravity.CENTER);
+        labelView.setAlpha(0.8f); // Slightly dimmed label
 
-        // Value TextView
+        // Value TextView with improved styling
         TextView valueView = new TextView(this);
         valueView.setText(value);
         valueView.setTextColor(Color.WHITE);
         valueView.setTextSize(16);
         valueView.setGravity(Gravity.CENTER);
+        valueView.setLineSpacing(0, 1.2f); // Add line spacing for better readability
+        valueView.setPadding(0, 8, 0, 0); // Add space between label and value
 
-        // Add label and value to the info card
         infoCard.addView(labelView);
         infoCard.addView(valueView);
 
-        // Set GridLayout parameters for the card
         GridLayout.LayoutParams params = new GridLayout.LayoutParams();
-        params.setMargins(16, 16, 16, 16);
-        params.columnSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f); // Take up one column
-        params.rowSpec = GridLayout.spec(GridLayout.UNDEFINED); // Automatically move to the next row if needed
+        params.setMargins(8, 8, 8, 8);
+        params.columnSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f);
+        params.rowSpec = GridLayout.spec(GridLayout.UNDEFINED);
+        params.setGravity(Gravity.FILL_HORIZONTAL);
         infoCard.setLayoutParams(params);
 
-        // Add the card to the GridLayout
         movieInfoGrid.addView(infoCard);
     }
 }

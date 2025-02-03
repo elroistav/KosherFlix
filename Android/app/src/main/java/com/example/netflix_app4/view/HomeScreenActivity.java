@@ -80,9 +80,8 @@ public class HomeScreenActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_screen);
 
-        // Initialize repository and adapter
+        // Initialize repository
         movieRepository = MovieRepository.getInstance();
-        lastWatchedAdapter = new LastWatchedAdapter(this, new ArrayList<>(), this::showMoviePopup);
 
         // Initialize navbar
         customNavbar = findViewById(R.id.custom_navbar);
@@ -119,7 +118,6 @@ public class HomeScreenActivity extends AppCompatActivity {
         RecyclerView lastWatchedRecyclerView = findViewById(R.id.lastWatchedRecyclerView);
         lastWatchedRecyclerView.setLayoutManager(new LinearLayoutManager(this,
                 LinearLayoutManager.HORIZONTAL, false));
-        lastWatchedRecyclerView.setAdapter(lastWatchedAdapter);
 
 
         // Initialize ViewModels
@@ -143,15 +141,22 @@ public class HomeScreenActivity extends AppCompatActivity {
         // Token validation
         viewModel.getUserInfo().observe(this, userInfo -> {
             if (userInfo != null) {
+                this.userInfo = userInfo;  // Store userInfo
                 Log.d(TAG, "User info received: " + userInfo.getUserId());
-                // Once token is validated, fetch the data
+
+                // Update UI and fetch data
                 updateUIWithUserInfo(userInfo);
                 categoryViewModel.fetchCategories(userInfo.getUserId());
                 categoryViewModel.fetchRandomMovie(this, userInfo.getUserId());
 
-                // Set up adapter for categories
-                categoryAdapter = new CategoryAdapter(this, new ArrayList<>(), this::showMoviePopup, userInfo);
+                // Set up adapters
+                categoryAdapter = new CategoryAdapter(this, new ArrayList<>(), userInfo);
+                lastWatchedAdapter = new LastWatchedAdapter(this, new ArrayList<>(), userInfo);
+
+                // Set adapters to RecyclerViews
                 categoriesRecyclerView.setAdapter(categoryAdapter);
+                RecyclerView lastWatchedRecyclerView = findViewById(R.id.lastWatchedRecyclerView);
+                lastWatchedRecyclerView.setAdapter(lastWatchedAdapter);
 
                 // Add last watched observer
                 categoryViewModel.getLastWatchedLiveData().observe(this, lastWatched -> {
@@ -205,6 +210,7 @@ public class HomeScreenActivity extends AppCompatActivity {
                 infoButton.setOnClickListener(v -> {
                     Intent intent = new Intent(HomeScreenActivity.this, MovieDetailsActivity.class);
                     intent.putExtra("movieDetails", movie);
+                    intent.putExtra("USER_INFO", userInfo);
                     startActivity(intent);
                 });
 
@@ -305,24 +311,11 @@ public class HomeScreenActivity extends AppCompatActivity {
         videoView.setLayoutParams(layoutParams);
     }
 
-    public void showMoviePopup(MovieModel movie) {
-        Dialog dialog = new Dialog(this);
-        dialog.setContentView(R.layout.movie_details);
-        Objects.requireNonNull(dialog.getWindow()).setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-
-        TextView movieTitle = dialog.findViewById(R.id.movieTitle);
-        TextView movieDescription = dialog.findViewById(R.id.movieDescription);
-        Button watchButton = dialog.findViewById(R.id.watchButton);
-
-        movieTitle.setText(movie.getTitle());
-        movieDescription.setText(movie.getDescription());
-
-        watchButton.setOnClickListener(v -> {
-            Toast.makeText(this, "Watch Movie feature coming soon!", Toast.LENGTH_SHORT).show();
-        });
-
-        dialog.show();
+    private void showMoviePopup(MovieModel movie) {
+        Intent intent = new Intent(this, MovieDetailsActivity.class);
+        intent.putExtra("movieDetails", movie);
+        intent.putExtra("USER_INFO", userInfo);
+        startActivity(intent);
     }
 
     private void redirectToLogin() {

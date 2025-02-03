@@ -38,11 +38,16 @@ const createMovie = async (req, res) => {
         const { title, description, categories, length, director, releaseDate, language } = req.body;
         console.log('Received body data:', { title, description, categories, length, director, releaseDate, language });
 
+        console.log('Files in request:', req.files);
+
 
         // const videoUrl = req.files?.videoUrl ? `http://localhost:4000/uploads/${req.files.videoUrl[0].filename}` : null;
         // const thumbnail = req.files?.thumbnail ? `http://localhost:4000/uploads/${req.files.thumbnail[0].filename}` : null;
-        const videoUrl = req.body.videoUrl;
-        const thumbnail = req.body.thumbnail;
+        // const videoUrl = req.body.videoUrl;
+        // const thumbnail = req.body.thumbnail;
+        const videoUrl = req.files?.videoUrl ? `uploads/${req.files.videoUrl[0].filename}` : null;
+        const thumbnail = req.files?.thumbnail ? `uploads/${req.files.thumbnail[0].filename}` : null;
+
 
         console.log('File paths:', { videoUrl, thumbnail });
 
@@ -133,25 +138,60 @@ const getMovies = async (req, res) => {
 };
 // Update a movie by ID
 const updateMovie = async (req, res) => {
-    try {
-        const movie = await movieService.updateMovie(req.headers, req.params.id, req.body);
-        res.status(204).send();
-    } catch (error) {
-        if (error.message === 'No user ID found in headers' || error.message === 'Invalid user ID') {
-            return res.status(401).json({ error: error.message });
+    console.log('Updating movie...');
+    upload(req, res, async (err) => {
+        if (err) {
+            console.error('File upload failed:', err);
+            return res.status(400).json({ error: 'File upload failed' });
         }
-        if(error.message.includes("Missing required fields") || error.message.includes("Movie ID and complete movie data are required") || error.message.includes("Update failed")) {
-            return res.status(400).json({ error: error.message });
+
+        const { title, description, categories, length, director, releaseDate, language } = req.body;
+        console.log('Received body data:', { title, description, categories, length, director, releaseDate, language });
+
+        console.log('Files in request:', req.files);
+
+        // Generate file paths similar to create movie
+        const videoUrl = req.files?.videoUrl ? `uploads/${req.files.videoUrl[0].filename}` : null;
+        const thumbnail = req.files?.thumbnail ? `uploads/${req.files.thumbnail[0].filename}` : null;
+
+        console.log('File paths:', { videoUrl, thumbnail });
+
+        try {
+            console.log('Calling movieService.updateMovie...');
+            const movie = await movieService.updateMovie(req.headers, req.params.id, {
+                title,
+                description,
+                categories,
+                length,
+                director,
+                releaseDate,
+                language,
+                videoUrl, // movie file path
+                thumbnail // cover image path
+            });
+
+            console.log('Movie updated successfully:', movie);
+
+            return res.status(204).send(); // No content for successful update
+        } catch (error) {
+            console.error('Error occurred during movie update:', error);
+            if (error.message === 'No user ID found in headers' || error.message === 'Invalid user ID') {
+                return res.status(401).json({ error: error.message });
+            }
+            if (error.message.includes("Missing required fields")) {
+                return res.status(400).json({ error: error.message });
+            }
+            if (error.message.includes("Category with ID")) {
+                return res.status(404).json({ error: error.message });
+            }
+            if (error.message.includes("Movie not found")) {
+                return res.status(404).json({ error: error.message });
+            } else {
+                console.error('Unexpected error:', error);
+                return res.status(500).json({ error: 'An unexpected error occurred.' });
+            }
         }
-        if(error.message.includes("Movie not found") || error.message.includes("Category with ID")) {
-            return res.status(404).json({ error: error.message });
-        }
-        else {
-            // Default error handler for unexpected errors
-            console.error('Unexpected error:', error);
-            res.status(500).json({ error: 'An unexpected error occurred.' });
-        }
-    }
+    });
 };
 
 // Delete a movie by ID 

@@ -5,12 +5,15 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.provider.OpenableColumns;
 
+import com.example.netflix_app4.model.CategoriesListResponse;
+import com.example.netflix_app4.model.CategoryModel;
+import com.example.netflix_app4.model.MovieModel;
 import com.example.netflix_app4.db.MovieEntity;
 import com.example.netflix_app4.model.CategoriesResponse;
 import com.example.netflix_app4.network.MovieApiService;
 import com.example.netflix_app4.network.RetrofitClient;
-import com.example.netflix_app4.model.MovieModel;
-import com.google.gson.Gson;
+
+import org.json.JSONArray;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -19,6 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -120,6 +125,12 @@ public class MovieRepository {
 
     public interface MovieOperationCallback {
         void onSuccess();
+        void onError(String error);
+    }
+
+    // Get categories
+    public interface CategoryConversionCallback {
+        void onSuccess(List<String> categoryIds);
         void onError(String error);
     }
 

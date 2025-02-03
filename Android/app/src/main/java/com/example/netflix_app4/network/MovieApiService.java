@@ -83,7 +83,7 @@ public interface MovieApiService {
             @Part("director") RequestBody director,
             @Part("releaseDate") RequestBody releaseDate,
             @Part("language") RequestBody language,
-            @Part("categories") RequestBody categories,
+            @Part("categories[]") List<RequestBody> categories,
             @Part MultipartBody.Part thumbnail,
             @Part MultipartBody.Part videoUrl,
             @Header("user-id") String userId
@@ -100,10 +100,12 @@ public interface MovieApiService {
             @Part("director") RequestBody director,
             @Part("releaseDate") RequestBody releaseDate,
             @Part("language") RequestBody language,
+            @Part("categories[]") List<RequestBody> categories,
             @Part MultipartBody.Part thumbnail,
             @Part MultipartBody.Part video,
             @Header("user-id") String userId
     );
+    //.
 
 
 }

@@ -1,25 +1,16 @@
 package com.example.netflix_app4.view;
 
-import android.app.Dialog;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.media.MediaPlayer;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.VideoView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.netflix_app4.R;
@@ -33,7 +24,6 @@ import com.example.netflix_app4.viewmodel.CategoryViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -49,9 +39,8 @@ public class CategoryMoviesActivity extends AppCompatActivity {
     private Button navbarToggleButton;
     private boolean isNavbarVisible = false;
     private TextView categoryTitleTextView;
-
     private UserInfo userInfo;
-
+    private List<MovieModel> movieDetails = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,10 +59,7 @@ public class CategoryMoviesActivity extends AppCompatActivity {
         setupNavbar(userInfo);
         setupRecyclerView();
 
-        // נציג את שם הקטגוריה
         categoryTitleTextView.setText(category.getName());
-
-        // נביא את הסרטים של הקטגוריה
         fetchMoviesForCategory(category, userInfo.getUserId());
     }
 
@@ -95,7 +81,7 @@ public class CategoryMoviesActivity extends AppCompatActivity {
     private void setupRecyclerView() {
         GridLayoutManager layoutManager = new GridLayoutManager(this, 2);
         moviesRecyclerView.setLayoutManager(layoutManager);
-        movieAdapter = new MovieAdapter(this, new ArrayList<>(), userInfo, this::showMoviePopup);
+        movieAdapter = new MovieAdapter(this, movieDetails, userInfo);
         moviesRecyclerView.setAdapter(movieAdapter);
     }
 
@@ -105,7 +91,6 @@ public class CategoryMoviesActivity extends AppCompatActivity {
             return;
         }
 
-        List<MovieModel> movieDetails = new ArrayList<>();
         MovieApiService apiService = RetrofitClient.getRetrofitInstance().create(MovieApiService.class);
 
         for (String movieId : movieIds) {
@@ -114,7 +99,11 @@ public class CategoryMoviesActivity extends AppCompatActivity {
                 public void onResponse(Call<MovieModel> call, Response<MovieModel> response) {
                     if (response.isSuccessful() && response.body() != null) {
                         movieDetails.add(response.body());
-                        movieAdapter.updateMovies(movieDetails);
+                        // Create new adapter instance with updated list
+                        movieAdapter = new MovieAdapter(CategoryMoviesActivity.this,
+                                new ArrayList<>(movieDetails),
+                                userInfo);
+                        moviesRecyclerView.setAdapter(movieAdapter);
                     }
                 }
 
@@ -151,25 +140,5 @@ public class CategoryMoviesActivity extends AppCompatActivity {
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         finish();
-    }
-
-    public void showMoviePopup(MovieModel movie) {
-        Dialog dialog = new Dialog(this);
-        dialog.setContentView(R.layout.movie_details);
-        Objects.requireNonNull(dialog.getWindow()).setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-
-        TextView movieTitle = dialog.findViewById(R.id.movieTitle);
-        TextView movieDescription = dialog.findViewById(R.id.movieDescription);
-        Button watchButton = dialog.findViewById(R.id.watchButton);
-
-        movieTitle.setText(movie.getTitle());
-        movieDescription.setText(movie.getDescription());
-
-        watchButton.setOnClickListener(v -> {
-            Toast.makeText(this, "Watch Movie feature coming soon!", Toast.LENGTH_SHORT).show();
-        });
-
-        dialog.show();
     }
 }
