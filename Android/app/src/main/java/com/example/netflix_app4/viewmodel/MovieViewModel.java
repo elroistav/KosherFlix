@@ -54,25 +54,26 @@ public class MovieViewModel extends ViewModel {
         });
     }
 
-    // Original update movie without files
-    public void updateMovie(String movieId, MovieModel movie, String userId) {
-        movieRepository.updateMovie(movieId, movie, userId, new MovieRepository.MovieOperationCallback() {
-            @Override
-            public void onSuccess() {
-                operationSuccessLiveData.postValue(true);
-            }
+    public void updateMovie(String movieId, MovieModel movie, List<String> categories, Uri thumbnailUri, Uri videoUri, String userId, Context context) {
+        movieRepository.updateMovie(movieId, movie, categories, thumbnailUri, videoUri, userId, context,
+                new MovieRepository.MovieCallback() {
+                    @Override
+                    public void onSuccess(MovieModel updatedMovie) {
+                        movieLiveData.postValue(updatedMovie);
+                        operationSuccessLiveData.postValue(true);
+                    }
 
-            @Override
-            public void onError(String error) {
-                errorLiveData.postValue(error);
-                operationSuccessLiveData.postValue(false);
-            }
-        });
+                    @Override
+                    public void onError(String error) {
+                        errorLiveData.postValue(error);
+                        operationSuccessLiveData.postValue(false);
+                    }
+                });
     }
 
     // New update movie with files
     public void updateMovieWithFiles(String movieId, MovieModel movie, Uri thumbnailUri, Uri videoUri, String userId, Context context) {
-        movieRepository.updateMovie(movieId, movie, thumbnailUri, videoUri, userId, context, new MovieRepository.MovieCallback() {
+        /*movieRepository.updateMovie(movieId, movie, thumbnailUri, videoUri, userId, context, new MovieRepository.MovieCallback() {
             @Override
             public void onSuccess(MovieModel movie) {
                 movieLiveData.postValue(movie);
@@ -84,7 +85,7 @@ public class MovieViewModel extends ViewModel {
                 errorLiveData.postValue(error);
                 operationSuccessLiveData.postValue(false);
             }
-        });
+        });*/
     }
 
     public void deleteMovie(String movieId, String userId) {
