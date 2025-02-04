@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Netflix_App4</string>
+    <string name="app_name">Kosher Netflix</string>
     <string name="movie_thumbnail">thumbnail</string>
     <string name="login">Login</string>
     <string name="username">Username</string>
