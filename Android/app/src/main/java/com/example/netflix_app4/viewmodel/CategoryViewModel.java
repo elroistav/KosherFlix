@@ -123,12 +123,32 @@ public class CategoryViewModel extends AndroidViewModel {
                     if (categoryWithMoviesList != null && !categoryWithMoviesList.isEmpty()) {
                         Log.d(TAG, "onChanged: Using cached data");
                         promotedCategoriesLiveData.postValue(convertWithMoviesToPromoted(categoryWithMoviesList));
+                        fetchLastWatched(userId);
                     } else {
                         Log.d(TAG, "onChanged: No cached data, fetching from server");
                         fetchFromServer(userId);
                     }
                 }
             });
+        });
+    }
+
+    private void fetchLastWatched(String userId) {
+        Log.d(TAG, "fetchFromServer: Starting server fetch for userId: " + userId);
+        categoryRepository.getCategories(userId, new CategoryRepository.CategoryCallback() {
+            @Override
+            public void onSuccess(CategoriesResponse response) {
+                new Handler(Looper.getMainLooper()).post(() -> {
+                    Log.d(TAG, "Received " + (response.getLastWatched() != null ? response.getLastWatched().getMovies().size() : "null") + " last watched movies");
+                    lastWatchedLiveData.setValue(response.getLastWatched());
+                });
+            }
+
+            @Override
+            public void onError(String error) {
+                Log.e(TAG, "Server fetch error: " + error);
+                errorLiveData.postValue(error);
+            }
         });
     }
 
@@ -214,6 +234,7 @@ public class CategoryViewModel extends AndroidViewModel {
                         new Handler(Looper.getMainLooper()).post(() -> {
                             Log.d(TAG, "Updating UI with fetched data");
                             promotedCategoriesLiveData.setValue(response.getPromotedCategories());
+                            Log.d(TAG, "Received " + (response.getLastWatched() != null ? response.getLastWatched().getMovies().size() : "null") + " last watched movies");
                             lastWatchedLiveData.setValue(response.getLastWatched());
                         });
                     } catch (Exception e) {
