@@ -23,11 +23,6 @@
     </androidx.appcompat.widget.Toolbar>
 
 <!--    testing search-->
-    <com.example.netflix_app4.components.SearchBarComponent
-        android:id="@+id/searchBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        tools:ignore="MissingConstraints" />
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Netflix_App4</string>
+    <string name="app_name">Kosher Netflix</string>
     <string name="movie_thumbnail">thumbnail</string>
     <string name="login">Login</string>
     <string name="username">Username</string>
@@ -49,5 +49,9 @@
     <string name="welcome">Welcome</string>
     <string name="watch">Watch</string>
     <string name="you_might_like_based_on_your_previously_watched">You might like based on your previously watched</string>
+    <string name="unlimited_movies_tv_nshows_and_more">Unlimited movies, TV\nshows and more</string>
+    <string name="watch_anywhere_cancel_anytime">Watch anywhere. Cancel anytime.</string>
+    <string name="sign_in">Sign In</string>
+    <string name="register">Register</string>
 
 </resources>

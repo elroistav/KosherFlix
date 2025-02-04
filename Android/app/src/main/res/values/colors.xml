@@ -38,4 +38,6 @@
     <color name="red">#E50914</color>
     <color name="black_overlay">#1A000000</color>
     <color name="semi_transparent">#80000000</color>
+    <color name="semi_transparent_black">#99000000</color>
+
 </resources>
