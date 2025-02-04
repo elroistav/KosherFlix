@@ -2,7 +2,6 @@ package com.example.netflix_app4.db;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.*;
-import com.example.netflix_app4.model.User;
 
 @Dao
 public interface UserDao {

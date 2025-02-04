@@ -8,7 +8,7 @@ import com.example.netflix_app4.db.AppDatabase;
 import com.example.netflix_app4.db.UserDao;
 import com.example.netflix_app4.model.RegisterResponse;
 import com.example.netflix_app4.model.TokenResponse;
-import com.example.netflix_app4.model.User;
+import com.example.netflix_app4.db.User;
 import com.example.netflix_app4.model.UserInfo;
 import com.example.netflix_app4.network.ApiService;
 import com.example.netflix_app4.network.Config;

@@ -1,4 +1,4 @@
-package com.example.netflix_app4.model;
+package com.example.netflix_app4.db;
 
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
