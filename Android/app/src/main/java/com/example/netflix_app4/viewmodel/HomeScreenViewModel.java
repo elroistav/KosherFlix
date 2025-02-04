@@ -7,6 +7,11 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import android.app.Application;
 import androidx.lifecycle.AndroidViewModel;
+
+import com.example.netflix_app4.db.AppDatabase;
+import com.example.netflix_app4.db.CategoryDao;
+import com.example.netflix_app4.db.MovieDao;
+import com.example.netflix_app4.db.MovieEntity;
 import com.example.netflix_app4.model.CategoryPromoted;
 import com.example.netflix_app4.model.LastWatched;
 import com.example.netflix_app4.model.MovieModel;
@@ -15,6 +20,8 @@ import com.example.netflix_app4.repository.MovieRepository;
 import com.example.netflix_app4.repository.UserRepository;
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class HomeScreenViewModel extends AndroidViewModel {
     private static final String TAG = "HomeScreenViewModel";
@@ -30,13 +37,27 @@ public class HomeScreenViewModel extends AndroidViewModel {
     private final MutableLiveData<UserInfo> userInfoLiveData = new MutableLiveData<>();
     private final MutableLiveData<String> validationErrorLiveData = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isLoadingLiveData = new MutableLiveData<>();
+    private final MovieDao movieDao;
+    private final CategoryDao categoryDao;
+    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
     public HomeScreenViewModel(@NonNull Application application) {
         super(application);
-        categoryViewModel = new CategoryViewModel();
+        AppDatabase db = AppDatabase.getDatabase(application);
+        movieDao = db.movieDao();
+        categoryDao = db.categoryDao();
+        categoryViewModel = new CategoryViewModel(application);
         movieViewModel = new MovieViewModel();
         userRepository = new UserRepository(application);
         userId = new MutableLiveData<>();
+    }
+
+    public List<MovieEntity> getMoviesFromRoom() {
+        return movieDao.getAllMovies();
+    }
+
+    public void insertMovies(List<MovieEntity> movies) {
+        executorService.execute(() -> movieDao.insertMovies(movies));
     }
 
     public void validateToken(String token) {

@@ -1,13 +1,12 @@
 package com.example.netflix_app4.viewmodel;
 
 import android.app.Application;
-import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.example.netflix_app4.model.User;
 import com.example.netflix_app4.repository.UserRepository;
 
 import java.io.File;
