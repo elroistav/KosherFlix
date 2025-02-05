@@ -171,7 +171,11 @@ function HomeScreen({ isDarkMode, setIsDarkMode }) {
       /> 
       {/* Random Movie Section */}
       {randomMovie && searchResults.length === 0 && (
-        <RandomMovie movie={randomMovie} onClick={() => setSelectedMovie(randomMovie)} />
+         <RandomMovie 
+         movie={randomMovie} 
+         onClick={() => setSelectedMovie(randomMovie)} 
+         userInfo={userInfo}  
+       />
       )}
 
       {/* Movie Categories Section */}
