@@ -22,6 +22,7 @@ import com.bumptech.glide.Glide;
 import com.example.netflix_app4.R;
 import com.example.netflix_app4.model.MovieModel;
 import com.example.netflix_app4.model.UserInfo;
+import com.example.netflix_app4.network.Config;
 import com.example.netflix_app4.network.MovieApiService;
 import com.example.netflix_app4.network.RetrofitClient;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -101,7 +102,7 @@ public class AdminMovieAdapter extends RecyclerView.Adapter<AdminMovieAdapter.Ad
 
             // Load thumbnail using Glide
             Glide.with(context)
-                    .load(movie.getThumbnail())
+                    .load(Config.getBaseUrl() + "/" + movie.getThumbnail())
                     .placeholder(R.drawable.placeholder_image)
                     .into(movieThumbnail);
 

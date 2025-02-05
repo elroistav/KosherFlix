@@ -35,6 +35,7 @@ import com.example.netflix_app4.model.CategoryModel;
 import com.example.netflix_app4.model.CategoryPromoted;
 import com.example.netflix_app4.model.MovieModel;
 import com.example.netflix_app4.model.UserInfo;
+import com.example.netflix_app4.network.Config;
 import com.example.netflix_app4.network.MovieApiService;
 import com.example.netflix_app4.network.RetrofitClient;
 import com.example.netflix_app4.repository.MovieRepository;
@@ -256,7 +257,8 @@ public class HomeScreenActivity extends AppCompatActivity {
         VideoView videoView = new VideoView(this);
         moviePlayerWrapper.addView(videoView);
 
-        Uri videoUri = Uri.parse(movie.getVideoUrl());
+        Uri videoUri = Uri.parse(Config.getBaseUrl() + "/" + movie.getVideoUrl());
+        Log.d("HomeScreenActivity", "Video URI: " + videoUri);
         videoView.setVideoURI(videoUri);
         if (videoUri != null) {
             Log.d("HomeScreenActivity", "Video URI is valid: " + videoUri.toString());

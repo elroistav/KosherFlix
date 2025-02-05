@@ -153,7 +153,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
         videoView.setZOrderOnTop(true);  // Ensure the VideoView is rendered above other views
 
         // Set the video URI and the MediaController
-        Uri videoUri = Uri.parse(videoUrl);
+        Uri videoUri = Uri.parse(Config.getBaseUrl() + "/" + videoUrl);
         videoView.setVideoURI(videoUri);
 //        videoView.setMediaController(mediaController);
         videoView.setFocusable(true);
