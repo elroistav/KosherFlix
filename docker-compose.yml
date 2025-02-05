@@ -1,0 +1,69 @@
+services:
+  frontend:
+    build:
+      context: ./React  # Adjust this to the correct path to your React project
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    stdin_open: true
+    tty: true
+    volumes:
+      - .NetflixProj3/uploads:/usr/src/app/uploads
+    networks:
+      - netflix-network
+    depends_on:
+      - backend-server
+      - backend-app
+      - mongo
+
+  backend-server:
+    build:
+      context: ./NetflixProj3/NetflixProj2/src/server
+      dockerfile: Dockerfile
+    ports:
+      - "5555:5555"
+    volumes:
+      - ./NetflixProj3/NetflixProj2/src:/usr/src/myapp/src
+      - ./NetflixProj3/NetflixProj2/data/Users:/usr/src/myapp/data/Users
+      - /usr/src/myapp/node_modules
+      - ./NetflixProj3/NetflixProj2/uploads:/usr/src/myapp/uploads
+    networks:
+      - netflix-network
+    restart: on-failure
+
+  backend-app:
+    build:
+      context: ./NetflixProj3
+      dockerfile: Dockerfile
+    command: "npm run startDocker"
+    volumes:
+      - ./NetflixProj3:/usr/src/app
+      - /usr/src/app/node_modules
+      - ./NetflixProj3/uploads:/usr/src/app/uploads
+    ports:
+      - "4000:4000"
+    depends_on:
+      - backend-server
+      - mongo
+    networks:
+      - netflix-network
+    env_file:
+      - ./NetflixProj3/config/.env.docker
+
+  mongo:
+    image: mongo:latest
+    ports:
+      - "27018:27017"
+    networks:
+      - netflix-network
+    volumes:
+      - ./NetflixProj3/data/db:/data/db
+    logging:
+      driver: "none"
+    restart: always
+
+networks:
+  netflix-network:
+    driver: bridge
