@@ -56,7 +56,7 @@ npm install
 ```
 
 ### **Create the Frontend Configuration File (.env)**
-### It should look somthing like this:
+### In the React folder create a config file called .env. It should look somthing like this:
 ```sh
 REACT_APP_BASE_URL=http://localhost:4000
 ```

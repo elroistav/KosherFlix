@@ -28,7 +28,7 @@ services:
       - ./NetflixProj3/NetflixProj2/src:/usr/src/myapp/src
       - ./NetflixProj3/NetflixProj2/data/Users:/usr/src/myapp/data/Users
       - /usr/src/myapp/node_modules
-      - ./uploads:/usr/src/myapp/uploads
+      - ./NetflixProj3/NetflixProj2/uploads:/usr/src/myapp/uploads
     networks:
       - netflix-network
     restart: on-failure

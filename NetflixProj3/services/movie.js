@@ -438,7 +438,7 @@ const sendToServer = async (command) =>{
         return new Promise((resolve, reject) => {
             const client = new net.Socket();
 
-            client.connect(5555, 'server', () => {
+            client.connect(5555, 'backend-server', () => {
                 console.log('Connected to the server. sending:', command);
                 client.write(command);
             });
