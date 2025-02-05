@@ -11,6 +11,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.netflix_app4.R;
 import com.example.netflix_app4.model.MovieModel;
+import com.example.netflix_app4.network.Config;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -72,7 +74,7 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
         public void bind(MovieModel movie) {
             movieTitle.setText(movie.getTitle());
             Glide.with(context)
-                    .load(movie.getThumbnail())
+                    .load(Config.getBaseUrl() + "/" + movie.getThumbnail())
                     .placeholder(R.drawable.placeholder_image)
                     .into(movieThumbnail);
         }
