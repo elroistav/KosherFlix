@@ -1,10 +1,8 @@
-# Use an official Node.js image as a base
 FROM node:18
 
-# Set the working directory inside the container
 WORKDIR /usr/src/app
 
-# Copy the package.json and package-lock.json files
+# Copy package files
 COPY package*.json ./
 
 # Install dependencies
@@ -13,12 +11,15 @@ RUN npm install
 # Copy the rest of the application code
 COPY . .
 
-# Create uploads directory
+# Create and set permissions for uploads directory
 RUN mkdir -p /usr/src/app/uploads && \
     chmod 777 /usr/src/app/uploads
 
-# Expose the port your app runs on
-EXPOSE 3000
+# Expose the port
+EXPOSE 4000
 
-# Run the app with npm start
+# Serve uploads as a static directory
+VOLUME ["/usr/src/app/uploads"]
+
+# Run the app
 CMD ["npm", "run", "startDocker"]
