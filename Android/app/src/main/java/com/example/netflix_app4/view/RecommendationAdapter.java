@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.netflix_app4.R;
 import com.example.netflix_app4.model.MovieModel;
+import com.example.netflix_app4.network.Config;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,7 +65,8 @@ public class RecommendationAdapter extends RecyclerView.Adapter<RecommendationAd
         public void bind(MovieModel movie) {
             movieTitle.setText(movie.getTitle());
             Glide.with(itemView.getContext())
-                    .load(movie.getThumbnail())
+                    .load(Config.getBaseUrl() + "/" + movie.getThumbnail())
+                    .placeholder(R.drawable.placeholder_image)
                     .into(movieThumbnail);
 
             itemView.setOnClickListener(v -> {

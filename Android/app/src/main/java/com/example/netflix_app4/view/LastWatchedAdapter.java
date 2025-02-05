@@ -16,6 +16,7 @@ import com.bumptech.glide.Glide;
 import com.example.netflix_app4.R;
 import com.example.netflix_app4.model.MovieModel;
 import com.example.netflix_app4.model.UserInfo;
+import com.example.netflix_app4.network.Config;
 
 import java.util.List;
 
@@ -77,7 +78,7 @@ public class LastWatchedAdapter extends RecyclerView.Adapter<LastWatchedAdapter.
         void bind(MovieModel movie) {
             movieTitle.setText(movie.getTitle());
             Glide.with(context)
-                    .load(movie.getThumbnail())
+                    .load(Config.getBaseUrl() + "/" + movie.getThumbnail())
                     .placeholder(R.drawable.placeholder_image)
                     .into(movieThumbnail);
         }
