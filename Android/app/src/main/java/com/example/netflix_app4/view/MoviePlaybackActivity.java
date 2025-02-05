@@ -5,6 +5,7 @@ import android.content.pm.ActivityInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageButton;
@@ -15,6 +16,7 @@ import android.widget.VideoView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.netflix_app4.R;
+import com.example.netflix_app4.network.Config;
 
 public class MoviePlaybackActivity extends AppCompatActivity {
 
@@ -42,7 +44,8 @@ public class MoviePlaybackActivity extends AppCompatActivity {
         String videoUrl = getIntent().getStringExtra("movieVideoUrl");
 
         if (videoUrl != null) {
-            Uri videoUri = Uri.parse(videoUrl);
+            Uri videoUri = Uri.parse(Config.getBaseUrl() + "/" + videoUrl);
+            Log.d("MoviePlaybackActivity", "Playing video from URL: " + videoUri);
             movieVideoView.setVideoURI(videoUri);
 
             // Set up MediaController

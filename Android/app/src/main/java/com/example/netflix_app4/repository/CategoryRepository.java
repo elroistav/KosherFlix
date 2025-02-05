@@ -162,7 +162,26 @@ public class CategoryRepository {
             List<MovieEntity> cachedMovies = database.movieDao().getAllMovies();
             if (!cachedMovies.isEmpty()) {
                 MovieEntity randomMovie = cachedMovies.get(new Random().nextInt(cachedMovies.size()));
-                callback.onSuccess(convertEntityToMovieModel(randomMovie));
+
+                // Fetch full details from API
+                apiService.getMovieById(randomMovie.getId(), userId).enqueue(new Callback<MovieModel>() {
+                    @Override
+                    public void onResponse(Call<MovieModel> call, Response<MovieModel> response) {
+                        if (response.isSuccessful() && response.body() != null) {
+                            Log.d(TAG, "Fetched full movie details: " + response.body().getTitle() + "VideoUrl: " + response.body().getVideoUrl());
+                            callback.onSuccess(response.body()); // Return the detailed movie
+                        } else {
+                            Log.e(TAG, "Failed to fetch full movie details: " + response.message());
+                            callback.onError("Failed to fetch movie details");
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<MovieModel> call, Throwable t) {
+                        Log.e(TAG, "Error fetching full movie details: " + t.getMessage());
+                        callback.onError(t.getMessage());
+                    }
+                });
             } else {
                 fetchMoviesFromApi(userId, callback);
             }
