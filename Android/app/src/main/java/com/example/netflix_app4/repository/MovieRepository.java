@@ -11,6 +11,7 @@ import com.example.netflix_app4.model.CategoryModel;
 import com.example.netflix_app4.model.MovieModel;
 import com.example.netflix_app4.network.MovieApiService;
 import com.example.netflix_app4.network.RetrofitClient;
+import com.google.gson.Gson;
 
 import org.json.JSONArray;
 
