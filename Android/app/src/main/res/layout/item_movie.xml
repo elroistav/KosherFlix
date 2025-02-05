@@ -1,6 +1,6 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
+    android:layout_width="120dp"
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="8dp"
@@ -9,17 +9,19 @@
 
     <ImageView
         android:id="@+id/movieThumbnail"
-        android:layout_width="100dp"
+        android:layout_width="match_parent"
         android:layout_height="150dp"
         android:scaleType="centerCrop"
         android:contentDescription="@string/movie_thumbnail" />
 
     <TextView
         android:id="@+id/movieTitle"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="4dp"
         android:textSize="14sp"
+        android:maxLines="1"
+        android:ellipsize="end"
         android:textColor="@color/text_primary"
         android:text="@string/movie_title" />
 </LinearLayout>

@@ -29,6 +29,7 @@ import com.example.netflix_app4.view.AllCategoriesActivity;
 import com.example.netflix_app4.view.CategoryMoviesActivity;
 import com.example.netflix_app4.view.HomeScreenActivity;
 import com.example.netflix_app4.viewmodel.CategoryViewModel;
+import com.example.netflix_app4.view.WelcomeActivity;
 
 import java.util.List;
 
@@ -50,6 +51,9 @@ public class CustomNavbar extends LinearLayout {
     private List<CategoryModel> currentCategories;
 
     private CategoryViewModel categoryViewModel;
+
+    private Button logoutButton;
+
 
 
 
@@ -76,7 +80,6 @@ public class CustomNavbar extends LinearLayout {
         darkModeSwitch = findViewById(R.id.dark_mode_switch);
         setupCategoriesButton();
 
-        // בדיקת המצב ההתחלתי של ה-Switch
         Log.d(TAG, "Initial switch state: " + darkModeSwitch.isChecked());
 
         darkModeSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
@@ -98,6 +101,8 @@ public class CustomNavbar extends LinearLayout {
         homeButton = findViewById(R.id.home_button);
         setupHomeButton();
         adminButton.setOnClickListener(v -> navigateToAdminPanel());
+        logoutButton = findViewById(R.id.logout_button);
+        logoutButton.setOnClickListener(v -> handleLogout());
         Log.d(TAG, "Finished initializeComponents");
     }
 
@@ -243,5 +248,20 @@ public class CustomNavbar extends LinearLayout {
         Intent intent = new Intent(getContext(), HomeScreenActivity.class);
         intent.putExtra("USER_TOKEN", userInfo.getToken());
         getContext().startActivity(intent);
+    }
+
+    private void handleLogout() {
+        new android.app.AlertDialog.Builder(getContext())
+                .setTitle("Logout")
+                .setMessage("Are you sure you want to logout?")
+                .setPositiveButton("Yes", (dialog, which) -> {
+                    // Clear all activities and start WelcomeActivity
+                    Intent intent = new Intent(getContext(), WelcomeActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    getContext().startActivity(intent);
+                })
+                .setNegativeButton("No", null)
+                .show();
     }
 }
