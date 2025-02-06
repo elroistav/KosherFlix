@@ -97,6 +97,15 @@ Admins can create and organize movie categories.
 
 ![Notflicks Logo](./Screenshots/web_notflicks_logo.png)
 
+### 4. **Whats's stopping me from just going straight to the admin page?**
+
+I'm glad you asked. When trying to navigate to /admin page without having the valid token
+<br>
+![Browser Url](./Screenshots/web_url.png)
+<br>
+You will be redirrected to the login page as punnishment and this likely will be reported:
+![Tricky](./Screenshots/web_tricky_user.png)
+
 ---
 
 ## Error Handling
