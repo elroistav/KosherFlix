@@ -88,6 +88,15 @@ In the middle of the navigation bar you can open a dropdown menu to filter movie
 ### Example
 ![Category Selector](./Screenshots/web_category_selector.png)
 
+### 8. **Whats's stopping me from just going straight to the homescreen page without logging in?**
+
+What a great question! When trying to navigate to /homescreen page without a valid token given from logging in,
+<br>
+![Browser Url](./Screenshots/web_url.png)
+<br>
+You will be redirrected to the login page as punnishment and this likely will be reported:
+![Tricky](./Screenshots/web_tricky_user.png)
+
 ### Step-by-Step Instructions
 
 1. Upon logging in, you are redirected to the homepage.

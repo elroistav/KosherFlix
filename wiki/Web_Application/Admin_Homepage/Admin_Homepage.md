@@ -99,7 +99,7 @@ Admins can create and organize movie categories.
 
 ### 4. **Whats's stopping me from just going straight to the admin page?**
 
-I'm glad you asked. When trying to navigate to /admin page without having the valid token
+I'm glad you asked. When trying to navigate to /admin page without actually being an admin
 <br>
 ![Browser Url](./Screenshots/web_url.png)
 <br>
