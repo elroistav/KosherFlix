@@ -14,17 +14,13 @@ The **Movie Details** screen provides comprehensive information about selected m
 A prominent **Play** button appears at the top of the screen.
 
 - Tapping the button starts the movie in the **Movie Player**.
-- Age restrictions trigger appropriate warnings.
-- Network issues display relevant error messages.
 
 ![Watch Movie](./Screenshots/android_watch_movie.png)
 
 ### 2. **Video Preview**
-The preview section automatically plays a short clip or trailer:
+The preview section automatically plays a short clip:
 
 - **Auto-play**: Begins when the screen loads
-- **Muted by Default**: Tap to enable sound
-- **Gesture Controls**: Pinch to expand/minimize
 
 ### 3. **Movie Information**
 Below the preview, you'll find:
@@ -43,8 +39,6 @@ Below the preview, you'll find:
 At the bottom, a horizontally scrollable list shows recommended movies:
 
 - **Personalized**: Based on viewing history
-- **Touch Scrolling**: Swipe to see more
-- **Quick Access**: Tap to view details
 
 ![Movie Recommendations](./Screenshots/android_movie_recommendations.png)
 
@@ -61,36 +55,7 @@ At the bottom, a horizontally scrollable list shows recommended movies:
 3. **View information** and preview content
 4. **Tap Play** to start watching or select another recommended movie
 
----
-
-## Error States
-
-### Video Preview Issues
-- Shows movie poster if preview fails to load
-- Displays connectivity warning when offline
-- Provides retry option for failed loads
-
-![Movie No Rec](./Screenshots/android_movie_no_rec.png)
-
-### Missing Information
-- Placeholder text for unavailable details
-- "No recommendations available" message when applicable
-- "Content unavailable" notice for removed movies
-
----
-
 ## Features
-
-### Gesture Controls
-- **Swipe Down**: Close details screen
-- **Double Tap**: Expand/minimize preview
-- **Long Press**: Add to watchlist
-
-### Share Options
-- Share movie details via:
-  - Messaging apps
-  - Social media
-  - Email
 
 ### Navigation
 - **Back Button**: Returns to previous screen
