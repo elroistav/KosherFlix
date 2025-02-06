@@ -4,6 +4,9 @@
 
 The **Android Admin Homepage** is an exclusive section that allows administrators to manage movies and categories through the mobile interface. This feature is only accessible to users with admin privileges (when **isAdmin** is set to `true` in the database).
 
+Note: When editing and adding make sure you fill in all required feilds and correctly otherwise you will get an error. For example, if you edit a movie but leave the title empty you will see:
+![Info Error](./Screenshots/android_info_error.png)
+
 ### Main page
 ![Admin Homescreen](./Screenshots/android_admin_homescreen.png)
 

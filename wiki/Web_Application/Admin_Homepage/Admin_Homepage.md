@@ -31,6 +31,8 @@ To access the **Admin Homepage**, an admin account must be configured manually:
 ---
 
 ## Admin Homepage Features
+Note: When editing and adding make sure you fill in all required feilds and correctly otherwise you will get an error. For example, if you edit a movie but leave the title empty you will see:
+![Info Error](./Screenshots/web_info_error.png)
 
 ### 1. **Movie Management**
 Admins can **add, update, or delete** movies from the platform.

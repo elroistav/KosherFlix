@@ -4,6 +4,10 @@
 
 The **Login and Registration** system for the Android app provides a secure and user-friendly way to create and access accounts. The interface is optimized for mobile devices with easy form navigation and clear error feedback.
 
+Note: When registering make sure you fill in all required feilds and correctly otherwise you will get an error. For example, if you dont enter a valid userName you will see:
+<br>
+![Info Error](./Screenshots/android_info_error.png)
+
 ### Homepage
 ![Homepage](./Screenshots/android_homepage_prelogin.png)
 

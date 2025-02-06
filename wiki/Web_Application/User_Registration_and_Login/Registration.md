@@ -4,7 +4,10 @@
 
 The **Registration** process allows new users to create an account on the platform. Once registered, users can log in to access personalized features such as browsing movies, creating watchlists, and viewing movie details.
 
-Both the **Web** and **Android** applications follow the same registration flow, connected to a shared backend.
+
+Note: When registering make sure you fill in all required feilds and correctly otherwise you will get an error. For example, if you dont enter a valid userName you will see:
+<br>
+![Info Error](./Screenshots/web_info_error.png)
 
 ### Welcome Page
 ![Welcome Page](./Screenshots/web_welcome.png)
