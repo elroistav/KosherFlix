@@ -111,12 +111,39 @@ public class MovieDetailsActivity extends AppCompatActivity {
         // Back button action
         backButton.setOnClickListener(v -> finish());
         watchButton.setOnClickListener(v -> {
-            Intent intent = new Intent(MovieDetailsActivity.this, MoviePlaybackActivity.class);
-            intent.putExtra("movieVideoUrl", movie.getVideoUrl()); // Pass the video URL
-            startActivity(intent);
+            if (movie != null) {
+                handleWatchClick(movie);
+            }
         });
         recommendationTitle = findViewById(R.id.recommendationTitle);
         recommendationTitle.setVisibility(View.GONE); // Initially hidden
+    }
+
+    private void handleWatchClick(MovieModel movie) {
+        MovieApiService apiService = RetrofitClient.getRetrofitInstance().create(MovieApiService.class);
+        apiService.recommendMovie(movie.getId(), userId).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
+                if (response.isSuccessful()) {
+                    Log.d("MovieDetailsActivity", "Successfully recommended movie");
+                } else {
+                    Log.e("MovieDetailsActivity", "Failed to recommend movie: " + response.code());
+                }
+
+                Intent intent = new Intent(MovieDetailsActivity.this, MoviePlaybackActivity.class);
+                intent.putExtra("movieVideoUrl", movie.getVideoUrl());
+                startActivity(intent);
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
+                Log.e("MovieDetailsActivity", "Network error recommending movie", t);
+
+                Intent intent = new Intent(MovieDetailsActivity.this, MoviePlaybackActivity.class);
+                intent.putExtra("movieVideoUrl", movie.getVideoUrl());
+                startActivity(intent);
+            }
+        });
     }
 
     private void playVideo(String videoUrl) {

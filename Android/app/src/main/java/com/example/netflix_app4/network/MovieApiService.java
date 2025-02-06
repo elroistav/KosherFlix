@@ -105,6 +105,12 @@ public interface MovieApiService {
             @Part MultipartBody.Part video,
             @Header("user-id") String userId
     );
+
+    @POST("movies/{id}/recommend")
+    Call<Void> recommendMovie(
+            @Path("id") String movieId,
+            @Header("user-id") String userId
+    );
     //.
 
 

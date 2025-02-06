@@ -115,5 +115,16 @@
             android:textColor="@color/netflix_red"
             android:background="?android:attr/selectableItemBackground"
             style="@style/Widget.MaterialComponents.Button.TextButton"/>
+
+        <Button
+            android:id="@+id/logout_button"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:text="⇥ Logout"
+            android:gravity="start|center_vertical"
+            android:paddingStart="16dp"
+            android:textColor="@color/text_primary"
+            android:background="?android:attr/selectableItemBackground"
+            style="@style/Widget.MaterialComponents.Button.TextButton"/>
     </LinearLayout>
 </LinearLayout>

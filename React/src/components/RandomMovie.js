@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import MoviePlayer from './MoviePlayer';
 import '../styles/RandomMovie.css';
+import axios from 'axios';
 
 /**
  * RandomMovie component displays a random movie with options to play or get more information.
@@ -23,7 +24,7 @@ import '../styles/RandomMovie.css';
  *
  * @returns {JSX.Element|null} The RandomMovie component or null if no movie is provided.
  */
-function RandomMovie({ movie, onClick }) {
+function RandomMovie({ movie, onClick, userInfo }) {
   const navigate = useNavigate();
   const [isVideoReady, setIsVideoReady] = useState(false);
 
@@ -38,8 +39,20 @@ function RandomMovie({ movie, onClick }) {
 
   if (!movie) return null;
 
-  const handlePlayClick = () => {
-    navigate('/movie', { state: { movie } });
+  const handlePlayClick = async () => {
+    try {
+      await axios.post(
+        `http://localhost:4000/api/movies/${movie._id}/recommend`,
+        {}, 
+        {
+          headers: { 'user-id': userInfo.userId } 
+        }
+      );
+     
+      navigate('/movie', { state: { movie } });
+    } catch (error) {
+      navigate('/movie', { state: { movie } });
+    }
   };
 
   return (

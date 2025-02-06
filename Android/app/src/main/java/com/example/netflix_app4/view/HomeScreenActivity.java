@@ -215,11 +215,8 @@ public class HomeScreenActivity extends AppCompatActivity {
                     startActivity(intent);
                 });
 
-                playButton.setOnClickListener(v -> {
-                    Intent intent = new Intent(HomeScreenActivity.this, MoviePlaybackActivity.class);
-                    intent.putExtra("movieVideoUrl", movie.getVideoUrl());
-                    startActivity(intent);
-                });
+                playButton.setOnClickListener(v -> handleWatchClick(movie));
+
             }
         });
 
@@ -236,6 +233,32 @@ public class HomeScreenActivity extends AppCompatActivity {
                 if (error.contains("Token validation failed")) {
                     redirectToLogin();
                 }
+            }
+        });
+    }
+
+    private void handleWatchClick(MovieModel movie) {
+        MovieApiService apiService = RetrofitClient.getRetrofitInstance().create(MovieApiService.class);
+        apiService.recommendMovie(movie.getId(), userInfo.getUserId()).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                // Navigate to playback screen regardless of recommendation success
+                Intent intent = new Intent(HomeScreenActivity.this, MoviePlaybackActivity.class);
+                intent.putExtra("movieVideoUrl", movie.getVideoUrl());
+                startActivity(intent);
+
+                if (!response.isSuccessful()) {
+                    Log.e(TAG, "Failed to recommend movie");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                // Navigate to playback screen even if recommendation fails
+                Intent intent = new Intent(HomeScreenActivity.this, MoviePlaybackActivity.class);
+                intent.putExtra("movieVideoUrl", movie.getVideoUrl());
+                startActivity(intent);
+                Log.e(TAG, "Network error recommending movie", t);
             }
         });
     }

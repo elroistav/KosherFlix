@@ -1,12 +1,8 @@
 package com.example.netflix_app4.view;
 
-import android.app.Dialog;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,7 +16,6 @@ import com.example.netflix_app4.model.MovieModel;
 import com.example.netflix_app4.viewmodel.SearchViewModel;
 import com.example.netflix_app4.viewmodel.CategoryViewModel;
 import com.example.netflix_app4.model.UserInfo;
-import java.util.Objects;
 
 public class SearchActivity extends AppCompatActivity {
     private RecyclerView searchResultsRecyclerView;
@@ -30,6 +25,7 @@ public class SearchActivity extends AppCompatActivity {
     private CustomNavbar customNavbar;
     private Button navbarToggleButton;
     private boolean isNavbarVisible = false;
+    private UserInfo userInfo;
     private String userId;
 
     @Override
@@ -37,7 +33,7 @@ public class SearchActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_results);
 
-        UserInfo userInfo = (UserInfo) getIntent().getSerializableExtra("USER_INFO");
+        userInfo = (UserInfo) getIntent().getSerializableExtra("USER_INFO");
         if (userInfo != null) {
             userId = userInfo.getUserId();
         } else {
@@ -58,7 +54,7 @@ public class SearchActivity extends AppCompatActivity {
         searchResultsRecyclerView = findViewById(R.id.searchResultsRecyclerView);
 
         // Setup RecyclerView
-        searchResultsAdapter = new SearchResultsAdapter(this, this::showMoviePopup);
+        searchResultsAdapter = new SearchResultsAdapter(this, this::showMovieDetails);
         searchResultsRecyclerView.setAdapter(searchResultsAdapter);
         searchResultsRecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
 
@@ -124,25 +120,11 @@ public class SearchActivity extends AppCompatActivity {
         });
     }
 
-    private void showMoviePopup(MovieModel movie) {
-        Dialog dialog = new Dialog(this);
-        dialog.setContentView(R.layout.movie_details);
-        Objects.requireNonNull(dialog.getWindow()).setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-
-        // Bind views
-        TextView movieTitle = dialog.findViewById(R.id.movieTitle);
-        TextView movieDescription = dialog.findViewById(R.id.movieDescription);
-        Button watchButton = dialog.findViewById(R.id.watchButton);
-
-        // Set data
-        movieTitle.setText(movie.getTitle());
-        movieDescription.setText(movie.getDescription());
-
-        watchButton.setOnClickListener(v -> {
-            Toast.makeText(this, "Watch Movie feature coming soon!", Toast.LENGTH_SHORT).show();
-        });
-
-        dialog.show();
+    private void showMovieDetails(MovieModel movie) {
+        // Navigate to MovieDetailsActivity with the movie and user info
+        Intent intent = new Intent(this, MovieDetailsActivity.class);
+        intent.putExtra("movieDetails", movie);
+        intent.putExtra("USER_INFO", userInfo);
+        startActivity(intent);
     }
 }
