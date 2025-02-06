@@ -22,7 +22,7 @@ Before starting, ensure you have the following installed on your system:
 ## 1. Clone the Repository
 
 ```sh
-git clone https://github.com/your-repo/NetflixProj3.git
+git clone https://github.com/Yedidya-Darshan-code/Netflix-proj-4.git
 ```
 
 ## 2. Setting Up the Backend (Node.js)

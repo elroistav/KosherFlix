@@ -31,6 +31,8 @@ To access the **Admin Homepage**, an admin account must be configured manually:
 ---
 
 ## Admin Homepage Features
+Note: When editing and adding make sure you fill in all required feilds and correctly otherwise you will get an error. For example, if you edit a movie but leave the title empty you will see:
+![Info Error](./Screenshots/web_info_error.png)
 
 ### 1. **Movie Management**
 Admins can **add, update, or delete** movies from the platform.
@@ -94,6 +96,15 @@ Admins can create and organize movie categories.
 - **Return to Main Homepage**: Click the **Notflicks logo** in the navbar to return to the homepage.
 
 ![Notflicks Logo](./Screenshots/web_notflicks_logo.png)
+
+### 4. **Whats's stopping me from just going straight to the admin page?**
+
+I'm glad you asked. When trying to navigate to /admin page without actually being an admin
+<br>
+![Browser Url](./Screenshots/web_url.png)
+<br>
+You will be redirrected to the login page as punnishment and this likely will be reported:
+![Tricky](./Screenshots/web_tricky_user.png)
 
 ---
 

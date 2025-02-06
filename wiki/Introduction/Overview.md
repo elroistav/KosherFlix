@@ -29,7 +29,9 @@ Both the **web** and **Android** applications are connected to the same backend,
 
 ### Frontend
 - **Web Application**: Built using modern web technologies (HTML, CSS, JavaScript) and a responsive design to ensure compatibility with different devices.
-- **Android Application**: Developed using Java and the Android SDK, following standard Android app development practices.
+- **Android Application**: 
+    - Developed using Java and the Android SDK, following standard Android app development practices.
+    - **Room** Database is used for local data storage, ensuring a smoother and faster experience by caching movie data locally. This reduces the need for repeated API calls, improving performance and usability.
 
 ### Backend
 - **Node.js/Express**: The backend server is built with Node.js and the Express framework, providing a RESTful API for communication with the frontend.
