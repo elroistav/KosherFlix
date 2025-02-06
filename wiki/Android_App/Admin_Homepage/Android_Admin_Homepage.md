@@ -2,7 +2,7 @@
 
 ## Introduction
 
-The **Android Admin Homepage** is an exclusive section that allows administrators to manage movies and categories through the mobile interface. This feature is only accessible to users with admin privileges (when **isAdmin** is set to `true` in the database). The admin interface retains the same bottom navigation bar as the regular app for consistency.
+The **Android Admin Homepage** is an exclusive section that allows administrators to manage movies and categories through the mobile interface. This feature is only accessible to users with admin privileges (when **isAdmin** is set to `true` in the database).
 
 ### Main page
 ![Admin Homescreen](./Screenshots/android_admin_homescreen.png)
@@ -19,9 +19,6 @@ To access the **Admin Homepage**, an admin account must be configured manually:
 
 ### Step 2: Logging In as an Admin
 1. Log in using the credentials of the modified admin account.
-2. Tap on the **Profile Icon** in the bottom navigation bar.
-3. You will now see an additional option labeled **Admin**.
-4. Tap **Admin** to navigate to the **Admin Homepage**.
 
 ### Example
 ![Enter Admin](./Screenshots/android_enter_admin.png)
@@ -34,7 +31,7 @@ To access the **Admin Homepage**, an admin account must be configured manually:
 Admins can **add, update, or delete** movies from the platform.
 
 - **Add Movie**  
-  - Tap the **"+" floating action button**.
+  - Tap the **"+" button**.
   - Fill in details such as **title, description, release date, categories, director, and cast**.
   - Upload a **thumbnail** for the movie.
   - Upload a **video** for the movie
@@ -93,22 +90,6 @@ Admins can create and organize movie categories.
 
 ![Notflicks Logo](./Screenshots/android_notflicks_logo.png)
 
----
-
-## Error Handling
-- **Admin Page Not Visible**  
-  - Ensure the `isAdmin` field in the database is set to `true`.
-  - Log out and log back in after making the change.
-  
-- **Failed to Add/Update/Delete Movie**  
-  - Check if all required fields are filled.
-  - Ensure the movie title is unique.
-  - Verify internet connectivity.
-
-- **Category Deletion Warning**  
-  - If a category is deleted, all movies linked to it may become unclassified.
-
----
 
 ## Tips
 - Only **trusted users** should be given admin access, as they have the ability to modify all movies and categories.
