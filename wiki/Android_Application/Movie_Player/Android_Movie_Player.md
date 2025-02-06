@@ -6,6 +6,8 @@ The **Android Movie Player** provides a seamless streaming experience optimized 
 
 ### Example
 ![Movie Player](./Screenshots/android_movie_player_cont_bar.png)
+<br>
+![Movie Player](./Screenshots/android_full_screen.png)
 
 ---
 

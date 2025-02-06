@@ -12,15 +12,17 @@ The **Movie Details** screen provides comprehensive information about selected m
 
 ### 1. **Watch Movie Button**
 A prominent **Play** button appears at the top of the screen.
+![Watch Movie](./Screenshots/android_watch_movie.png)
 
 - Tapping the button starts the movie in the **Movie Player**.
 
-![Watch Movie](./Screenshots/android_watch_movie.png)
 
 ### 2. **Video Preview**
 The preview section automatically plays a short clip:
 
 - **Auto-play**: Begins when the screen loads
+<br>
+![Movie Preview](./Screenshots/android_movie_preview.png)
 
 ### 3. **Movie Information**
 Below the preview, you'll find:

@@ -18,10 +18,12 @@ To access the **Admin Homepage**, an admin account must be configured manually:
 5. Save the changes.
 
 ### Step 2: Logging In as an Admin
-1. Log in using the credentials of the modified admin account.
-
-### Example
+1. Log in using the credentials of the modified admin account. (You must manually make yourself an admin)
+2. Locate the **Extention Button** at the top of the screen (The three bars)
+3. Press the **Admin Panel** button
 ![Enter Admin](./Screenshots/android_enter_admin.png)
+<br>
+4. Now you can edit the application
 
 ---
 
@@ -32,63 +34,68 @@ Admins can **add, update, or delete** movies from the platform.
 
 - **Add Movie**  
   - Tap the **"+" button**.
+  ![Add Movie](./Screenshots/android_add_movie1.png)
   - Fill in details such as **title, description, release date, categories, director, and cast**.
+  ![Add Movie](./Screenshots/android_add_movie2.png)
   - Upload a **thumbnail** for the movie.
   - Upload a **video** for the movie
   - Tap **Save** to add the movie to the database.
 
-  ![Add Movie](./Screenshots/android_add_movie1.png)
-  ![Add Movie](./Screenshots/android_add_movie2.png)
 
 - **Edit Movie**  
   - Navigate to a movie you want to edit.
   - Tap the edit icon in the bottom right of the movie card
+  ![Edit Movie](./Screenshots/android_edit_movie1.png)
   - Modify details such as title, description, or category.
+  <br>
+  ![Edit Movie](./Screenshots/android_edit_movie2.png)
   - Tap **Update** to save changes.
 
-  ![Edit Movie](./Screenshots/android_edit_movie1.png)
-  ![Edit Movie](./Screenshots/android_edit_movie2.png)
 
 - **Delete Movie**  
   - Navigate to a movie you want to remove.
   - Tap the delete icon in the bottom left of the movie card
-  - Confirm deletion in the dialog
+  ![Delete Movie](./Screenshots/android_delete_movie1.png)
+  - Confirm deletion in the alert dialog
+  <br>
+  ![Delete Movie](./Screenshots/android_delete_movie2.png)
 
-  ![Delete Movie](./Screenshots/android_delete_movie.png)
 
 ### 2. **Category Management**
 Admins can create and organize movie categories.
 
 - **Add Category**  
   - Tap the **"Add Category"** button.
+  ![Add Category](./Screenshots/android_add_category1.png)
   - Enter a **category name and description** (e.g., Action, Comedy, Horror).
+  <br>
+  ![Add Category](./Screenshots/android_add_category2.png)
   - Toggle whether the category should be promoted
   - Tap **Save** to add the category.
 
-  ![Add Category](./Screenshots/android_add_category1.png)
-  ![Add Category](./Screenshots/android_add_category2.png)
 
 - **Edit Category**  
   - Navigate to a category you want to edit.
   - Tap the edit icon to the right of the category
+  ![Edit Category](./Screenshots/android_edit_category1.png)
   - Modify details such as name or description.
+  <br>
+  ![Edit Category](./Screenshots/android_edit_category2.png)
   - Tap **Update** to save changes.
 
-  ![Edit Category](./Screenshots/android_edit_category1.png)
-  ![Edit Category](./Screenshots/android_edit_category2.png)
 
 - **Delete Category**  
   - Navigate to a category you want to remove.
   - Tap the delete icon to the left of the category
+  ![Delete Category](./Screenshots/android_delete_category1.png)
   - Confirm deletion in the dialog
+  <br>
+  ![Delete Category](./Screenshots/android_delete_category2.png)
 
-  ![Delete Category](./Screenshots/android_delete_category.png)
 
 ### 3. **Navigation & UI**
-- **Bottom Navigation**: The Admin Homepage maintains the same **bottom navigation bar** as the regular app.
+- **Top Navigation**: The Admin Homepage maintains the same **top navigation bar** as the regular app.
 - **Return to Main Homepage**: Tap the **Home** icon in the bottom navigation to return to the homepage.
-
-![Notflicks Logo](./Screenshots/android_notflicks_logo.png)
 
 
 ## Tips

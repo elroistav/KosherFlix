@@ -11,11 +11,21 @@ The **Android Homepage** serves as the main hub for users to discover and browse
 - **Featured Movie**: Prominently displayed movie that changes periodically
 - **Movie Categories**: Horizontal scrolling rows of movie categories
 - **Recently Watched**: Quick access to previously viewed content
-- **Profile Access**: Access to user profile and admin features (for admins)
 
 ## Homepage Layout
 
-### 1. **Featured Movie**
+### 1. **Theme Settings**
+
+Access theme settings through the profile menu:
+- **Dark Theme**: Optimized for low-light environments
+- **Light Theme**: Bright interface for daytime use
+- **System Default**: Follows system theme settings
+
+### Dark Mode / Light Mode:
+![Dark Mode](./Screenshots/android_dark_mode.png)
+![Light Mode](./Screenshots/android_light_mode.png)
+
+### 2. **Featured Movie**
 
 The featured movie section occupies the top portion of the screen, displaying:
 - **Movie Poster/Preview**: Large format display of the movie
@@ -26,7 +36,7 @@ The featured movie section occupies the top portion of the screen, displaying:
 ### Example
 ![Random Movie](./Screenshots/android_random_movie.png)
 
-### 2. **Movie Categories**
+### 3. **Movie Categories**
 
 Below the featured movie, horizontally scrollable rows display different categories:
 - **Action**
@@ -40,7 +50,7 @@ Each category shows movie posters that can be tapped to view details.
 ### Example
 ![Category Rows](./Screenshots/android_category_rows.png)
 
-### 3. **Search Feature**
+### 4. **Search Feature**
 
 The search icon in the top bar opens the search interface:
 - **Search Bar**: Enter movie titles or categories
@@ -50,36 +60,26 @@ The search icon in the top bar opens the search interface:
 ### Example
 ![Search Bar](./Screenshots/android_searchbar.png)
 
-### 4. **Theme Settings**
-
-Access theme settings through the profile menu:
-- **Dark Theme**: Optimized for low-light environments
-- **Light Theme**: Bright interface for daytime use
-- **System Default**: Follows system theme settings
-
-### Example
-![Dark Mode](./Screenshots/android_dark_mode.png)
-![Light Mode](./Screenshots/android_light_mode.png)
-
 ### 5. **Recently Watched**
 
 The recently watched section appears as a horizontal row showing:
-- **Previously watched movies**
-- **Progress indicators** for partially watched content
-- **Resume playback** option
+- **Previously watched movies** Shows a list of the last watched movies for the logged in user
+- **Clickable** You can press one of the last watched movies to see details about it
+- **Scrollable View** Allows the option to scroll between the recently watched movies seemlessly
 
 ### Example
 ![Last Watched](./Screenshots/android_last_watched.png)
 
-### 6. **Profile Section**
+### 6. **Extension Section**
 
-The profile icon in the bottom navigation provides access to:
-- **User Profile**: Personal information and settings
+The Three bars icon in the top navigation provides access to:
+- **Home button**: Personal information and settings
+- **View All Categories**: See all the categories at once
 - **Admin Interface**: For users with admin privileges
-- **Account Settings**: Manage account preferences
+- **Search Button**: Search for a specific movie
 
 ### Example
-![Profile](./Screenshots/android_profile.png)
+![Profile](./Screenshots/android_options_menu.png)
 
 ### 7. **Category Filter**
 
@@ -93,14 +93,14 @@ Access the category filter through the top bar:
 
 ## Navigation
 
-The app uses a bottom navigation bar with:
+The app uses a top navigation bar with:
 - **Home**: Return to main screen
 - **Search**: Open search interface
 - **Categories**: Browse all categories
-- **Profile**: Access user settings
+- **Admin Panel**: Access admin mode
 
-### Navigation Examples
-![Notflicks Logo](./Screenshots/android_notflicks_logo.png)
+### Navigation Options
+![Notflicks Logo](./Screenshots/android_navbar.png)
 
 ## Error Handling
 

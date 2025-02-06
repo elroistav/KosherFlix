@@ -4,6 +4,9 @@
 
 The **Login and Registration** system for the Android app provides a secure and user-friendly way to create and access accounts. The interface is optimized for mobile devices with easy form navigation and clear error feedback.
 
+### Homepage
+![Homepage](./Screenshots/android_homepage_prelogin.png)
+
 ## Registration Process
 
 ### Step 1: Initial Setup
