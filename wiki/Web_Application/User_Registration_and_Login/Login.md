@@ -37,4 +37,4 @@ The login system is designed with security in mind, featuring token-based authen
 - Ensure that you are using the correct userName and password combination.
 - Keep your login credentials safe and do not share them with others.
 
-For any problems with registration please contact our help office at YedYoniElroi@barilan.com or call 1800-NOT-FLIC
+For any problems with registration please contact our help office at YedYoniElroi@barilan.com or call 1800-KOSHER1

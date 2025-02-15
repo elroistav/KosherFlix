@@ -121,4 +121,4 @@ You will be redirrected to the login page as punnishment and this likely will be
 - If you're looking for specific genres or movie types, use the **Search Bar** to quickly locate content.
 - Keep track of your **Last Watched List** to easily continue watching movies you’ve started.
 
-For any problems with registration please contact our help office at YedYoniElroi@barilan.com or call 1800-NOT-FLIC
+For any problems with registration please contact our help office at YedYoniElroi@barilan.com or call 1800-KOSHER1

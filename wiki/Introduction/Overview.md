@@ -57,4 +57,4 @@ The project is organized into two main components: the **Web Application** and t
 
 
 
-For any problems with registration please contact our help office at YedYoniElroi@barilan.com or call 1800-NOT-FLIC
+For any problems with registration please contact our help office at YedYoniElroi@barilan.com or call 1800-KOSHER1

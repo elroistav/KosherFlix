@@ -41,4 +41,4 @@ Note: When registering make sure you fill in all required feilds and correctly o
 ### Example
 ![Registration Page](./Screenshots/web_registration_form.png)
 
-For any problems with registration please contact our help office at YedYoniElroi@barilan.com or call 1800-NOT-FLIC
+For any problems with registration please contact our help office at YedYoniElroi@barilan.com or call 1800-KOSHER1
