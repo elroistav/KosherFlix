@@ -10,13 +10,10 @@ For setup instructions, features, and usage guidelines, please visit our **[Wiki
 
 ## ⭐ Features
 - **Curated Kosher Content** – A selection of movies and shows that align with Jewish values.
-- **Custom Family Profiles** – Personalized watchlists for every family member.
 - **Strict Content Filtering** – Ensuring all media adheres to Halacha.
-- **Multi-Language Support** – Hebrew, English, Yiddish, and more.
 - **Smart Recommendations** – Personalized suggestions based on viewing history.
 
 ## 🏆 Core Principles
-- **Shabbat-Friendly Design** – Ensuring no automatic updates or interruptions during Shabbat.
 - **Safe Viewing Experience** – No inappropriate ads or unexpected content.
 - **Community-Oriented** – Built with feedback from religious families in mind.
 
