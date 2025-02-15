@@ -1,27 +1,29 @@
-# 🍿 KosherFlix
+# 🎬 KosherFlix
 
 ## About
-KosherFlix is your one-stop destination for family-friendly entertainment that's cleaner than your bubbie's kitchen before Passover. We're like Netflix, but with 100% less guilt and 100% more nachas.
+KosherFlix is a streaming platform designed for religious Jewish families, providing high-quality, kosher entertainment that aligns with Torah values. With a carefully curated library, KosherFlix ensures a safe and enriching viewing experience for all ages, free from inappropriate content.
 
-## Documentation
-For detailed documentation, please visit our [Wiki](./wiki/) folder. It's organized better than your mother's recipe box!
+## 📖 Documentation
+For setup instructions, features, and usage guidelines, please visit our **[Wiki](https://github.com/Yedidya-Darshan-code/Netflix-KosherStyle/wiki)**.
 
-Note: make sure to look at the wiki in order to see the instalation guide
+**Note:** The **installation guide** is available in the Wiki.
 
-## Features
-- **Content Filtering**: Stricter than your local mashgiach
-- **Family Profiles**: Because everyone in the mishpacha deserves their own watchlist
-- **Smart Recommendations**: Like your shadchan, but for movies
-- **Offline Viewing**: Perfect for Shabbos... just kidding! 
-- **Multi-language Support**: Hebrew, English, Yiddish, and more than you can say "Oy vey" at
+## ⭐ Features
+- **Curated Kosher Content** – A selection of movies and shows that align with Jewish values.
+- **Custom Family Profiles** – Personalized watchlists for every family member.
+- **Strict Content Filtering** – Ensuring all media adheres to Halacha.
+- **Multi-Language Support** – Hebrew, English, Yiddish, and more.
+- **Smart Recommendations** – Personalized suggestions based on viewing history.
 
+## 🏆 Core Principles
+- **Shabbat-Friendly Design** – Ensuring no automatic updates or interruptions during Shabbat.
+- **Safe Viewing Experience** – No inappropriate ads or unexpected content.
+- **Community-Oriented** – Built with feedback from religious families in mind.
 
-## Fun Facts
-- Our servers run 25/6 (we respect Shabbos)
-- Our code base is blessed by a Rabbi
-- Every successful deployment is celebrated with virtual challah
+## 🎭 Join the Kosher Entertainment Revolution
+KosherFlix is more than just a streaming service; it’s a commitment to providing quality entertainment that respects Jewish values.
 
-Remember: Keep it kosher, keep it fun, and may your buffer times be short and your stream quality high! 🕎✡️
+For more details, visit our **[Wiki](https://github.com/Yedidya-Darshan-code/Netflix-KosherStyle/wiki)**.
 
 ---
-Made with ❤️ and certified kosher ingredients
+📌 **Made with dedication to Jewish values** ✡️🎥
