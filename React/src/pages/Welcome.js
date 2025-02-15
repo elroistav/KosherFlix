@@ -23,7 +23,7 @@ const Welcome = () => {
             <WelcomeBar />
             
             <div className="welcome-content">
-                <h1>Welcome to NETFLICK</h1>
+                <h1>Welcome to KOSHERFLIX</h1>
                 <h2>Waste your time</h2>
                 <h2>Give us your money</h2>
                 <div className="register">

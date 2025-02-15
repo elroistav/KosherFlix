@@ -95,7 +95,7 @@ Admins can create and organize movie categories.
 - **Navbar**: The Admin Homepage retains the same **navbar** as the regular homepage.
 - **Return to Main Homepage**: Click the **Notflicks logo** in the navbar to return to the homepage.
 
-![Notflicks Logo](./Screenshots/web_notflicks_logo.png)
+![Notflicks Logo](./Screenshots/web_kosherflix_logo.png)
 
 ### 4. **Whats's stopping me from just going straight to the admin page?**
 
