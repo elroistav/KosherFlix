@@ -16,7 +16,7 @@ function WelcomeBar() {
     <div className="WelcomeBar">
       {/* Logo */}
       <Link to="/" className="logo" >
-        Notflicks
+        KOSHERFLIX
       </Link>
 
       {/* Login Button on the Right */}

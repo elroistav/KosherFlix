@@ -175,7 +175,7 @@ function Navbar( { onSearchResults, clearSearchResults, userInfo, loading, isDar
             <div className="navbar">
               {/* Logo */}
               <div className="logo" onClick={handleLogoClick}>
-              Notflicks
+              KOSHERFLIX
             </div>
 
             <button onClick={() => setIsDarkMode(!isDarkMode)}>

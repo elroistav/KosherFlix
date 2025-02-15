@@ -2,7 +2,7 @@
 
 ## Introduction
 
-Welcome to **Notflicks** – a web and Android application inspired by Netflix. This application allows users to browse and stream movies, while administrators can manage movie content. The project is designed to provide an intuitive and seamless experience for both users and administrators across multiple platforms. 
+Welcome to **KOSHERFLIX** – a web and Android application inspired by Netflix, designed specifically for religious Jews. This application allows users to browse and stream movies, while administrators can manage movie content. The project is designed to provide an intuitive and seamless experience for both users and administrators across multiple platforms. 
 
 Both the **web** and **Android** applications are connected to the same backend, ensuring consistency in functionality and data between both versions.
 
