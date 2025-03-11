@@ -20,7 +20,7 @@ For setup instructions, features, and usage guidelines, please visit our **[Wiki
 ## 🎭 Join the Kosher Entertainment Revolution
 KosherFlix is more than just a streaming service; it’s a commitment to providing quality entertainment that respects Jewish values.
 
-For more details, visit our **[Wiki](https://github.com/Yedidya-Darshan-code/KosherFlix/tree/main/wiki)**.
+For more details, visit our **[Wiki](https://github.com/elroistav/KosherFlix/tree/main/wiki)**.
 
 ---
 📌 **Made with dedication to Jewish values** ✡️🎥
